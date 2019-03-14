@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.dao.OrganizationDao;
 import tr.com.poc.temporaldate.dto.OrganizationDTO;
+import tr.com.poc.temporaldate.dto.converter.OrganizationDTOConverter;
 import tr.com.poc.temporaldate.model.Organization;
 
 /**
@@ -38,8 +39,9 @@ public class OrganizationService implements BaseService
 	
 	public BigDecimal saveOrganization(OrganizationDTO toSave)
 	{
-		//return organizationDao.saveEntity(toSave);
-		return null;
+		Organization organizationSaved = organizationDao.saveDTOReturnEntity(toSave, OrganizationDTOConverter.class);
+		return organizationSaved.getId();
+		
 	}
 	
 	public List<OrganizationDTO> getAllOrganizations()

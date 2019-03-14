@@ -53,6 +53,9 @@ import tr.com.poc.temporaldate.util.ExceptionConstants;
 public class BaseDaoImpl<E extends BaseEntity>
 {
 	//TODO: Enrich entity...
+	private static final String NO_SINGLE_RESULT_EXC_STRING = "Returning null since NoResultException is thrown and caught";
+	private static final String UNEXCPECTED_EXC_INFO_STRING = "An unexpected exception. See error log for details";
+	private static final String UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING = "Exception Building a criteria in repository. Detail: ";
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -101,7 +104,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return true;
 	}
 
-	public E saveAndFlushEntity(E baseEntity, boolean flushNeeded)
+	public E saveAndFlushEntity(E baseEntity)
 	{		
 		return saveEntityWithFlushOption(baseEntity, true);
 	}
@@ -149,8 +152,8 @@ public class BaseDaoImpl<E extends BaseEntity>
 			}
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
-				String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);
-				log.info("An unexpected exception. See error log for details");
+				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);
+				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);
 				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_BY_ENTITY_CRITERIA_EXCEPTION, ExceptionUtils.getMessage(e) ,e);				
 			}
@@ -179,8 +182,8 @@ public class BaseDaoImpl<E extends BaseEntity>
 			}
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
-				String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);
-				log.info("An unexpected exception. See error log for details");
+				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);
+				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);
 				throw new ApplicationException(ExceptionConstants.GET_ROW_COUNT_BY_ENTITY_CRITERIA_EXCEPTION, ExceptionUtils.getMessage(e) ,e);			
 			}
@@ -209,8 +212,8 @@ public class BaseDaoImpl<E extends BaseEntity>
 			}
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
-				String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);
-				log.info("An unexpected exception. See error log for details");
+				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING+ ExceptionUtils.getStackTrace(e);
+				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);
 				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_COUNT_BY_ENTITY_CRITERIA_WITH_PAGINATION, ExceptionUtils.getMessage(e) ,e);	
 			}
@@ -249,12 +252,12 @@ public class BaseDaoImpl<E extends BaseEntity>
 		}
 		catch (NoResultException nre)
 		{
-			log.info("Returning null since NoResultException is thrown and caught");			
+			log.info(NO_SINGLE_RESULT_EXC_STRING);			
 			return null;
 		}
 		catch (Exception e)
 		{
-			String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);	
+			String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
 			throw new ApplicationException(ExceptionConstants.GET_ENTITY_BY_ENTITY_CRITERIA, ExceptionUtils.getMessage(e) ,e);	
 		}
@@ -280,7 +283,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 			}
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
-				String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);	
+				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 				log.error(exceptionMessage);
 				throw new ApplicationException(ExceptionConstants.GET_ENTITY_FOR_UPDATE_BY_ENTITY_CRITERIA, ExceptionUtils.getMessage(e) ,e);				
 			}
@@ -296,7 +299,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		}
 		catch (NoResultException nre)
 		{
-			log.info("Returning null since NoResultException is thrown and caught");	
+			log.info(NO_SINGLE_RESULT_EXC_STRING);	
 			return null;
 		}		
 	}
@@ -320,14 +323,14 @@ public class BaseDaoImpl<E extends BaseEntity>
 					firstEntry = false;
 					continue;
 				}
-				if (field.get(searchCriteria) != null && !"id".equalsIgnoreCase(field.getName()))
+				if (field.get(searchCriteria) != null && !Constants.ID_COLUMN_KEY.equalsIgnoreCase(field.getName()))
 				{
 					base = builder.or(builder.equal(pRoot.<Comparable>get(field.getName()), field.get(searchCriteria)), base);
 				}
 			}
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
-				String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);	
+				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 				log.error(exceptionMessage);
 				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_BY_ENTITY_OR_CRITERIA, ExceptionUtils.getMessage(e) ,e);
 			}
@@ -356,7 +359,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 			}
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
-				String exceptionMessage = "Exception Building a criteria in repository. Detail: " + ExceptionUtils.getStackTrace(e);	
+				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 				log.error(exceptionMessage);
 				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_FOR_UPDATE_BY_ENTITY_CRITERIA, ExceptionUtils.getMessage(e) ,e);
 			}
@@ -423,7 +426,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		}
 		catch (NoResultException nre)
 		{
-			log.info("Returning null since NoResultException is thrown and caught");	
+			log.info(NO_SINGLE_RESULT_EXC_STRING);	
 			return null;
 		}
 		return toReturn;
@@ -446,7 +449,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		}
 		catch (NoResultException nre)
 		{
-			log.info("Returning null since NoResultException is thrown and caught");	
+			log.info(NO_SINGLE_RESULT_EXC_STRING);	
 			return null;
 		}
 		return toReturn;
@@ -490,19 +493,19 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return true;
 	}
 
-	public <D extends BaseDTO> List<D> getDTOList(Class dtoClassToReturn, Class<? extends BaseConverter<E,D>> converterClass)
+	public <D extends BaseDTO> List<D> getDTOList(Class<? extends BaseConverter<E,D>> converterClass)
 	{
 		List<E> allEntities = getEntityList();
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListForUpdate(Class dtoClassToReturn, Class converterClass)
+	public <D extends BaseDTO> List<D> getDTOListForUpdate(Class converterClass)
 	{
 		List<E> allEntities = getEntityListForUpdate();
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> D updateEntityReturnDTO(Class dtoClassToReturn, E toUpdate, Class converterClass)
+	public <D extends BaseDTO> D updateEntityReturnDTO(E toUpdate, Class converterClass)
 	{
 		//EnrichEntity
 		E updated = entityManager.merge(toUpdate);
@@ -510,14 +513,14 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return (D) getRelevantConverter(converterClass).convertToDTO(updated);
 	}
 
-	public <D extends BaseDTO> D getEntityById(Class dtoClassToReturn, Long pk, Class converterClass)
+	public <D extends BaseDTO> D getEntityById(Long pk, Class converterClass)
 	{
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];		
 		E entity = (E) entityManager.find(beType, pk);
 		return (D) getRelevantConverter(converterClass).convertToDTO(entity);		
 	}
 
-	public <D extends BaseDTO> D saveEntityReturnDTO(Class dtoClassToReturn, E peristedEntity, Class converterClass)
+	public <D extends BaseDTO> D saveEntityReturnDTO(E peristedEntity, Class converterClass)
 	{
 		//EnrichEntity
 		entityManager.persist(peristedEntity);
@@ -525,43 +528,43 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return (D) getRelevantConverter(converterClass).convertToDTO(peristedEntity);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListByEntityCriteria(Class dtoClassToReturn, E searchCriteria, Class converterClass)
+	public <D extends BaseDTO> List<D> getDTOListByEntityCriteria(E searchCriteria, Class converterClass)
 	{
 		List<E> allEntities = getEntityListByEntityCriteria(searchCriteria);		
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListByEntityCriteriaWithPagination(Class dtoClassToReturn, E searchCriteria, Class converterClass, int firstResult, int pageSize)
+	public <D extends BaseDTO> List<D> getDTOListByEntityCriteriaWithPagination(E searchCriteria, Class converterClass, int firstResult, int pageSize)
 	{
 		List<E> allEntities = getEntityListByEntityCriteriaWithPagination(searchCriteria, firstResult, pageSize);		
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListForUpdateByEntityCriteria(Class dtoClassToReturn, E searchCriteria, Class converterClass)
+	public <D extends BaseDTO> List<D> getDTOListForUpdateByEntityCriteria(E searchCriteria, Class converterClass)
 	{
 		List<E> allEntities = getEntityListForUpdateByEntityCriteria(searchCriteria);		
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListByNamedQuery(Class dtoClassToReturn, String namedQueryName, Class converterClass, Object... parameters)
+	public <D extends BaseDTO> List<D> getDTOListByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
 	{
 		List<E> listWithNamedQuery = getEntityListByNamedQuery(namedQueryName, parameters);		
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(listWithNamedQuery);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListForUpdateByNamedQuery(Class dtoClassToReturn, String namedQueryName, Class converterClass, Object... parameters)
+	public <D extends BaseDTO> List<D> getDTOListForUpdateByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
 	{
 		List<E> listWithNamedQuery = getEntityListForUpdateByNamedQuery(namedQueryName, parameters);		
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(listWithNamedQuery);
 	}
 
-	public <D extends BaseDTO> D getDTOByNamedQuery(Class dtoClassToReturn, String namedQueryName, Class converterClass, Object... parameters)
+	public <D extends BaseDTO> D getDTOByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
 	{
 		E singleEntity = getEntityByNamedQuery(namedQueryName, parameters);		
 		return (D) getRelevantConverter(converterClass).convertToDTO(singleEntity);
 	}
 
-	public <D extends BaseDTO> D getDTOForUpdateByNamedQuery(Class dtoClassToReturn, String namedQueryName, Class converterClass, Object... parameters)
+	public <D extends BaseDTO> D getDTOForUpdateByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
 	{
 		E singleEntity = getEntityForUpdateByNamedQuery(namedQueryName, parameters);		
 		return (D) getRelevantConverter(converterClass).convertToDTO(singleEntity);
@@ -642,7 +645,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
 		{
 			String exceptionMessage = "Exception using reflections in repository. Detail: " + ExceptionUtils.getStackTrace(e);
-			log.info("An unexpected exception. See error log for details");
+			log.info(UNEXCPECTED_EXC_INFO_STRING);
 			log.error(exceptionMessage);
 			throw new ApplicationException(ExceptionConstants.SAVE_DTO_RETURN_DTO_EXCEPTION, ExceptionUtils.getMessage(e) ,e);		
 		}
@@ -664,7 +667,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return (List<D>) bc.mapListEntityToDTO(allEntities);
 	}
 	
-	public <D extends BaseDTO, D2 extends BaseDTO> List<D2> updateDTOListByDTOCriteriaAndReturnAnotherDTOList(D searchCriteria, D newParams, Class returnClass, Class converterAsInputClass, Class converterToReturnClass)
+	public <D extends BaseDTO, D2 extends BaseDTO> List<D2> updateDTOListByDTOCriteriaAndReturnAnotherDTOList(D searchCriteria, D newParams, Class converterAsInputClass, Class converterToReturnClass)
 	{
 		BaseConverter bcInput = getRelevantConverter(converterAsInputClass);
 		E entity = (E) bcInput.convertToEntity(searchCriteria);
@@ -677,7 +680,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return (List<D2>) getRelevantConverter(converterToReturnClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO, D2 extends BaseDTO> D2 saveDTOReturnAnotherDTO(D baseDTO, Class returnClass, Class converterAsInputClass, Class converterToReturnClass)
+	public <D extends BaseDTO, D2 extends BaseDTO> D2 saveDTOReturnAnotherDTO(D baseDTO, Class converterAsInputClass, Class converterToReturnClass)
 	{
 		E persistedEntity = (E) getRelevantConverter(converterAsInputClass).convertToEntity(baseDTO);
 		//EnrichEntity
@@ -686,14 +689,14 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return (D2) getRelevantConverter(converterToReturnClass).convertToDTO(persistedEntity);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListByCriteria(Class dtoClass, CriteriaQuery<E> cq, Class converterClass)
+	public <D extends BaseDTO> List<D> getDTOListByCriteria(CriteriaQuery<E> cq, Class converterClass)
 	{
 		TypedQuery<E> query = entityManager.createQuery(cq);
 		List<E> allEntities = query.getResultList();		
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListByCriteriaWithPagination(Class dtoClass, CriteriaQuery<E> cq, Class converterClass, int first, int pageSize)
+	public <D extends BaseDTO> List<D> getDTOListByCriteriaWithPagination(CriteriaQuery<E> cq, Class converterClass, int first, int pageSize)
 	{
 		TypedQuery<E> query = entityManager.createQuery(cq);
 		query.setFirstResult(first);
@@ -702,7 +705,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
 	}
 
-	public <D extends BaseDTO> List<D> getDTOListForUpdateByCriteria(Class dtoClass, CriteriaQuery<E> cq, Class converterClass)
+	public <D extends BaseDTO> List<D> getDTOListForUpdateByCriteria(CriteriaQuery<E> cq, Class converterClass)
 	{
 		TypedQuery<E> query = entityManager.createQuery(cq);
 		query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
@@ -793,7 +796,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 				setter = pd.getWriteMethod();
 				Object willChangeToValue = getter.invoke(source);// Which values
 				// a non null field as new data
-				if (willChangeToValue != null && !"id".equalsIgnoreCase(pd.getName()) && setter != null)// get
+				if (willChangeToValue != null && !Constants.ID_COLUMN_KEY.equalsIgnoreCase(pd.getName()) && setter != null)// get
 				{
 					setterValuePairs.add(new SetterAndValue(setter, willChangeToValue));
 				}
@@ -807,6 +810,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 	}
 
 	// Copy from buffer to destination collection
+	//TODO: Refactor...
 	private boolean copyFromBufferToDestinationCollection(Collection destinationObjectOrCollection, List<SetterAndValue> buffer)
 	{
 		if (destinationObjectOrCollection == null)
@@ -850,9 +854,27 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return true;
 	}
 	
-	private <D extends BaseDTO> BaseConverter<E,D> getRelevantConverter(Class<? extends BaseConverter<E,D>> mappingClass)
+	private <D extends BaseDTO> BaseConverter<E,D> getRelevantConverter(Class<? extends BaseConverter<E,D>> baseConverter)
 	{
-		return null;
+		if(baseConverter == null)
+		{
+			String errorMessage = "Can not instantiate a user given null base converter object in repository layer. Detail: A null object is given as parameter to the method";	
+			log.info("Can not instantiate a user given null base converter object in repository layer. See error log for details.");
+			log.error(errorMessage);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, errorMessage, new NullPointerException());
+		}
+		try 
+		{
+			Class clazz = Class.forName(baseConverter.getName());
+			return (BaseConverter<E,D>)clazz.getDeclaredConstructor().newInstance();
+		} 
+		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException| NoSuchMethodException | SecurityException | ClassNotFoundException e) 
+		{		
+			String errorMessage = "Can not instantiate/or locate an existing base converter object in repository layer. Detail: " + ExceptionUtils.getStackTrace(e);	
+			log.info("Can not instantiate/or locate an existing base converter object in repository layer. See error log for details.");
+			log.error(errorMessage);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, ExceptionUtils.getMessage(e), e);
+		}		
 	}
 	
 	// Returns ENTITY version of the DTO that has an id attribute and not null id value.
@@ -890,9 +912,8 @@ public class BaseDaoImpl<E extends BaseEntity>
 			catch (IllegalArgumentException | IllegalAccessException e)
 			{
 				String exceptionMessage = "Exception calling reflections in repository. Detail: " + ExceptionUtils.getStackTrace(e);
-				log.info("An unexpected exception. See error log for details");
-				log.error(exceptionMessage);
-								
+				log.info(UNEXCPECTED_EXC_INFO_STRING);
+				log.error(exceptionMessage);								
 				throw new ApplicationException(ExceptionConstants.CALL_SETTERS_ON_OBJECT_WITHOUT_NULL_AND_ID_FIELDS_EXCEPTION, ExceptionUtils.getMessage(e), e);
 			}
 		}

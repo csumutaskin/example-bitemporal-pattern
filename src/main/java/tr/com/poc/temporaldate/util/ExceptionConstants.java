@@ -18,4 +18,5 @@ public class ExceptionConstants
 	public static final long COPY_FROM_BUFFER_TO_DESTINATION_OBJECT_EXCEPTION = 11011l;
 	public static final long GET_ENTITY_USING_DTO_WITH_ID_EXCEPTION = 11012l;
 	public static final long CALL_SETTERS_ON_OBJECT_WITHOUT_NULL_AND_ID_FIELDS_EXCEPTION = 11013l;
+	public static final long GET_RELEVANT_CONVERTER_EXCEPTION = 11014l;
 }
