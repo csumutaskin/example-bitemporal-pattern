@@ -55,7 +55,7 @@ public class OrganizationDTOConverter implements BaseConverter<Organization, Org
 		if(CollectionUtils.isEmpty(entityList))
 		{
 			log.debug("empty collection converted to new Arraylist");
-			return new ArrayList<OrganizationDTO>();
+			return new ArrayList<>();
 		}
 		Collection<OrganizationDTO> toReturn = new ArrayList<>();
 		for(Organization entity : entityList)
@@ -75,7 +75,7 @@ public class OrganizationDTOConverter implements BaseConverter<Organization, Org
 		if(CollectionUtils.isEmpty(dtoList))
 		{
 			log.debug("empty collection converted to new Arraylist");
-			return new ArrayList<Organization>();
+			return new ArrayList<>();
 		}
 		Collection<Organization> toReturn = new ArrayList<>();
 		for(OrganizationDTO dto : dtoList)
