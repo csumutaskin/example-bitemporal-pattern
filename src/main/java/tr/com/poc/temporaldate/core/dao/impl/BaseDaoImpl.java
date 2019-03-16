@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -95,6 +96,28 @@ public class BaseDaoImpl<E extends BaseEntity>
 		E merge = entityManager.merge(toUpdate);
 		entityManager.flush();
 		return merge;
+	}
+	
+	//TODO: detail test! if any other properties are overridden as null or other values, check it...
+	public <D extends BaseDTO> E updateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
+	{
+		if(id == null)
+		{
+			return null;
+		}		
+		E convertedEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
+		try
+		{
+			entityManager.merge(setIdusingReflection(convertedEntity, id));
+		}
+		catch(Exception e)
+		{
+			String exceptionMessage = "Can not update an entity using DTO. Detail is." + ExceptionUtils.getStackTrace(e);
+			log.info("Can not update an entity using DTO. See error log for details.");
+			log.error(exceptionMessage);
+			throw new ApplicationException(ExceptionConstants.UPDATE_ENTITY_BY_DTO, exceptionMessage, e);
+		}
+		return convertedEntity;
 	}
 
 	public boolean deleteEntityListByEntityCriteria(E toDeleteFilter)
@@ -893,6 +916,27 @@ public class BaseDaoImpl<E extends BaseEntity>
 			throw new ApplicationException(ExceptionConstants.GET_ENTITY_USING_DTO_WITH_ID_EXCEPTION, ExceptionUtils.getMessage(e), e);
 		}
 		return getEntityForUpdate(id);
+	}
+	
+	private E setIdusingReflection(E baseEntity, Serializable id) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException
+	{
+	
+		Method method = null;	
+		E invokedEntity = null;
+		try
+		{
+			Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+			method = beType.getMethod(Constants.ID_SETTER_KEY, BigDecimal.class);
+			invokedEntity = (E)method.invoke(baseEntity, id);
+		}
+		catch(Exception e)
+		{
+			String errorMessage = "Can not invoke setId() using reflection on object: " + baseEntity + ". Detail: " + ExceptionUtils.getStackTrace(e);
+			log.error(errorMessage);
+			log.info("Can not invoke setId() using reflection on object: " + baseEntity + " See errog log for details...");					 
+			throw e;
+		}
+		return invokedEntity;
 	}
 
 	// Copies from not null and not id values of newValues to be object

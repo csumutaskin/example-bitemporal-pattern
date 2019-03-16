@@ -9,4 +9,5 @@ public class Constants
 	public static final int REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH = 100;
 	public static final String ID_COLUMN_KEY = "id";
 	public static final String ID_GETTER_KEY = "getId";
+	public static final String ID_SETTER_KEY = "setId";
 }

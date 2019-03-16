@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.dao.OrganizationDao;
 import tr.com.poc.temporaldate.dto.OrganizationDTO;
@@ -20,6 +21,7 @@ import tr.com.poc.temporaldate.model.Organization;
  */
 @Service
 @Transactional
+@Log4j2
 public class OrganizationService implements BaseService
 {
 	@Autowired
@@ -27,8 +29,14 @@ public class OrganizationService implements BaseService
 	
 	public Boolean updateOrganization(Serializable id, OrganizationDTO toUpdate)
 	{
-		//return organizationDao.updateEntity(id, toUpdate);
-		return null;
+		Organization updateEntityByDTO = organizationDao.updateEntityByDTO(id, toUpdate, OrganizationDTOConverter.class);
+		if(updateEntityByDTO == null)
+		{
+			log.info("No organization with id: {} is detected on db. Thus no update operation will be performed this time using DTO: {}." , id, toUpdate);
+			//TODO: throw exception necessary or not...
+			return false;
+		}
+		return true;
 	}
 	
 	public Boolean deleteOrganization(Serializable id)
