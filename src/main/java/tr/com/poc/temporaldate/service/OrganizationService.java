@@ -41,16 +41,14 @@ public class OrganizationService implements BaseService
 	
 	public Boolean deleteOrganization(Serializable id)
 	{
-		organizationDao.deleteEntity(id);
-		//return organizationDao.deleteEntity(id);
-		return null;
+		boolean entityDeleted = organizationDao.deleteEntity(id);
+		return Boolean.valueOf(entityDeleted);
 	}
 	
 	public BigDecimal saveOrganization(OrganizationDTO toSave)
 	{
 		Organization organizationSaved = organizationDao.saveDTOReturnEntity(toSave, OrganizationDTOConverter.class);
-		return organizationSaved.getId();
-		
+		return organizationSaved.getId();		
 	}
 	
 	public List<OrganizationDTO> getAllOrganizations()
@@ -59,8 +57,7 @@ public class OrganizationService implements BaseService
 	}
 	
 	public OrganizationDTO getOrganization(Serializable id) 
-	{
-		//return organizationDao.getOrganization(id);
-		return null;
+	{		
+		return organizationDao.getDTO(id, OrganizationDTOConverter.class);
 	}
 }

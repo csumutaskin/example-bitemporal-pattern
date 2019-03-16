@@ -89,6 +89,11 @@ public abstract class BaseDaoImpl<E extends BaseEntity>
 	{
 		return getEntityForUpdateWithLockMode(pk, LockModeType.PESSIMISTIC_WRITE);
 	}
+	
+	public <D extends BaseDTO> D getDTO(final Serializable pk, Class<? extends BaseConverter<E,D>> baseConverter) 
+	{
+		return getRelevantConverter(baseConverter).convertToDTO(getEntity(pk));
+	}
 
 	public E updateEntity(E toUpdate)
 	{				
