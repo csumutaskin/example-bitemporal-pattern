@@ -51,9 +51,8 @@ import tr.com.poc.temporaldate.util.ExceptionConstants;
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-public class BaseDaoImpl<E extends BaseEntity>
+public abstract class BaseDaoImpl<E extends BaseEntity>
 {
-	//TODO: Enrich entity...
 	private static final String NO_SINGLE_RESULT_EXC_STRING = "Returning null since NoResultException is thrown and caught";
 	private static final String UNEXCPECTED_EXC_INFO_STRING = "An unexpected exception. See error log for details";
 	private static final String UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING = "Exception Building a criteria in repository. Detail: ";
@@ -98,14 +97,20 @@ public class BaseDaoImpl<E extends BaseEntity>
 		return merge;
 	}
 	
-	//TODO: detail test! if any other properties are overridden as null or other values, check it...
 	public <D extends BaseDTO> E updateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
 	{
 		if(id == null)
 		{
 			return null;
-		}		
+		}
+		E entityFromDB = getEntityForUpdate(id);
+		if(entityFromDB == null)
+		{
+			return null;
+		}
 		E convertedEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
+		convertedEntity.setCreateDate(entityFromDB.getCreateDate());
+		convertedEntity.setCreateUser(entityFromDB.getCreateUser());
 		try
 		{
 			entityManager.merge(setIdusingReflection(convertedEntity, id));
@@ -141,6 +146,19 @@ public class BaseDaoImpl<E extends BaseEntity>
 	{
 		entityManager.remove(baseEntity);
 		entityManager.flush();		
+	}
+	
+	public boolean deleteEntity(Serializable id)
+	{
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		int deleteCount = entityManager.createQuery("delete from "+ beType.getSimpleName() +" e where e.id=:id").setParameter("id", id).executeUpdate();
+		entityManager.flush();
+		if (deleteCount == 0) 
+		{
+			log.info("No tuple found to be deleted with id: {}",id);
+			return false;
+		}			
+		return true;
 	}
 
 	public void deleteEntityList(List<E> entityList)
@@ -921,13 +939,12 @@ public class BaseDaoImpl<E extends BaseEntity>
 	private E setIdusingReflection(E baseEntity, Serializable id) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException
 	{
 	
-		Method method = null;	
-		E invokedEntity = null;
+		Method method = null;		
 		try
 		{
 			Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 			method = beType.getMethod(Constants.ID_SETTER_KEY, BigDecimal.class);
-			invokedEntity = (E)method.invoke(baseEntity, id);
+			method.invoke(baseEntity, id);
 		}
 		catch(Exception e)
 		{
@@ -936,7 +953,7 @@ public class BaseDaoImpl<E extends BaseEntity>
 			log.info("Can not invoke setId() using reflection on object: " + baseEntity + " See errog log for details...");					 
 			throw e;
 		}
-		return invokedEntity;
+		return baseEntity;
 	}
 
 	// Copies from not null and not id values of newValues to be object

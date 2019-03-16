@@ -41,7 +41,7 @@ public class OrganizationController
 	
 	@PostMapping(value = "/save" , consumes = {"application/json", "application/xml"}, produces= {"application/json", "application/xml"})
 	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
-	{		
+	{	
 		BigDecimal organizationId = organizationService.saveOrganization(toSave);
 		log.debug("Organization created with id: {}", organizationId);
 		return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);

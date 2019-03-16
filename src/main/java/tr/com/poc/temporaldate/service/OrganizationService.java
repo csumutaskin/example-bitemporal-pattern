@@ -41,6 +41,7 @@ public class OrganizationService implements BaseService
 	
 	public Boolean deleteOrganization(Serializable id)
 	{
+		organizationDao.deleteEntity(id);
 		//return organizationDao.deleteEntity(id);
 		return null;
 	}
@@ -54,8 +55,7 @@ public class OrganizationService implements BaseService
 	
 	public List<OrganizationDTO> getAllOrganizations()
 	{
-		//return organizationDao.getAllEntities();
-		return null;
+		return organizationDao.getDTOList(OrganizationDTOConverter.class);		
 	}
 	
 	public OrganizationDTO getOrganization(Serializable id) 
