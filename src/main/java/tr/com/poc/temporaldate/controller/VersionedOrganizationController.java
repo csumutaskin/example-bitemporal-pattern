@@ -27,19 +27,19 @@ public class VersionedOrganizationController
 	@Autowired
 	private VersionedOrganizationService versionedOrganizationService;
 	
-	@GetMapping(value = "/getAll" , produces= {"application/json", "application/xml"})
+	@GetMapping(value = "/getAll" , produces= {"application/json"})
 	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()
 	{		
 		return new ResponseEntity<>(versionedOrganizationService.getAllOrganizations(), HttpStatus.OK);
 	}
 	
-	@PutMapping(value = "/update/{id}" , consumes = {"application/json", "application/xml"}, produces= {"application/json", "application/xml"})
+	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody OrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(versionedOrganizationService.updateVersionedOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/save" , consumes = {"application/json", "application/xml"}, produces= {"application/json", "application/xml"})
+	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
 	{	
 		BigDecimal organizationId = versionedOrganizationService.saveVersionedOrganization(toSave);

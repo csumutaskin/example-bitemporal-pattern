@@ -27,19 +27,19 @@ public class OrganizationController
 	@Autowired
 	private OrganizationService organizationService;
 	
-	@GetMapping(value = "/getAll" , produces= {"application/json", "application/xml"})
+	@GetMapping(value = "/getAll" , produces= {"application/json"})
 	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()
 	{		
 		return new ResponseEntity<>(organizationService.getAllOrganizations(), HttpStatus.OK);
 	}
 	
-	@PutMapping(value = "/update/{id}" , consumes = {"application/json", "application/xml"}, produces= {"application/json", "application/xml"})
+	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody OrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(organizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/save" , consumes = {"application/json", "application/xml"}, produces= {"application/json", "application/xml"})
+	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
 	{	
 		BigDecimal organizationId = organizationService.saveOrganization(toSave);
