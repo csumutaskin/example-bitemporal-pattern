@@ -20,8 +20,7 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 public abstract class BaseVersionedEntity extends BaseEntity
-{
-	
+{	
 	@Version
 	@Column(name = "VERSION")
 	@Temporal(TemporalType.TIMESTAMP)

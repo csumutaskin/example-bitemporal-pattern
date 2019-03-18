@@ -20,4 +20,6 @@ public class ExceptionConstants
 	public static final long CALL_SETTERS_ON_OBJECT_WITHOUT_NULL_AND_ID_FIELDS_EXCEPTION = 11013l;
 	public static final long GET_RELEVANT_CONVERTER_EXCEPTION = 11014l;
 	public static final long UPDATE_ENTITY_BY_DTO = 11015l;
+	
+	public static final long GET_ENTITY_AT_EFFECTIVE_DATE = 11016l;
 }
