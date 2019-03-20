@@ -25,5 +25,4 @@ public abstract class BaseVersionedEntity extends BaseEntity
 	@Column(name = "VERSION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date finalDate;
-
 }
