@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -19,11 +20,13 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
-import tr.com.poc.temporaldate.core.model.BaseDTO;
+import tr.com.poc.temporaldate.core.model.BaseEntity;
+import tr.com.poc.temporaldate.util.Constants;
 import tr.com.poc.temporaldate.util.ExceptionConstants;;
 
 @Component
@@ -49,17 +52,33 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		this.entityManager = entityManager;
 	}
 	
-	public E getEntity(final Serializable pk)//currently effective from current perspective
+	/**
+	 * Retrieves currently effective entity from current perspective
+	 * @param pk primary key to be searched
+	 * @return {@link BaseEntity} object
+	 */
+	public E getEntity(final Serializable pk)
 	{		
 		return getEntityForUpdateWithLockMode(pk, null);				
 	}
 	
-	public E getEntityForUpdate(final Serializable pk)//currently effective from current perspective
+	/**
+	 * Retrieves currently effective entity from current perspective with pessimistic lock for updating
+	 * @param pk primary key to be searched
+	 * @return {@link BaseEntity} object
+	 */
+	public E getEntityForUpdate(final Serializable pk)
 	{
 		return getEntityForUpdateWithLockMode(pk, LockModeType.PESSIMISTIC_WRITE);
 	}
 	
-	public E getEntityAtEffectiveTime(final Serializable pk, Date effectiveDate)//effective at a certain date from current perspective
+	/**
+	 * Retrieves entity effective at a given time from current perspective
+	 * @param pk primary key to be searched
+	 * @param effectiveDate
+	 * @return {@link BaseEntity} object
+	 */
+	public E getEntityAtEffectiveTime(final Serializable pk, Date effectiveDate)
 	{
 		E toReturn = null;
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
@@ -91,6 +110,13 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		return toReturn;
 	}
 	
+	/**
+	 * Retrieves entity effective at a given time from a given perspective
+	 * @param pk primary key to be searched
+	 * @param effectiveDate actual date for the tuple
+	 * @param perspectiveDate from which time line we are looking at the tuples
+	 * @return {@link BaseEntity} object
+	 */
 	public E getEntityAtEffectiveTimeFromPerspectiveTime(final Serializable pk, Date effectiveDate, Date perspectiveDate)//effective at a certain date from a certain perspective (not now)
 	{
 		E toReturn = null;
@@ -98,7 +124,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and :perspectiveDate >= recordDateStart and :perspectiveDate <= recordDateEnd and id = :id");
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveDate", effectiveDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("perspectiveDate", perspectiveDate);
-		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("id", pk);
+		selectWithinEffectiveTimeFromPerspectiveDate.setParameter(Constants.ID_COLUMN_KEY, pk);
 		try
 		{
 			toReturn = (E) selectWithinEffectiveTimeFromPerspectiveDate.getSingleResult();			
@@ -124,19 +150,88 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		return toReturn;
 	}
 	
-	public E saveAndFlushEntity(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+	/**
+	 * Saves or updates (with flush) entity from current perspective
+	 * @param id primary key to be updated (if null data will be persisted)
+	 * @param baseEntity entity to be saved or updated
+	 * @param effectiveStartDate actual start date where the tuple is active
+	 * @param effectiveEndDate actual final date where the tuple is active
+	 * @return {@link BaseEntity} that is saved or updated
+	 */
+	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
 	{		
-		return saveEntityWithFlushOption(baseEntity, true, effectiveStartDate, effectiveEndDate);
+		return saveOrUpdateEntityWithFlushOption(id, baseEntity, true, effectiveStartDate, effectiveEndDate);
 	}
 	
-    public E saveEntity(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
-    {
-    	return saveEntityWithFlushOption(baseEntity, false, effectiveStartDate, effectiveEndDate);
-    }
+	/**
+	 * Deletes entity which is effective at the given date
+	 * @param id primary key to be updated (if null data will be persisted)
+	 * @param effectiveDate actual date for the tuple
+	 */
+	public void deleteEntityAtEffectiveDate(Serializable id, Date effectiveDate)
+	{
+		
+	}
 	
-	private E saveEntityWithFlushOption(E baseEntity, boolean flushNeeded, Date effectiveStartDate, Date effectiveEndDate)
-	{			
-		entityManager.persist(enrichPerspectiveDate(baseEntity,effectiveStartDate, effectiveEndDate));
+	/**
+	 * Deletes entity which is currently effective
+	 * @param id primary key to be updated (if null data will be persisted)
+	 */
+	public void deleteEntityAtEffectiveDate(Serializable id)
+	{
+		
+	}
+	
+	/**
+	 * Deletes all versions????? of entity with the given id
+	 * @param id primary key to be updated (if null data will be persisted)
+	 */
+	public void deleteEntityWithAllVersions(Serializable id)
+	{
+		
+	}
+	
+	/**
+	 * Saves or updates entity from current perspective
+	 * @param id primary key to be updated (if null data will be persisted)
+	 * @param baseEntity entity to be saved or updated
+	 * @param effectiveStartDate actual start date where the tuple is active
+	 * @param effectiveEndDate actual final date where the tuple is active
+	 * @return {@link BaseEntity} that is saved or updated
+	 */
+    public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+    {
+    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
+    }
+    
+	/**
+	 * Retrieves all entities that intersect the given effective start and end dates
+	 * @param pk primary key to be searched
+	 * @return {@link BaseEntity} object
+	 */
+	public Collection<E> getAllEntitiesThatIntersectBeginAndEndDate(final Serializable pk, Date effectiveStartDate, Date effectiveEndDate)
+	{
+		return null;
+	}
+	
+    /* Saves or Updates entity */
+	private E saveOrUpdateEntityWithFlushOption(Serializable pk, E baseEntity, boolean flushNeeded, Date effectiveStartDate, Date effectiveEndDate)
+	{	
+		//E entityForUpdate = getEntityForUpdate(pk);
+		Collection<E> entitiesIntersected = getAllEntitiesThatIntersectBeginAndEndDate(pk, effectiveStartDate, effectiveEndDate);
+		if(CollectionUtils.isEmpty(entitiesIntersected))
+		{
+			entityManager.persist(enrichDateColumns(baseEntity,effectiveStartDate, effectiveEndDate));
+		}
+		else //update currently found entity
+		{
+			for(E current:entitiesIntersected)
+			{
+				//TODO: comparator sort by date begin, then start updating new dates using the given date by end user and also merge the new data 
+				//if a tuples both start and end dates match update by merging new data
+				//if a tuples at least one date match insert new data and limit the old data times..
+			}
+		}
 		if(flushNeeded)
 		{
 			entityManager.flush();
@@ -144,39 +239,16 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		return baseEntity;
 	}
 	
-	public <D extends BaseDTO> E updateEntity(Serializable id, E newEntity)
+    /* Saves or Updates entity with pessimistic lock in case of update */
+	private E getEntityForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
 	{
-		if(id == null)
+		if(pk == null)
 		{
 			return null;
 		}
-		E toReturn = null;
-		E entityFromDB = getEntityForUpdate(id);
-		if(entityFromDB == null)
-		{
-			return toReturn;
-		}
-		Date now = new Date();//TODO: yeni kaydin create date i aldir.
-		try
-		{
-			entityFromDB.setEffectiveDateEnd(now);
-			toReturn = saveEntity(newEntity, now, END_OF_EPYS);
-		}
-		catch(Exception e)
-		{
-			String exceptionMessage = "Can not update (by adding a new item with new perspective dates) an entity using DTO. Detail is." + ExceptionUtils.getStackTrace(e);
-			log.info("Can not update (by adding a new item with new perspective dates) an entity using DTO. See error log for details.");
-			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_UPDATE_ENTITY, exceptionMessage, e);
-		}
-		return toReturn;
-	}
-	
-	private E getEntityForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
-	{
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];		
 		Query selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");		
-		selectCurrentDataUsingEffectiveTimeParameter.setParameter("id", pk);
+		selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
 		if(lockModeType != null)
 		{
 			selectCurrentDataUsingEffectiveTimeParameter.setLockMode(lockModeType);
@@ -191,7 +263,6 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	@SuppressWarnings("unused")
 	private E setIdusingReflection(E baseEntity, Serializable id) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException
 	{
-	
 		Method method = null;		
 		try
 		{
@@ -209,7 +280,8 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		return baseEntity;
 	}
 	
-	private E enrichPerspectiveDate(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+	/* Sets an effective (actual) start date and end date for the current tuple */
+	private E enrichDateColumns(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
 	{
 		baseEntity.setRecordDateStart(new Date());//TODO: Audit create date alinmali...
 		baseEntity.setRecordDateEnd(END_OF_EPYS);
