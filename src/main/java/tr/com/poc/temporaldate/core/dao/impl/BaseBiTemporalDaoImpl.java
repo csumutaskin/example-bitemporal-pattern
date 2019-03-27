@@ -88,7 +88,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	{
 		E toReturn = null;
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Query selectWithinEffectiveTime = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");		
+		Query selectWithinEffectiveTime = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");		
 		selectWithinEffectiveTime.setParameter("id", pk);
 		selectWithinEffectiveTime.setParameter("effectiveDate", effectiveDate);
 		try
@@ -127,7 +127,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	{
 		E toReturn = null;
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and :perspectiveDate >= recordDateStart and :perspectiveDate <= recordDateEnd and id = :id");
+		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and :perspectiveDate >= recordDateStart and :perspectiveDate <= recordDateEnd and id = :id");
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveDate", effectiveDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("perspectiveDate", perspectiveDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter(Constants.ID_COLUMN_KEY, pk);
@@ -234,7 +234,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	{
 		Collection<E> toReturnCollection = null;
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart < :effectiveEndDate and E.effectiveDateEnd > :effectiveStartDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and id = :id");
+		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart < :effectiveEndDate and E.effectiveDateEnd > :effectiveStartDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and id = :id");
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveStartDate", effectiveStartDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveEndDate", effectiveEndDate);	
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter(Constants.ID_COLUMN_KEY, pk);
@@ -341,7 +341,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		}
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
 		Query selectCurrentDataUsingEffectiveTimeParameter = null;
-		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");
+		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");
 		selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
 		if(lockModeType != null)
 		{
