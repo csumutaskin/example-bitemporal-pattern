@@ -20,14 +20,14 @@ import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.dao.BaseDao;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
-import tr.com.poc.temporaldate.core.model.BaseEntity;
+import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
 import tr.com.poc.temporaldate.util.Constants;
 import tr.com.poc.temporaldate.util.ExceptionConstants;
 
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-public class BaseVersionedDaoImpl<E extends BaseEntity> implements BaseDao<E> 
+public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseDao<E> 
 {
 	@PersistenceContext
 	private EntityManager entityManager;

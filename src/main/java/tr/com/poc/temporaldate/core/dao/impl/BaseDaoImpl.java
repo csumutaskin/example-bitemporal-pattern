@@ -34,7 +34,7 @@ import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.dao.BaseDao;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
-import tr.com.poc.temporaldate.core.model.BaseEntity;
+import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
 import tr.com.poc.temporaldate.util.Constants;
 import tr.com.poc.temporaldate.util.ExceptionConstants;
 
@@ -52,7 +52,7 @@ import tr.com.poc.temporaldate.util.ExceptionConstants;
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-public abstract class BaseDaoImpl<E extends BaseEntity> implements BaseDao<E>
+public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseDao<E>
 {
 	private static final String NO_SINGLE_RESULT_EXC_STRING = "Returning null since NoResultException is thrown and caught";
 	private static final String UNEXCPECTED_EXC_INFO_STRING = "An unexpected exception. See error log for details";
@@ -963,7 +963,7 @@ public abstract class BaseDaoImpl<E extends BaseEntity> implements BaseDao<E>
 	}
 
 	// Copies from not null and not id values of newValues to be object
-	private <E2 extends BaseEntity> void callSettersOnObjectWithoutNullAndIdFields(E2 be, E2 newValues)
+	private <E2 extends BaseTemporalEntity> void callSettersOnObjectWithoutNullAndIdFields(E2 be, E2 newValues)
 	{
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		for (Field field : beType.getDeclaredFields())

@@ -15,4 +15,5 @@ public class BusinessValidationExceptionItem
 {
 	private Long exceptionItemCode;
 	private String exceptionItemMessage;
+	//private String exceptionItemLogMessage;
 }

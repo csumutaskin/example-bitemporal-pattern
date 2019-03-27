@@ -1,5 +1,6 @@
 package tr.com.poc.temporaldate.core.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -26,42 +27,26 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseBitemporalEntity implements BaseEntity 
+public class BaseTemporalEntity implements BaseEntity 
 {
 	@Column(name = "CREATE_USER")
 	@CreatedBy
 	private String createUser; 
-		
+	
 	@Column(name = "IP")
 	private String clientIp;
 
 	@Column(name = "MODIFY_USER")
 	@LastModifiedBy
 	private String modifyUser;
-		
+	
 	@Column(name = "CREATE_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate	
-	private Date createDate;//this is the record date
-		
+	private Date createDate;
+	
 	@Column(name = "MODIFY_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate	
 	private Date modifyDate;
-	
-	@Column(name = "EFFECTIVE_DATE_START")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date effectiveDateStart;
-	
-	@Column(name = "EFFECTIVE_DATE_END")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date effectiveDateEnd;
-	
-	@Column(name = "RECORD_DATE_START")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date recordDateStart;
-	
-	@Column(name = "RECORD_DATE_END")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date recordDateEnd;
 }

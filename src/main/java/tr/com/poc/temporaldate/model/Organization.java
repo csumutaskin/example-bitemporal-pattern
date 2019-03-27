@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import tr.com.poc.temporaldate.core.model.BaseEntity;
+import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
 
 @SuppressWarnings("serial")
 @Table(name = "ORGANIZATION")
@@ -26,7 +26,7 @@ import tr.com.poc.temporaldate.core.model.BaseEntity;
 @Setter 
 @ToString 
 @Builder
-public class Organization extends BaseEntity
+public class Organization extends BaseTemporalEntity
 {
 	@Id
 	@Column(name = "ID")

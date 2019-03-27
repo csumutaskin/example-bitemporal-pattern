@@ -10,26 +10,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.service.BaseService;
-import tr.com.poc.temporaldate.dao.OrganizationDao;
+import tr.com.poc.temporaldate.dao.BitemporalOrganizationDao;
 import tr.com.poc.temporaldate.dto.OrganizationDTO;
 import tr.com.poc.temporaldate.dto.converter.OrganizationDTOConverter;
+import tr.com.poc.temporaldate.model.BitemporalOrganization;
 import tr.com.poc.temporaldate.model.Organization;
 
 /**
- * Transactional Service operations for {@link Organization} entity
+ * Transactional Service Operations for {@link BitemporalOrganization} entity
  * @author umutaskin
  */
 @Service
 @Transactional
 @Log4j2
-public class OrganizationService implements BaseService
+public class BitemporalOrganizationService  implements BaseService
 {
 	@Autowired
-	private OrganizationDao organizationDao;
-	
+	private BitemporalOrganizationDao bitemporalOrganizationDao;
+
 	public Boolean updateOrganization(Serializable id, OrganizationDTO toUpdate)
 	{
-		Organization updateEntityByDTO = organizationDao.updateEntityByDTO(id, toUpdate, OrganizationDTOConverter.class);
+		Organization updateEntityByDTO = bitemporalOrganizationDao.updateEntityByDTO(id, toUpdate, OrganizationDTOConverter.class);		
 		if(updateEntityByDTO == null)
 		{
 			log.info("No organization with id: {} is detected on db. Thus no update operation will be performed this time using DTO: {}." , id, toUpdate);
@@ -41,23 +42,24 @@ public class OrganizationService implements BaseService
 	
 	public Boolean deleteOrganization(Serializable id)
 	{
-		boolean entityDeleted = organizationDao.deleteEntity(id);
+		boolean entityDeleted = bitemporalOrganizationDao.deleteEntity(id);
 		return Boolean.valueOf(entityDeleted);
 	}
 	
 	public BigDecimal saveOrganization(OrganizationDTO toSave)
 	{
-		Organization organizationSaved = organizationDao.saveDTOReturnEntity(toSave, OrganizationDTOConverter.class);
+		Organization organizationSaved = bitemporalOrganizationDao.saveDTOReturnEntity(toSave, OrganizationDTOConverter.class);
 		return organizationSaved.getId();		
 	}
 	
 	public List<OrganizationDTO> getAllOrganizations()
 	{
-		return organizationDao.getDTOList(OrganizationDTOConverter.class);		
+		return bitemporalOrganizationDao.getDTOList(OrganizationDTOConverter.class);		
 	}
 	
 	public OrganizationDTO getOrganization(Serializable id) 
 	{		
-		return organizationDao.getDTO(id, OrganizationDTOConverter.class);
+		return bitemporalOrganizationDao.getDTO(id, OrganizationDTOConverter.class);
 	}
+	
 }

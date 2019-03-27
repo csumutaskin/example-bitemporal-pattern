@@ -16,7 +16,7 @@ import tr.com.poc.temporaldate.dto.converter.VersionedOrganizationDTOConverter;
 import tr.com.poc.temporaldate.model.VersionedOrganization;
 
 /**
- * CRUD operations for {@link VersionedOrganization} entity
+ * Transactional service operations for {@link VersionedOrganization} entity
  * @author umutaskin
  */
 @Service

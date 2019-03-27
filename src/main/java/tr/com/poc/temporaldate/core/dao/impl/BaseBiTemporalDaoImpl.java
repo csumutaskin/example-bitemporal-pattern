@@ -9,7 +9,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -23,16 +25,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
-import tr.com.poc.temporaldate.core.model.BaseEntity;
+import tr.com.poc.temporaldate.core.model.BaseDTO;
+import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
+import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
+import tr.com.poc.temporaldate.core.util.comparator.SortBaseEntityByEffectiveStartDateComparator;
 import tr.com.poc.temporaldate.util.Constants;
 import tr.com.poc.temporaldate.util.ExceptionConstants;;
 
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
+public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 {
 	private static final String NO_SINGLE_RESULT_EXC_STRING = "Returning null since NoResultException is thrown and caught";
 	private static final String NON_UNIQUE_PERSPECTIVE_EXC_STRING = "Non unique single item returned from a perspective get query"; 
@@ -55,7 +61,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	/**
 	 * Retrieves currently effective entity from current perspective
 	 * @param pk primary key to be searched
-	 * @return {@link BaseEntity} object
+	 * @return {@link BaseTemporalEntity} object
 	 */
 	public E getEntity(final Serializable pk)
 	{		
@@ -65,7 +71,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	/**
 	 * Retrieves currently effective entity from current perspective with pessimistic lock for updating
 	 * @param pk primary key to be searched
-	 * @return {@link BaseEntity} object
+	 * @return {@link BaseTemporalEntity} object
 	 */
 	public E getEntityForUpdate(final Serializable pk)
 	{
@@ -76,7 +82,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 * Retrieves entity effective at a given time from current perspective
 	 * @param pk primary key to be searched
 	 * @param effectiveDate
-	 * @return {@link BaseEntity} object
+	 * @return {@link BaseTemporalEntity} object
 	 */
 	public E getEntityAtEffectiveTime(final Serializable pk, Date effectiveDate)
 	{
@@ -115,7 +121,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @param effectiveDate actual date for the tuple
 	 * @param perspectiveDate from which time line we are looking at the tuples
-	 * @return {@link BaseEntity} object
+	 * @return {@link BaseTemporalEntity} object
 	 */
 	public E getEntityAtEffectiveTimeFromPerspectiveTime(final Serializable pk, Date effectiveDate, Date perspectiveDate)//effective at a certain date from a certain perspective (not now)
 	{
@@ -156,7 +162,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 * @param baseEntity entity to be saved or updated
 	 * @param effectiveStartDate actual start date where the tuple is active
 	 * @param effectiveEndDate actual final date where the tuple is active
-	 * @return {@link BaseEntity} that is saved or updated
+	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
 	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
 	{		
@@ -170,7 +176,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 */
 	public void deleteEntityAtEffectiveDate(Serializable id, Date effectiveDate)
 	{
-		
+		//TODO: implement...
 	}
 	
 	/**
@@ -179,7 +185,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 */
 	public void deleteEntityAtEffectiveDate(Serializable id)
 	{
-		
+		//TODO: implement...
 	}
 	
 	/**
@@ -188,7 +194,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 */
 	public void deleteEntityWithAllVersions(Serializable id)
 	{
-		
+		//TODO: implement...
 	}
 	
 	/**
@@ -197,7 +203,7 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	 * @param baseEntity entity to be saved or updated
 	 * @param effectiveStartDate actual start date where the tuple is active
 	 * @param effectiveEndDate actual final date where the tuple is active
-	 * @return {@link BaseEntity} that is saved or updated
+	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
     public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
     {
@@ -207,11 +213,45 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 	/**
 	 * Retrieves all entities that intersect the given effective start and end dates
 	 * @param pk primary key to be searched
-	 * @return {@link BaseEntity} object
+	 * @return {@link BaseTemporalEntity} object
 	 */
 	public Collection<E> getAllEntitiesThatIntersectBeginAndEndDate(final Serializable pk, Date effectiveStartDate, Date effectiveEndDate)
 	{
-		return null;
+		Collection<E> toReturnCollection = null;
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart < :effectiveEndDate and E.effectiveDateEnd > :effectiveStartDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and id = :id");
+		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveStartDate", effectiveStartDate);
+		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveEndDate", effectiveEndDate);	
+		selectWithinEffectiveTimeFromPerspectiveDate.setParameter(Constants.ID_COLUMN_KEY, pk);
+		try
+		{
+			toReturnCollection = (List<E>) selectWithinEffectiveTimeFromPerspectiveDate.getResultList();		
+		}
+		catch(Exception e)
+		{
+			String errorMessage = "Can not retrieve all tuples of type " + beType.getSimpleName() +"  withing given effective date range with a begin date of: " + effectiveStartDate + " and an end date of: " + effectiveEndDate + ". Detail: " + ExceptionUtils.getStackTrace(e);
+			log.error(errorMessage);
+			log.info("Can not retrieve all tuples of type " + beType.getSimpleName() + "  within given effective date. See errog log for details.");					 
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_THAT_INTERSECT_BEGIN_AND_END_DATE, ExceptionUtils.getMessage(e) ,e);	
+		}		
+		return toReturnCollection;
+	}
+	
+	/**
+	 * Retrieves all entities that intersect the given effective start and end dates
+	 * @param pk primary key to be searched
+	 * @return {@link BaseTemporalEntity} object
+	 */
+	public <D extends BaseDTO> E updateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
+	{
+		if(id == null)
+		{
+			return null;
+		}
+		Collection<E> entitiesFromDB = getAllEntitiesThatIntersectBeginAndEndDate(id, effectiveStartDate, effectiveEndDate);
+		
+		
+		return convertedEntity;
 	}
 	
     /* Saves or Updates entity */
@@ -225,11 +265,27 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		}
 		else //update currently found entity
 		{
+			Collections.sort((List<E>)entitiesIntersected, new SortBaseEntityByEffectiveStartDateComparator<E>());
+			boolean endDateCoveredByAnyExistingTuple = false;
 			for(E current:entitiesIntersected)
 			{
 				//TODO: comparator sort by date begin, then start updating new dates using the given date by end user and also merge the new data 
-				//if a tuples both start and end dates match update by merging new data
-				//if a tuples at least one date match insert new data and limit the old data times..
+				//if both start and end dates match, update by merging new data
+				//if at least one date match, insert new data and limit the old data times..
+				if(DateUtils.dateBetweenDates(effectiveStartDate, current.getEffectiveDateStart(), current.getEffectiveDateEnd(), false))
+				{
+					current.setEffectiveDateEnd(effectiveStartDate);
+					continue;
+				}
+				if(DateUtils.dateBetweenDates(effectiveEndDate, current.getEffectiveDateStart(), current.getEffectiveDateEnd(), false))
+				{
+					endDateCoveredByAnyExistingTuple = true;					
+					current.setEffectiveDateStart(effectiveEndDate);
+				}
+			}
+			if(endDateCoveredByAnyExistingTuple == false)
+			{
+				entityManager.persist(enrichDateColumns(baseEntity,effectiveStartDate, effectiveEndDate));
 			}
 		}
 		if(flushNeeded)
@@ -288,5 +344,28 @@ public class BaseBiTemporalDao<E extends BaseBitemporalEntity>
 		baseEntity.setEffectiveDateStart(effectiveStartDate);
 		baseEntity.setEffectiveDateEnd(effectiveEndDate);
 		return baseEntity;
+	}
+	
+	private <D extends BaseDTO> BaseConverter<E,D> getRelevantConverter(Class<? extends BaseConverter<E,D>> baseConverter)
+	{
+		if(baseConverter == null)
+		{
+			String errorMessage = "Can not instantiate a user given null base converter object in repository layer. Detail: A null object is given as parameter to the method";	
+			log.info("Can not instantiate a user given null base converter object in repository layer. See error log for details.");
+			log.error(errorMessage);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, errorMessage, new NullPointerException());
+		}
+		try 
+		{
+			Class clazz = Class.forName(baseConverter.getName());
+			return (BaseConverter<E,D>)clazz.getDeclaredConstructor().newInstance();
+		} 
+		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException| NoSuchMethodException | SecurityException | ClassNotFoundException e) 
+		{		
+			String errorMessage = "Can not instantiate/or locate an existing base converter object in repository layer. Detail: " + ExceptionUtils.getStackTrace(e);	
+			log.info("Can not instantiate/or locate an existing base converter object in repository layer. See error log for details.");
+			log.error(errorMessage);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, ExceptionUtils.getMessage(e), e);
+		}		
 	}
 }

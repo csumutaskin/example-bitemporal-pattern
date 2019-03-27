@@ -2,6 +2,13 @@ package tr.com.poc.temporaldate.util;
 
 public class ExceptionConstants 
 {
+	/* **********************************
+	 *    Utility Exception Constants
+	 ************************************/
+	public static final long CUSTOM_COMPARATOR_NOT_EXPECTING_NULL_OBJECT_EXCEPTION = 10000l;
+	public static final long DATE_UTILS_NOT_EXPECTING_NULL_OBJECT_COMPARISON_EXCEPTION = 10001l;
+	
+	
 	/* *************************************
 	 *     @Repository Layer Constants
 	 **************************************/
@@ -24,5 +31,8 @@ public class ExceptionConstants
 	public static final long BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_DATE = 11016l;
 	public static final long BITEMPORAL_UPDATE_ENTITY = 11017l;
 	public static final long BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_TIME_FROM_PERSPECTIVE_TIME = 11018l;
+	public static final long BITEMPORAL_GET_ALL_ENTITIES_THAT_INTERSECT_BEGIN_AND_END_DATE = 11019l;
 	//getEntityAtEffectiveTimeFromPerspectiveTime
+	
+	
 }

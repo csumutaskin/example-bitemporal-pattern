@@ -18,5 +18,6 @@ public class ApplicationException extends BaseException
 {
 	private Long exceptionCode;
 	private String exceptionMessage;
+	//private String exceptionLogMessage;
 	private Exception causeException;
 }
