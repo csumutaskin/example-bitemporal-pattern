@@ -63,7 +63,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
-	public E getEntity(final Serializable pk)
+	public E getEntityAtEffectiveDate(final Serializable pk)
 	{		
 		return getEntityForUpdateWithLockMode(pk, null);				
 	}
@@ -73,7 +73,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
-	public E getEntityForUpdate(final Serializable pk)
+	public E getEntityForUpdateAtEffectiveDate(final Serializable pk)
 	{
 		return getEntityForUpdateWithLockMode(pk, LockModeType.PESSIMISTIC_WRITE);
 	}
@@ -192,9 +192,10 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * Deletes all versions????? of entity with the given id
 	 * @param id primary key to be updated (if null data will be persisted)
 	 */
-	public void deleteEntityWithAllVersions(Serializable id)
+	public boolean deleteEntityWithAllVersions(Serializable id)
 	{
 		//TODO: implement...
+		return true;
 	}
 	
 	/**
@@ -207,6 +208,20 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 */
     public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
     {
+    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
+    }
+    
+	/**
+	 * Saves or updates entity from current perspective using DTO object
+	 * @param id primary key to be updated (if null data will be persisted)
+	 * @param baseEntity entity to be saved or updated
+	 * @param effectiveStartDate actual start date where the tuple is active
+	 * @param effectiveEndDate actual final date where the tuple is active
+	 * @return {@link BaseTemporalEntity} that is saved or updated
+	 */
+    public <D extends BaseDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveStartDate, Date effectiveEndDate)
+    {
+    	E baseEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
     	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
     }
     
@@ -242,16 +257,38 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
-	public <D extends BaseDTO> E updateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
+	public <D extends BaseDTO> List<D> getDTOListAtEffectiveDate(Class<? extends BaseConverter<E,D>> converterClass, Date effectiveDate)
 	{
-		if(id == null)
+		List<E> allEntities = getEntityList(effectiveDate);
+		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+	}
+	
+	public <D extends BaseDTO> D getDTOAtEffectiveDate(final Serializable pk, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveDate) 
+	{
+		return getRelevantConverter(baseConverter).convertToDTO(getEntityAtEffectiveTime(pk, effectiveDate));
+	}
+	
+	public List<E> getEntityList(Date effectiveDate)
+	{
+		return getEntityListWithLockMode(null, effectiveDate);
+	}
+
+	public List<E> getEntityListForUpdate(Date effectiveDate)
+	{
+		return getEntityListWithLockMode(LockModeType.PESSIMISTIC_WRITE, effectiveDate);		
+	}
+	
+	private List<E> getEntityListWithLockMode(LockModeType lockModeType, Date effectiveDate)
+	{
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];		
+		String query = "SELECT BE FROM " + beType.getSimpleName() + " BE WHERE :effectiveDate >= BE.effectiveDateStart AND :effectiveDate <= BE.effectiveDateEnd ";
+		Query queryJpa = entityManager.createQuery(query);
+		queryJpa.setParameter("effectiveDate", effectiveDate);
+		if(lockModeType != null)
 		{
-			return null;
+			queryJpa.setLockMode(lockModeType);
 		}
-		Collection<E> entitiesFromDB = getAllEntitiesThatIntersectBeginAndEndDate(id, effectiveStartDate, effectiveEndDate);
-		
-		
-		return convertedEntity;
+		return queryJpa.getResultList();
 	}
 	
     /* Saves or Updates entity */
@@ -302,8 +339,9 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		{
 			return null;
 		}
-		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];		
-		Query selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");		
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		Query selectCurrentDataUsingEffectiveTimeParameter = null;
+		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT * FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");
 		selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
 		if(lockModeType != null)
 		{

@@ -1,6 +1,7 @@
 package tr.com.poc.temporaldate.controller;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.dto.OrganizationDTO;
 import tr.com.poc.temporaldate.service.BitemporalOrganizationService;
+import tr.com.poc.temporaldate.util.Constants;
 
 @RestController
 @Log4j2
@@ -30,19 +32,19 @@ public class BitemporalOrganizationController
 	@GetMapping(value = "/getAll" , produces= {"application/json"})
 	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()
 	{		
-		return new ResponseEntity<>(bitemporalOrganizationService.getAllOrganizations(), HttpStatus.OK);
+		return new ResponseEntity<>(bitemporalOrganizationService.getAllOrganizations(new Date()), HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody OrganizationDTO toUpdate)
 	{		
-		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
+		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate, new Date(), Constants.END_OF_EPYS), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
 	{	
-		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave);
+		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave, new Date(), Constants.END_OF_EPYS);
 		log.debug("Organization created with id: {}", organizationId);
 		return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
 	}
