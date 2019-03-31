@@ -228,6 +228,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 */
     public <D extends BaseBitemporalDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
     {
+    	//TODO: Fix on Monday... always get overlapping entities with the same id if exist and rearrange older tuples dates using the newer tuple date!!!! 
     	E baseEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
     	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, baseEntity.getEffectiveDateStart(), baseEntity.getEffectiveDateEnd());
     }

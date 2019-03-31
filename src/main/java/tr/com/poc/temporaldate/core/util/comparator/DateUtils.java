@@ -14,6 +14,8 @@ import tr.com.poc.temporaldate.util.ExceptionConstants;
  */
 public class DateUtils 
 {
+	private DateUtils() {}
+	
 	public static final Date END_OF_SOFTWARE = new GregorianCalendar(2100, 11, 31, 23, 59, 59).getTime();
 	
 	/**
@@ -41,18 +43,26 @@ public class DateUtils
 	
 	/** 
 	 * Calculates and returns the beginning date of the open period e.g. 01 - 03 -2019 for any date in March 2019 	
-	 * @param now if true now is returned, else start day of current month is returned (e.g. today is the 16th of March -> returns 1st of March with current Year)
+	 * @param nowOrGivenDate if true now is returned, else start day of current month is returned (e.g. today is the 16th of March -> returns 1st of March with current Year)
 	 * @return Date needed (now or period begin)
 	 */
 	//TODO: Temporary method, will be filled later using the new business requirements.
-	public static Date getNowOrOpenPeriodStartDate(boolean now)
+	public static Date getNowOrGivenOrOpenPeriodStartDate(boolean nowOrGivenDate, Date effectiveBeginDate)
 	{
-		if(now)
+		if(nowOrGivenDate)
 		{
+			if(effectiveBeginDate != null)
+			{
+				return effectiveBeginDate;
+			}
 			return new Date();
 		}
 		Calendar c = Calendar.getInstance();
-		c.set(Calendar.DAY_OF_MONTH, 1);
+		if(effectiveBeginDate != null)
+		{
+			c.setTime(effectiveBeginDate);
+		}
+		c.set(Calendar.DAY_OF_MONTH, 1);		
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
