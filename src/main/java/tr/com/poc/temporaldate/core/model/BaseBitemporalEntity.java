@@ -19,6 +19,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * A bi-temporal entity contains:  
+ * TODO: explain details
+ * 
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @NoArgsConstructor 
 @AllArgsConstructor 

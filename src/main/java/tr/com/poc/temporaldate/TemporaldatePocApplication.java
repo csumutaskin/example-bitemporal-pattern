@@ -15,5 +15,4 @@ public class TemporaldatePocApplication
 	{
 		SpringApplication.run(TemporaldatePocApplication.class, args);
 	}
-
 }

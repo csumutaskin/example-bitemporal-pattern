@@ -19,6 +19,11 @@ import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.dto.OrganizationDTO;
 import tr.com.poc.temporaldate.service.OrganizationService;
 
+/**
+ * Sample organization controller having temporal data
+ * 
+ * @author umut
+ */
 @RestController
 @Log4j2
 @RequestMapping(value = "/organization")

@@ -9,6 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Base DTO for Bi-temporal entities
+ * 
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @XmlRootElement
 @Getter

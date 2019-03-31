@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Validation exceptions that are thrown and can be fixed if customer input changes correctly
+ * 
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString @Builder
 public class BusinessException extends BaseException 

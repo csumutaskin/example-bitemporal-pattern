@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.dao.BitemporalOrganizationDao;
 import tr.com.poc.temporaldate.dto.BitemporalOrganizationDTO;
@@ -46,9 +47,13 @@ public class BitemporalOrganizationService  implements BaseService
 		return Boolean.valueOf(entityDeleted);
 	}
 	
-	public BigDecimal saveOrganization(BitemporalOrganizationDTO toSave, Date effectiveStartDate, Date effectiveEndDate)
-	{
-		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(null, toSave, BitemporalOrganizationDTOConverter.class, effectiveStartDate, effectiveEndDate);
+	public BigDecimal saveOrganization(BitemporalOrganizationDTO toSave)
+	{		
+		if(toSave == null)
+		{
+			throw new ApplicationException();//TODO: validation layerina cek
+		}
+		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(null, toSave, BitemporalOrganizationDTOConverter.class, toSave.getEffectiveDateStart(), toSave.getEffectiveDateEnd());
 		return organizationSaved.getId();		
 	}
 	

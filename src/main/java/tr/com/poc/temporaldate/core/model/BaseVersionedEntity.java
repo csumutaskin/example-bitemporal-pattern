@@ -13,6 +13,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Indicates versioned entities
+ * 
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @NoArgsConstructor 
 @AllArgsConstructor 

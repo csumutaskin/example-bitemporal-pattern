@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * An extended Data Transfer Object class that contains temporal date data
+ * 
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @XmlRootElement
 @Getter

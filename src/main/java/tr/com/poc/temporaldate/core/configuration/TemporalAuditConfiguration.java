@@ -7,6 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+/**
+ * Interceptor for auditting data as CREATE_DATE, MODIFY_DATE and tuples' authors on entities
+ *
+ * @author umut
+ */
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditor")
 public class TemporalAuditConfiguration 

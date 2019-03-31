@@ -10,6 +10,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Validation exception
+ * 
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @AllArgsConstructor 
 @NoArgsConstructor

@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Unexpected Exception thrown throughout the life cycle of the software
+ *  
+ * @author umut
+ */
 @SuppressWarnings("serial")
 @AllArgsConstructor 
 @NoArgsConstructor

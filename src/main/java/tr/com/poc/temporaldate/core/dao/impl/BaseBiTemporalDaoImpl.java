@@ -27,14 +27,21 @@ import org.springframework.util.CollectionUtils;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
+import tr.com.poc.temporaldate.core.model.BaseBitemporalDTO;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
-import tr.com.poc.temporaldate.core.model.BaseDTO;
 import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
 import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
 import tr.com.poc.temporaldate.core.util.comparator.SortBaseEntityByEffectiveStartDateComparator;
 import tr.com.poc.temporaldate.util.Constants;
 import tr.com.poc.temporaldate.util.ExceptionConstants;;
 
+/**
+ * Base CRUD operations on a Bi-temporal entity
+ * 
+ * @author umut
+ *
+ * @param <E> any entity that extends {@link BaseBitemporalEntity}
+ */
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
@@ -219,7 +226,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param effectiveEndDate actual final date where the tuple is active
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-    public <D extends BaseDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveStartDate, Date effectiveEndDate)
+    public <D extends BaseBitemporalDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveStartDate, Date effectiveEndDate)
     {
     	E baseEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
     	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
@@ -257,13 +264,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
-	public <D extends BaseDTO> List<D> getDTOListAtEffectiveDate(Class<? extends BaseConverter<E,D>> converterClass, Date effectiveDate)
+	public <D extends BaseBitemporalDTO> List<D> getDTOListAtEffectiveDate(Class<? extends BaseConverter<E,D>> converterClass, Date effectiveDate)
 	{
 		List<E> allEntities = getEntityList(effectiveDate);
 		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 	
-	public <D extends BaseDTO> D getDTOAtEffectiveDate(final Serializable pk, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveDate) 
+	public <D extends BaseBitemporalDTO> D getDTOAtEffectiveDate(final Serializable pk, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveDate) 
 	{
 		return getRelevantConverter(baseConverter).convertToDTO(getEntityAtEffectiveTime(pk, effectiveDate));
 	}
@@ -384,7 +391,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		return baseEntity;
 	}
 	
-	private <D extends BaseDTO> BaseConverter<E,D> getRelevantConverter(Class<? extends BaseConverter<E,D>> baseConverter)
+	private <D extends BaseBitemporalDTO> BaseConverter<E,D> getRelevantConverter(Class<? extends BaseConverter<E,D>> baseConverter)
 	{
 		if(baseConverter == null)
 		{

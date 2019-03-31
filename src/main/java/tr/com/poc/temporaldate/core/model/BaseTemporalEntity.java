@@ -19,6 +19,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * A super class that contains creation and modification meta-data on tuples that are used in the software  
+ * 
+ * @author umut
+ *
+ */
 @SuppressWarnings("serial")
 @NoArgsConstructor 
 @AllArgsConstructor 

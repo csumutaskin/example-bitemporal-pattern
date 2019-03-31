@@ -21,6 +21,11 @@ import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
 import tr.com.poc.temporaldate.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.service.BitemporalOrganizationService;
 
+/**
+ * Sample organization controller having bi-temporal data
+ * 
+ * @author umut
+ */
 @RestController
 @Log4j2
 @RequestMapping(value = "/bitemporal-organization")

@@ -18,6 +18,12 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * Contains Configuration beans on DB connection and other 3rd party tools that are being used
+ *  
+ * @author umut
+ *
+ */
 @Configuration
 //@EnableJpaRepositories(basePackages= Constants.SCAN_PATH_JPA_REPOSITORIES, repositoryBaseClass = BaseDaoImpl.class)
 @EnableTransactionManagement

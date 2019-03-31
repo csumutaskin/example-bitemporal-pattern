@@ -24,6 +24,13 @@ import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
 import tr.com.poc.temporaldate.util.Constants;
 import tr.com.poc.temporaldate.util.ExceptionConstants;
 
+/**
+ * CRUD operations on a versioned entity
+ * 
+ * @author umut
+ *
+ * @param <E>
+ */
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2

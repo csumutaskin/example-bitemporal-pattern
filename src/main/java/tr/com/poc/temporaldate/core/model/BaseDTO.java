@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * A marker interface indicating a Data Transfer Object
+ * 
+ * @author umut
+ */
 @XmlRootElement
 public interface BaseDTO extends Serializable  
 {}
