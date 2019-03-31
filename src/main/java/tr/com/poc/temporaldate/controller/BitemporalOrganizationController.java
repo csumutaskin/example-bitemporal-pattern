@@ -43,13 +43,13 @@ public class BitemporalOrganizationController
 	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody BitemporalOrganizationDTO toUpdate)
 	{		
-		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate, new Date(), DateUtils.END_OF_EPYS), HttpStatus.OK);
+		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate, new Date(), DateUtils.END_OF_SOFTWARE), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
 	public ResponseEntity<Boolean> saveOrganization(@RequestBody BitemporalOrganizationDTO toSave)
 	{	
-		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave, new Date(), DateUtils.END_OF_EPYS);
+		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave);
 		log.debug("Organization created with id: {}", organizationId);
 		return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
 	}

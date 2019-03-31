@@ -29,8 +29,10 @@ import tr.com.poc.temporaldate.util.StringUtils;
 @Log4j2
 public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D extends BaseBitemporalDTO> implements BaseConverter<E,D> 
 {
-	private static final boolean NOW_OR_START_DAY_OF_MONTH_FLAG = false; //true: now is current date, false now is the beginning day of current month
+	private static final boolean NOW_OR_START_DAY_OF_MONTH_FLAG = true; //true: now is current date, false now is the beginning day of current month
 	
+	public abstract boolean overrideEffectiveStartToBeginPeriodAlways();
+	public abstract boolean overrideEffectiveEndToEndofSoftware(); 
 	public abstract E convertDTOToEntity(D bd);
 	public abstract D convertEntityToDTO(E be);
 	
@@ -42,24 +44,24 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		}
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);			
 		entityToEnrich.setRecordDateStart(now);
-		entityToEnrich.setRecordDateEnd(DateUtils.END_OF_EPYS);
+		entityToEnrich.setRecordDateEnd(DateUtils.END_OF_SOFTWARE);
 		return entityToEnrich;
 	}
 	
 	public E enrichEntityEffectiveDates(E entityToEnrich, Date now)
 	{		
-		if(now == null)
+		if(now == null || overrideEffectiveStartToBeginPeriodAlways())
 		{
-			now = DateUtils.getNowOrOpenPeriodStartDate(NOW_OR_START_DAY_OF_MONTH_FLAG);
+			now = DateUtils.getNowOrOpenPeriodStartDate(NOW_OR_START_DAY_OF_MONTH_FLAG && !overrideEffectiveStartToBeginPeriodAlways());
 		}
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);	
 		if(entityToEnrich.getEffectiveDateStart() == null)
 		{
 			entityToEnrich.setEffectiveDateStart(now);
 		}
-		if(entityToEnrich.getEffectiveDateEnd() == null)
+		if(entityToEnrich.getEffectiveDateEnd() == null || overrideEffectiveEndToEndofSoftware())
 		{
-			entityToEnrich.setEffectiveDateEnd(DateUtils.END_OF_EPYS);
+			entityToEnrich.setEffectiveDateEnd(DateUtils.END_OF_SOFTWARE);
 		}
 		return entityToEnrich;
 	}

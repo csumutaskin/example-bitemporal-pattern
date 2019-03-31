@@ -53,7 +53,7 @@ public class BitemporalOrganizationService  implements BaseService
 		{
 			throw new ApplicationException();//TODO: validation layerina cek
 		}
-		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(null, toSave, BitemporalOrganizationDTOConverter.class, toSave.getEffectiveDateStart(), toSave.getEffectiveDateEnd());
+		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(null, toSave, BitemporalOrganizationDTOConverter.class);
 		return organizationSaved.getId();		
 	}
 	

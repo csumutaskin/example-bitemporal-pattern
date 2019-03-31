@@ -1,6 +1,6 @@
 package tr.com.poc.temporaldate.core.dao.impl;
 
-import static tr.com.poc.temporaldate.core.util.comparator.DateUtils.END_OF_EPYS;
+import static tr.com.poc.temporaldate.core.util.comparator.DateUtils.END_OF_SOFTWARE;
 import static tr.com.poc.temporaldate.util.Constants.ID_SETTER_KEY;
 
 import java.io.Serializable;
@@ -226,10 +226,10 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param effectiveEndDate actual final date where the tuple is active
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-    public <D extends BaseBitemporalDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveStartDate, Date effectiveEndDate)
+    public <D extends BaseBitemporalDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
     {
     	E baseEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
-    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
+    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, baseEntity.getEffectiveDateStart(), baseEntity.getEffectiveDateEnd());
     }
     
 	/**
@@ -385,7 +385,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	private E enrichDateColumns(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
 	{
 		baseEntity.setRecordDateStart(new Date());//TODO: Audit create date alinmali...
-		baseEntity.setRecordDateEnd(END_OF_EPYS);
+		baseEntity.setRecordDateEnd(END_OF_SOFTWARE);
 		baseEntity.setEffectiveDateStart(effectiveStartDate);
 		baseEntity.setEffectiveDateEnd(effectiveEndDate);
 		return baseEntity;
