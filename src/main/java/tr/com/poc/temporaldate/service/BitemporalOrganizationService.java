@@ -29,9 +29,9 @@ public class BitemporalOrganizationService  implements BaseService
 	@Autowired
 	private BitemporalOrganizationDao bitemporalOrganizationDao;
 
-	public Boolean updateOrganization(Serializable id, BitemporalOrganizationDTO toUpdate, Date effectiveStartDate, Date effectiveEndDate)
+	public Boolean updateOrganization(Serializable id, BitemporalOrganizationDTO toUpdate)
 	{
-		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class, effectiveStartDate, effectiveEndDate);		
+		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class);		
 		if(updateEntityByDTO == null)
 		{
 			log.info("No BitemporalOrganization with id: {} is detected on db. Thus no update operation will be performed this time using DTO: {}." , id, toUpdate);
