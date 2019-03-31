@@ -543,13 +543,13 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 	public <D extends BaseDTO> List<D> getDTOList(Class<? extends BaseConverter<E,D>> converterClass)
 	{
 		List<E> allEntities = getEntityList();
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListForUpdate(Class converterClass)
 	{
 		List<E> allEntities = getEntityListForUpdate();
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> D updateEntityReturnDTO(E toUpdate, Class converterClass)
@@ -578,31 +578,31 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 	public <D extends BaseDTO> List<D> getDTOListByEntityCriteria(E searchCriteria, Class converterClass)
 	{
 		List<E> allEntities = getEntityListByEntityCriteria(searchCriteria);		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListByEntityCriteriaWithPagination(E searchCriteria, Class converterClass, int firstResult, int pageSize)
 	{
 		List<E> allEntities = getEntityListByEntityCriteriaWithPagination(searchCriteria, firstResult, pageSize);		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListForUpdateByEntityCriteria(E searchCriteria, Class converterClass)
 	{
 		List<E> allEntities = getEntityListForUpdateByEntityCriteria(searchCriteria);		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
 	{
 		List<E> listWithNamedQuery = getEntityListByNamedQuery(namedQueryName, parameters);		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(listWithNamedQuery);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(listWithNamedQuery);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListForUpdateByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
 	{
 		List<E> listWithNamedQuery = getEntityListForUpdateByNamedQuery(namedQueryName, parameters);		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(listWithNamedQuery);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(listWithNamedQuery);
 	}
 
 	public <D extends BaseDTO> D getDTOByNamedQuery(String namedQueryName, Class converterClass, Object... parameters)
@@ -671,7 +671,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		{
 			callSettersOnObjectWithoutNullAndIdFields(be, newValues);
 		}
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> D saveDTOReturnDTO(D baseDTO, Class converterClass)
@@ -703,7 +703,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 	{
 		E persistedEntity = (E) getRelevantConverter(converterClass).convertToEntity(searchCriteria);
 		List<E> allEntities = getEntityListByEntityCriteria(persistedEntity);
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListForUpdateByDTOCriteria(D searchCriteria, Class converterClass)
@@ -711,7 +711,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		BaseConverter bc = getRelevantConverter(converterClass);
 		E persistedEntity = (E) bc.convertToEntity(searchCriteria);
 		List<E> allEntities = getEntityListForUpdateByEntityCriteria(persistedEntity);
-		return (List<D>) bc.mapListEntityToDTO(allEntities);
+		return (List<D>) bc.convertEntityCollectionToDTOCollection(allEntities);
 	}
 	
 	public <D extends BaseDTO, D2 extends BaseDTO> List<D2> updateDTOListByDTOCriteriaAndReturnAnotherDTOList(D searchCriteria, D newParams, Class converterAsInputClass, Class converterToReturnClass)
@@ -724,7 +724,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		{
 			callSettersOnObjectWithoutNullAndIdFields(be, newValues);
 		}
-		return (List<D2>) getRelevantConverter(converterToReturnClass).mapListEntityToDTO(allEntities);
+		return (List<D2>) getRelevantConverter(converterToReturnClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO, D2 extends BaseDTO> D2 saveDTOReturnAnotherDTO(D baseDTO, Class converterAsInputClass, Class converterToReturnClass)
@@ -740,7 +740,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 	{
 		TypedQuery<E> query = entityManager.createQuery(cq);
 		List<E> allEntities = query.getResultList();		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListByCriteriaWithPagination(CriteriaQuery<E> cq, Class converterClass, int first, int pageSize)
@@ -749,7 +749,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		query.setFirstResult(first);
 		query.setMaxResults(pageSize);
 		List<E> allEntities = query.getResultList();		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	public <D extends BaseDTO> List<D> getDTOListForUpdateByCriteria(CriteriaQuery<E> cq, Class converterClass)
@@ -757,7 +757,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		TypedQuery<E> query = entityManager.createQuery(cq);
 		query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 		List<E> allEntities = query.getResultList();		
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 
 	/* ***********************

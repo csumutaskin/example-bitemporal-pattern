@@ -40,6 +40,6 @@ public class ApplicationConfiguration
 	private ApiInfo apiInformation() 
 	{
 	    return new ApiInfo("TEMPORAL BITEMPORAL DATE PATTERN SHOWCASE REST API", "This API contains methods that facilitate how temporal and bitemporal patterns can be implemented in a simple boot application.", "API TOS", "Terms of service", 
-	    		new Contact("Umut Askin", "NA", "umutaskin@gmail.com"), "License of API", "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
+	    		new Contact("Umut Askin", "NA", "umutaskin@gmail.com"), "License of API", "https://www.apache.org/licenses/LICENSE-2.0.txt", Collections.emptyList());
 	}
 }

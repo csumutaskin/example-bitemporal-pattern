@@ -1,6 +1,6 @@
 package tr.com.poc.temporaldate.core.dao.impl;
 
-import static tr.com.poc.temporaldate.util.Constants.END_OF_EPYS;
+import static tr.com.poc.temporaldate.core.util.comparator.DateUtils.END_OF_EPYS;
 import static tr.com.poc.temporaldate.util.Constants.ID_SETTER_KEY;
 
 import java.io.Serializable;
@@ -260,7 +260,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	public <D extends BaseDTO> List<D> getDTOListAtEffectiveDate(Class<? extends BaseConverter<E,D>> converterClass, Date effectiveDate)
 	{
 		List<E> allEntities = getEntityList(effectiveDate);
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 	
 	public <D extends BaseDTO> D getDTOAtEffectiveDate(final Serializable pk, Class<? extends BaseConverter<E,D>> baseConverter, Date effectiveDate) 

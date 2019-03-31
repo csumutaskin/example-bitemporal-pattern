@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.dto.OrganizationDTO;
+import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
+import tr.com.poc.temporaldate.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.service.BitemporalOrganizationService;
-import tr.com.poc.temporaldate.util.Constants;
 
 @RestController
 @Log4j2
@@ -30,21 +30,21 @@ public class BitemporalOrganizationController
 	private BitemporalOrganizationService bitemporalOrganizationService;
 	
 	@GetMapping(value = "/getAll" , produces= {"application/json"})
-	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()
+	public ResponseEntity<List<BitemporalOrganizationDTO>> getOrganizationList()
 	{		
 		return new ResponseEntity<>(bitemporalOrganizationService.getAllOrganizations(new Date()), HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody OrganizationDTO toUpdate)
+	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody BitemporalOrganizationDTO toUpdate)
 	{		
-		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate, new Date(), Constants.END_OF_EPYS), HttpStatus.OK);
+		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate, new Date(), DateUtils.END_OF_EPYS), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
+	public ResponseEntity<Boolean> saveOrganization(@RequestBody BitemporalOrganizationDTO toSave)
 	{	
-		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave, new Date(), Constants.END_OF_EPYS);
+		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave, new Date(), DateUtils.END_OF_EPYS);
 		log.debug("Organization created with id: {}", organizationId);
 		return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
 	}

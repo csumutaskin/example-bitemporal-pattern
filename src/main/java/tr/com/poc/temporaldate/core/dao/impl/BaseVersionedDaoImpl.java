@@ -70,7 +70,7 @@ public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseD
 	public <D extends BaseDTO> List<D> getDTOList(Class<? extends BaseConverter<E,D>> converterClass)
 	{
 		List<E> allEntities = getEntityList();
-		return (List<D>) getRelevantConverter(converterClass).mapListEntityToDTO(allEntities);
+		return (List<D>) getRelevantConverter(converterClass).convertEntityCollectionToDTOCollection(allEntities);
 	}
 	
 	public <D extends BaseDTO> E saveDTOReturnEntity(D baseDTO, Class converterClass)

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import tr.com.poc.temporaldate.core.model.BaseTemporalDTO;
+import tr.com.poc.temporaldate.core.model.BaseBitemporalDTO;
 
 @SuppressWarnings("serial")
 @AllArgsConstructor
@@ -13,7 +13,7 @@ import tr.com.poc.temporaldate.core.model.BaseTemporalDTO;
 @Getter 
 @Setter 
 @ToString
-public class OrganizationDTO extends BaseTemporalDTO
+public class BitemporalOrganizationDTO extends BaseBitemporalDTO
 {
 	private String name;
 	private String shortName;

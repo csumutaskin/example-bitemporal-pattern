@@ -8,6 +8,11 @@ public class ExceptionConstants
 	public static final long CUSTOM_COMPARATOR_NOT_EXPECTING_NULL_OBJECT_EXCEPTION = 10000l;
 	public static final long DATE_UTILS_NOT_EXPECTING_NULL_OBJECT_COMPARISON_EXCEPTION = 10001l;
 	
+	/* *************************************
+	 *     Converter Exception Constants
+	 **************************************/
+	public static final long INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION = 10200l;
+	public static final long INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION = 10201l;
 	
 	/* *************************************
 	 *     @Repository Layer Constants

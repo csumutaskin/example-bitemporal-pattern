@@ -51,7 +51,7 @@ public class VersionedOrganizationDTOConverter  implements BaseConverter<Version
 	}
 
 	@Override
-	public Collection<OrganizationDTO> mapListEntityToDTO(Collection<VersionedOrganization> entityList) 
+	public Collection<OrganizationDTO> convertEntityCollectionToDTOCollection(Collection<VersionedOrganization> entityList) 
 	{
 		if(CollectionUtils.isEmpty(entityList))
 		{
@@ -71,7 +71,7 @@ public class VersionedOrganizationDTOConverter  implements BaseConverter<Version
 	}
 
 	@Override
-	public Collection<VersionedOrganization> mapListDTOtoEntity(Collection<OrganizationDTO> dtoList) 
+	public Collection<VersionedOrganization> convertDTOCollectiontoEntityCollection(Collection<OrganizationDTO> dtoList) 
 	{
 		if(CollectionUtils.isEmpty(dtoList))
 		{

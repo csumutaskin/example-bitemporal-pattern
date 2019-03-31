@@ -12,11 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.dao.BitemporalOrganizationDao;
-import tr.com.poc.temporaldate.dto.OrganizationDTO;
+import tr.com.poc.temporaldate.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.dto.converter.BitemporalOrganizationDTOConverter;
-import tr.com.poc.temporaldate.dto.converter.OrganizationDTOConverter;
 import tr.com.poc.temporaldate.model.BitemporalOrganization;
-import tr.com.poc.temporaldate.model.Organization;
 
 /**
  * Transactional Service Operations for {@link BitemporalOrganization} entity
@@ -30,7 +28,7 @@ public class BitemporalOrganizationService  implements BaseService
 	@Autowired
 	private BitemporalOrganizationDao bitemporalOrganizationDao;
 
-	public Boolean updateOrganization(Serializable id, OrganizationDTO toUpdate, Date effectiveStartDate, Date effectiveEndDate)
+	public Boolean updateOrganization(Serializable id, BitemporalOrganizationDTO toUpdate, Date effectiveStartDate, Date effectiveEndDate)
 	{
 		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class, effectiveStartDate, effectiveEndDate);		
 		if(updateEntityByDTO == null)
@@ -48,18 +46,18 @@ public class BitemporalOrganizationService  implements BaseService
 		return Boolean.valueOf(entityDeleted);
 	}
 	
-	public BigDecimal saveOrganization(OrganizationDTO toSave, Date effectiveStartDate, Date effectiveEndDate)
+	public BigDecimal saveOrganization(BitemporalOrganizationDTO toSave, Date effectiveStartDate, Date effectiveEndDate)
 	{
 		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(null, toSave, BitemporalOrganizationDTOConverter.class, effectiveStartDate, effectiveEndDate);
 		return organizationSaved.getId();		
 	}
 	
-	public List<OrganizationDTO> getAllOrganizations(Date effectiveDate)
+	public List<BitemporalOrganizationDTO> getAllOrganizations(Date effectiveDate)
 	{
 		return bitemporalOrganizationDao.getDTOListAtEffectiveDate(BitemporalOrganizationDTOConverter.class, effectiveDate);		
 	}
 	
-	public OrganizationDTO getOrganization(Serializable id, Date effectiveDate) 
+	public BitemporalOrganizationDTO getOrganization(Serializable id, Date effectiveDate) 
 	{		
 		return bitemporalOrganizationDao.getDTOAtEffectiveDate(id, BitemporalOrganizationDTOConverter.class, effectiveDate);
 	}
