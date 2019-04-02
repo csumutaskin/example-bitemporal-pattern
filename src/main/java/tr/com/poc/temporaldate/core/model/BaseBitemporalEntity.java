@@ -1,5 +1,6 @@
 package tr.com.poc.temporaldate.core.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -7,6 +8,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -70,4 +72,7 @@ public class BaseBitemporalEntity implements BaseEntity
 	@Column(name = "RECORD_DATE_END")
 	@Temporal(TemporalType.TIMESTAMP)	
 	private Date recordDateEnd;
+	
+	@Version
+	private int version;
 }

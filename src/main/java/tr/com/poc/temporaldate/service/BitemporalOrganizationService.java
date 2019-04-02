@@ -31,7 +31,7 @@ public class BitemporalOrganizationService  implements BaseService
 
 	public Boolean updateOrganization(Serializable id, BitemporalOrganizationDTO toUpdate)
 	{
-		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class);		
+		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class, false);		
 		if(updateEntityByDTO == null)
 		{
 			log.info("No BitemporalOrganization with id: {} is detected on db. Thus no update operation will be performed this time using DTO: {}." , id, toUpdate);
@@ -47,13 +47,13 @@ public class BitemporalOrganizationService  implements BaseService
 		return Boolean.valueOf(entityDeleted);
 	}
 	
-	public BigDecimal saveOrganization(BitemporalOrganizationDTO toSave)
+	public BigDecimal saveOrMergeOrganization(Serializable id, BitemporalOrganizationDTO toSave)
 	{		
 		if(toSave == null)
 		{
 			throw new ApplicationException();//TODO: validation layerina cek
-		}
-		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(null, toSave, BitemporalOrganizationDTOConverter.class);
+		}		
+		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toSave, BitemporalOrganizationDTOConverter.class, (id == null) ? false : true);
 		return organizationSaved.getId();		
 	}
 	

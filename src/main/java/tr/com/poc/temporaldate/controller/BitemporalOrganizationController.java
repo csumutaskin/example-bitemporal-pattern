@@ -3,6 +3,7 @@ package tr.com.poc.temporaldate.controller;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiParam;
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
 import tr.com.poc.temporaldate.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.service.BitemporalOrganizationService;
 
@@ -46,11 +47,21 @@ public class BitemporalOrganizationController
 		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> saveOrganization(@RequestBody BitemporalOrganizationDTO toSave)
-	{	
-		BigDecimal organizationId = bitemporalOrganizationService.saveOrganization(toSave);
-		log.debug("Organization created with id: {}", organizationId);
+	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {"application/json"}, produces= {"application/json"})
+	public ResponseEntity<Boolean> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSave)
+	{			
+		if(!id.isPresent() || "undefined".equalsIgnoreCase(id.get()))
+		{			
+			BigDecimal organizationId = bitemporalOrganizationService.saveOrMergeOrganization(null, toSave);
+			log.debug("Organization created with id: {}", organizationId);
+		}	
+		else
+		{
+			BigDecimal bd = new BigDecimal(id.get());
+			BigDecimal organizationId = bitemporalOrganizationService.saveOrMergeOrganization(bd, toSave);
+			log.debug("Organization created with id: {}", organizationId);
+		}
+		
 		return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
 	}
 	

@@ -9,6 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
+
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +30,7 @@ import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
 @Setter 
 @ToString 
 @Builder
+@NaturalIdCache
 public class BitemporalOrganization extends BaseBitemporalEntity
 {
 	@Id
@@ -36,7 +41,7 @@ public class BitemporalOrganization extends BaseBitemporalEntity
 	@Column(name = "NAME")
 	private String name;
 	
-	@Column(name = "SHORTNAME")
+	@Column(name = "SHORT_NAME")
 	private String shortName;
 	
 	@Column(name = "FINE_AMOUNT")

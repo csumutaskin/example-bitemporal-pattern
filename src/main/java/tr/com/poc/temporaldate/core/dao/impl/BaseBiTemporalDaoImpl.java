@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -21,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -66,7 +68,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/**
-	 * Retrieves currently effective entity from current perspective
+	 * Retrieves currently effective entity from current perspective using natural id
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
@@ -169,11 +171,12 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param baseEntity entity to be saved or updated
 	 * @param effectiveStartDate actual start date where the tuple is active
 	 * @param effectiveEndDate actual final date where the tuple is active
+	 * @param mergeAndRearrangeDates if true no tuple having the same id is deleted, instead the given parameters withing given date range is merged with the older same id tuple in the timeline
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate, boolean mergeAndRearrangeDates)
 	{		
-		return saveOrUpdateEntityWithFlushOption(id, baseEntity, true, effectiveStartDate, effectiveEndDate);
+		return saveOrUpdateEntityWithFlushOption(id, baseEntity, true, effectiveStartDate, effectiveEndDate, mergeAndRearrangeDates);
 	}
 	
 	/**
@@ -211,11 +214,12 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param baseEntity entity to be saved or updated
 	 * @param effectiveStartDate actual start date where the tuple is active
 	 * @param effectiveEndDate actual final date where the tuple is active
+ 	 * @param mergeAndRearrangeDates if true no tuple having the same id is deleted, instead the given parameters withing given date range is merged with the older same id tuple in the timeline
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-    public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+    public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate, boolean mergeAndRearrangeDates)
     {
-    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
+    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate, mergeAndRearrangeDates);
     }
     
 	/**
@@ -224,13 +228,14 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param baseEntity entity to be saved or updated
 	 * @param effectiveStartDate actual start date where the tuple is active
 	 * @param effectiveEndDate actual final date where the tuple is active
+	 * @param mergeAndRearrangeDates if true no tuple having the same id is deleted, instead the given parameters withing given date range is merged with the older same id tuple in the timeline
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-    public <D extends BaseBitemporalDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter)
+    public <D extends BaseBitemporalDTO> E saveorUpdateEntityByDTO(Serializable id, D updateDTO, Class<? extends BaseConverter<E,D>> baseConverter, boolean mergeAndRearrangeDates)
     {
     	//TODO: Fix on Monday... always get overlapping entities with the same id if exist and rearrange older tuples dates using the newer tuple date!!!! 
     	E baseEntity = getRelevantConverter(baseConverter).convertToEntity(updateDTO);
-    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, baseEntity.getEffectiveDateStart(), baseEntity.getEffectiveDateEnd());
+    	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, baseEntity.getEffectiveDateStart(), baseEntity.getEffectiveDateEnd(), mergeAndRearrangeDates);
     }
     
 	/**
@@ -240,7 +245,11 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 */
 	public Collection<E> getAllEntitiesThatIntersectBeginAndEndDate(final Serializable pk, Date effectiveStartDate, Date effectiveEndDate)
 	{
-		Collection<E> toReturnCollection = null;
+		Collection<E> toReturnCollection = new ArrayList<>();
+		if(pk == null)
+		{
+			return toReturnCollection;
+		}
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart < :effectiveEndDate and E.effectiveDateEnd > :effectiveStartDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and id = :id");
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveStartDate", effectiveStartDate);
@@ -300,9 +309,8 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
     /* Saves or Updates entity */
-	private E saveOrUpdateEntityWithFlushOption(Serializable pk, E baseEntity, boolean flushNeeded, Date effectiveStartDate, Date effectiveEndDate)
+	private E saveOrUpdateEntityWithFlushOption(Serializable pk, E baseEntity, boolean flushNeeded, Date effectiveStartDate, Date effectiveEndDate, boolean mergeAndRearrangeDates)
 	{	
-		//E entityForUpdate = getEntityForUpdate(pk);
 		Collection<E> entitiesIntersected = getAllEntitiesThatIntersectBeginAndEndDate(pk, effectiveStartDate, effectiveEndDate);
 		if(CollectionUtils.isEmpty(entitiesIntersected))
 		{
@@ -343,23 +351,23 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
     /* Saves or Updates entity with pessimistic lock in case of update */
 	private E getEntityForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
 	{
-		if(pk == null)
-		{
+		 if(pk == null)
+		 {
 			return null;
-		}
-		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
-		Query selectCurrentDataUsingEffectiveTimeParameter = null;
-		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");
-		selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
-		if(lockModeType != null)
-		{
+		 }
+		 Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		 Query selectCurrentDataUsingEffectiveTimeParameter = null;
+		 selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");
+		 selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
+		 if(lockModeType != null)
+		 {
 			selectCurrentDataUsingEffectiveTimeParameter.setLockMode(lockModeType);
 			return (E) selectCurrentDataUsingEffectiveTimeParameter.getSingleResult();
-		}
-		else
-		{
+		 }
+		 else
+		 {
 			return (E) selectCurrentDataUsingEffectiveTimeParameter.getSingleResult();
-		}		
+		 }
 	}	
 	
 	@SuppressWarnings("unused")
