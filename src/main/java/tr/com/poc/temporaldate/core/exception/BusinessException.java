@@ -10,7 +10,7 @@ import lombok.ToString;
 /**
  * Validation exceptions that are thrown and can be fixed if customer input changes correctly
  * 
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString @Builder

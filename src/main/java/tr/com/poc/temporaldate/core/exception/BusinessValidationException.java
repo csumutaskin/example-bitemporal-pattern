@@ -13,7 +13,7 @@ import lombok.extern.log4j.Log4j2;
 /**
  * Validation exception
  * 
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @AllArgsConstructor 

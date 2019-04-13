@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 @SuppressWarnings("serial")
 @Table(name = "ORGANIZATION")

@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.core.model;
+package tr.com.poc.temporaldate.core.model.bitemporal;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,12 +19,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tr.com.poc.temporaldate.core.model.BaseEntity;
 
 /**
- * A super class that contains creation and modification meta-data on tuples that are used in the software  
+ * Super class for objects that are bitemporal entities  
  * 
  * @author umut
- *
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor 
@@ -32,26 +33,45 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseTemporalEntity implements BaseEntity 
+public class BaseBitemporalEntity implements BaseEntity 
 {
 	@Column(name = "CREATE_USER")
 	@CreatedBy
 	private String createUser; 
-	
+		
 	@Column(name = "IP")
 	private String clientIp;
 
 	@Column(name = "MODIFY_USER")
 	@LastModifiedBy
 	private String modifyUser;
-	
+		
 	@Column(name = "CREATE_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate	
-	private Date createDate;
-	
+	private Date createDate;//this is the record date
+		
 	@Column(name = "MODIFY_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate	
 	private Date modifyDate;
+	
+	@Column(name = "EFFECTIVE_DATE_START")
+	@Temporal(TemporalType.TIMESTAMP)	
+	private Date effectiveDateStart;
+	
+	@Column(name = "EFFECTIVE_DATE_END")
+	@Temporal(TemporalType.TIMESTAMP)	
+	private Date effectiveDateEnd;
+	
+	@Column(name = "RECORD_DATE_START")
+	@Temporal(TemporalType.TIMESTAMP)	
+	private Date recordDateStart;
+	
+	@Column(name = "RECORD_DATE_END")
+	@Temporal(TemporalType.TIMESTAMP)	
+	private Date recordDateEnd;
+	
+	@Version
+	private int version;
 }

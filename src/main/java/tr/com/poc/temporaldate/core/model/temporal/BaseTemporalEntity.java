@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.core.model;
+package tr.com.poc.temporaldate.core.model.temporal;
 
 import java.util.Date;
 
@@ -7,7 +7,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,12 +18,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tr.com.poc.temporaldate.core.model.BaseEntity;
 
 /**
- * A bi-temporal entity contains:  
- * TODO: explain details
- * 
+ * A super class for entity objects that hold effective date information
+ * for temporal objects no perspective time interval is used, tuples which are fixed historically are updated 
+ * and no older information for updated tuples exist for these objects. 
  * @author umut
+ *
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor 
@@ -33,24 +34,24 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseBitemporalEntity implements BaseEntity 
+public class BaseTemporalEntity implements BaseEntity 
 {
 	@Column(name = "CREATE_USER")
 	@CreatedBy
 	private String createUser; 
-		
+	
 	@Column(name = "IP")
 	private String clientIp;
 
 	@Column(name = "MODIFY_USER")
 	@LastModifiedBy
 	private String modifyUser;
-		
+	
 	@Column(name = "CREATE_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate	
-	private Date createDate;//this is the record date
-		
+	private Date createDate;
+	
 	@Column(name = "MODIFY_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate	
@@ -63,15 +64,4 @@ public class BaseBitemporalEntity implements BaseEntity
 	@Column(name = "EFFECTIVE_DATE_END")
 	@Temporal(TemporalType.TIMESTAMP)	
 	private Date effectiveDateEnd;
-	
-	@Column(name = "RECORD_DATE_START")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date recordDateStart;
-	
-	@Column(name = "RECORD_DATE_END")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date recordDateEnd;
-	
-	@Version
-	private int version;
 }

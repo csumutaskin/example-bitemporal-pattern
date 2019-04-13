@@ -10,7 +10,7 @@ import lombok.ToString;
 /**
  * Unexpected Exception thrown throughout the life cycle of the software
  *  
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @AllArgsConstructor 

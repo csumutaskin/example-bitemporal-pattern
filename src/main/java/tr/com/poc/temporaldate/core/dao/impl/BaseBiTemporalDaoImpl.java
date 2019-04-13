@@ -30,16 +30,16 @@ import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
-import tr.com.poc.temporaldate.core.model.BaseBitemporalDTO;
-import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
-import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
+import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
+import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 import tr.com.poc.temporaldate.core.util.DateUtils;
 import tr.com.poc.temporaldate.core.util.comparator.SortBaseEntityByEffectiveStartDateComparator;
 
 /**
- * Base CRUD operations on a Bi-temporal entity
+ * Base CRUD operations on a Bitemporal entity
  * 
- * @author umut
+ * @author umutaskin
  *
  * @param <E> any entity that extends {@link BaseBitemporalEntity}
  */

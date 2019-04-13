@@ -42,26 +42,20 @@ public class DateUtils
 	}
 	
 	/** 
-	 * Calculates and returns the beginning date of the open period e.g. 01 - 03 -2019 for any date in March 2019 	
-	 * @param nowOrGivenDate if true now is returned, else start day of current month is returned (e.g. today is the 16th of March -> returns 1st of March with current Year)
-	 * @return Date needed (now or period begin)
+	 * Returns "now" or calculates and returns the beginning day of current month 
+	 * </br> <b>e.g.</b> <i>03 - 01 -2019 for any date in March 2019</i> 	
+	 * @param alwaysGetNowAsDate </br>if <b><i>true</i></b> "now" is returned, </br><b><i>else</i></b> start day of current month is returned </br><b>e.g.</b> today is the 16th of March -> returns 1st of March with current Year
+	 *        </br> Attention: <i>false flow can be overridden according to different necessities</i>
+	 * @return Date needed (now or monthly period begin)
 	 */
 	//TODO: Temporary method, will be filled later using the new business requirements.
-	public static Date getNowOrGivenOrOpenPeriodStartDate(boolean nowOrGivenDate, Date effectiveBeginDate)
+	public static Date getNowOrGivenOrOpenPeriodStartDate(boolean alwaysGetNowAsDate)
 	{
-		if(nowOrGivenDate)
+		if(alwaysGetNowAsDate)
 		{
-			if(effectiveBeginDate != null)
-			{
-				return effectiveBeginDate;
-			}
 			return new Date();
 		}
 		Calendar c = Calendar.getInstance();
-		if(effectiveBeginDate != null)
-		{
-			c.setTime(effectiveBeginDate);
-		}
 		c.set(Calendar.DAY_OF_MONTH, 1);		
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import tr.com.poc.temporaldate.core.model.BaseTemporalDTO;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalDTO;
 
 @SuppressWarnings("serial")
 @AllArgsConstructor

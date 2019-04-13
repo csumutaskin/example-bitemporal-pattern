@@ -22,12 +22,12 @@ import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.dao.BaseDao;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
-import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 /**
- * CRUD operations on a versioned entity
+ * Repository layer for CRUD operations of a versioned (Objects with effective Date) entity
  * 
- * @author umut
+ * @author umutaskin
  *
  * @param <E>
  */

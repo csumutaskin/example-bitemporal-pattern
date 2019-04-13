@@ -36,7 +36,7 @@ import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.dao.BaseDao;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
-import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 /**
  * Base Data Access Operations. Includes generic operations for saving, updating, deleting and retrieving tuples according to different criteria. Do not use/inject this component directly to the service layer. 
@@ -45,6 +45,7 @@ import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
  * E.g public class MyDao extends BaseEntity<MyObject> {} And inject MyDao to MyService class and so on...
  * 
  * @author umutaskin
+ * 
  * @param <baseEntity
  *            extends BaseEntity> Needs a generic type of any BaseEntity extending object to auto detect the database table/entity mapping
  */

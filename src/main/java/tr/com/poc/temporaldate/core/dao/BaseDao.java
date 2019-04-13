@@ -1,13 +1,13 @@
 package tr.com.poc.temporaldate.core.dao;
 
-import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 /**
- * Marker interface on Repository Abstraction
+ * Marker interface for Repository Abstraction
  * 
- * @author umut
+ * @author umutaskin
  *
- * @param <E>
+ * @param <E> any class that extends {@link BaseTemporalEntity}
  */
 public interface BaseDao<E extends BaseTemporalEntity> 
 {}

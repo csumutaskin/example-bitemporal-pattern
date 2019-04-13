@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.core.model;
+package tr.com.poc.temporaldate.core.model.versioned;
 
 import java.util.Date;
 
@@ -6,15 +6,15 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 /**
- * Indicates versioned entities
+ * For versioned (indicated by effective date) entities 
  * 
  * @author umut
  */
@@ -25,9 +25,8 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 public abstract class BaseVersionedEntity extends BaseTemporalEntity
-{	
-	@Version
-	@Column(name = "VERSION")
+{		
+	@Column(name = "EFFECTIVE_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date finalDate;
+	private Date effectiveDate;	
 }

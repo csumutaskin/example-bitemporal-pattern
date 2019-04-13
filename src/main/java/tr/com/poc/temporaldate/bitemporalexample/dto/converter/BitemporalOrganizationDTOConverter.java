@@ -47,13 +47,13 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 	}
 
 	@Override
-	public boolean overrideEffectiveStartToBeginPeriodAlways() 
+	public boolean overrideEffectiveStartToCurrentBeginPeriodAlways() 
 	{
 		return true;
 	}
 
 	@Override
-	public boolean overrideEffectiveEndToEndofSoftware() 
+	public boolean overrideEffectiveEndToEndofSoftwareAlways() 
 	{
 		return false;
 	}

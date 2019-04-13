@@ -5,7 +5,7 @@ import java.util.Date;
 
 import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
-import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
+import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 
 /**
  * Sorts Any bitemporal entity by effective start date

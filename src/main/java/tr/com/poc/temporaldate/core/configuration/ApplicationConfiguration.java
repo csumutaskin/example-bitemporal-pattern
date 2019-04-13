@@ -21,7 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * Contains Configuration beans on DB connection and other 3rd party tools that are being used
  *  
- * @author umut
+ * @author umutaskin
  *
  */
 @Configuration

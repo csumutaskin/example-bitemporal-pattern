@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import tr.com.poc.temporaldate.core.model.BaseVersionedEntity;
+import tr.com.poc.temporaldate.core.model.versioned.BaseVersionedEntity;
 
 @SuppressWarnings("serial")
 @Table(name = "VERSIONED_ORGANIZATION")
