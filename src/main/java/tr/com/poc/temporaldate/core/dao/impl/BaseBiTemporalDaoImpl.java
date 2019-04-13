@@ -1,7 +1,7 @@
 package tr.com.poc.temporaldate.core.dao.impl;
 
-import static tr.com.poc.temporaldate.core.util.comparator.DateUtils.END_OF_SOFTWARE;
-import static tr.com.poc.temporaldate.util.Constants.ID_SETTER_KEY;
+import static tr.com.poc.temporaldate.common.Constants.ID_SETTER_KEY;
+import static tr.com.poc.temporaldate.core.util.DateUtils.END_OF_SOFTWARE;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -22,20 +22,19 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.common.Constants;
+import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalDTO;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
 import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
-import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
+import tr.com.poc.temporaldate.core.util.DateUtils;
 import tr.com.poc.temporaldate.core.util.comparator.SortBaseEntityByEffectiveStartDateComparator;
-import tr.com.poc.temporaldate.util.Constants;
-import tr.com.poc.temporaldate.util.ExceptionConstants;;
 
 /**
  * Base CRUD operations on a Bi-temporal entity
@@ -97,9 +96,9 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	{
 		E toReturn = null;
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Query selectWithinEffectiveTime = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");		
+		Query selectWithinEffectiveTime = entityManager.createQuery("SELECT BEntity FROM " + beType.getSimpleName() + " BEntity WHERE BEntity.effectiveDateStart <= :effectiveDateQueried and BEntity.effectiveDateEnd >= :effectiveDate and sysdate >= recordDateStart and sysdate <= recordDateEnd and BEntity.id = :id");		
 		selectWithinEffectiveTime.setParameter("id", pk);
-		selectWithinEffectiveTime.setParameter("effectiveDate", effectiveDate);
+		selectWithinEffectiveTime.setParameter("effectiveDateQueried", effectiveDate);
 		try
 		{
 			toReturn = (E) selectWithinEffectiveTime.getSingleResult();			
@@ -136,7 +135,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	{
 		E toReturn = null;
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd >= :effectiveDate and :perspectiveDate >= recordDateStart and :perspectiveDate <= recordDateEnd and id = :id");
+		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery("SELECT BE FROM " + beType.getSimpleName() + " BE WHERE BE.effectiveDateStart <= :effectiveDate and BE.effectiveDateEnd >= :effectiveDate and :perspectiveDate >= recordDateStart and :perspectiveDate <= recordDateEnd and BE.id = :id");
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveDate", effectiveDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("perspectiveDate", perspectiveDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter(Constants.ID_COLUMN_KEY, pk);
@@ -336,7 +335,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 					current.setEffectiveDateStart(effectiveEndDate);
 				}
 			}
-			if(endDateCoveredByAnyExistingTuple == false)
+			if(!endDateCoveredByAnyExistingTuple)
 			{
 				entityManager.persist(enrichDateColumns(baseEntity,effectiveStartDate, effectiveEndDate));
 			}

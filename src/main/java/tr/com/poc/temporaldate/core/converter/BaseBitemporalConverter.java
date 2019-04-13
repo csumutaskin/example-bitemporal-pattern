@@ -10,12 +10,12 @@ import org.apache.logging.log4j.Level;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalDTO;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
-import tr.com.poc.temporaldate.core.util.comparator.DateUtils;
-import tr.com.poc.temporaldate.util.ExceptionConstants;
-import tr.com.poc.temporaldate.util.StringUtils;
+import tr.com.poc.temporaldate.core.util.DateUtils;
+import tr.com.poc.temporaldate.core.util.StringUtils;
 
 /**
  * A base converter that automates "record date" and "effective date" operations on bi-temporal objects' conversion

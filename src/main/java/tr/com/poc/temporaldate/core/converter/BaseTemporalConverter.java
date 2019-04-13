@@ -9,7 +9,7 @@ import org.springframework.util.CollectionUtils;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.model.BaseTemporalDTO;
 import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
-import tr.com.poc.temporaldate.util.StringUtils;
+import tr.com.poc.temporaldate.core.util.StringUtils;
 
 @Log4j2
 public abstract class BaseTemporalConverter<E extends BaseTemporalEntity, D extends BaseTemporalDTO> implements BaseConverter<E,D> 

@@ -16,13 +16,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.common.Constants;
+import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.dao.BaseDao;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 import tr.com.poc.temporaldate.core.model.BaseTemporalEntity;
-import tr.com.poc.temporaldate.util.Constants;
-import tr.com.poc.temporaldate.util.ExceptionConstants;
 
 /**
  * CRUD operations on a versioned entity

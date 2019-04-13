@@ -3,9 +3,9 @@ package tr.com.poc.temporaldate.core.util.comparator;
 import java.util.Comparator;
 import java.util.Date;
 
+import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseBitemporalEntity;
-import tr.com.poc.temporaldate.util.ExceptionConstants;
 
 /**
  * Sorts Any bitemporal entity by effective start date
