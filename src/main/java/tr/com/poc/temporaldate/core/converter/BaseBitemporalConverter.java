@@ -30,7 +30,7 @@ import tr.com.poc.temporaldate.core.util.StringUtils;
 public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D extends BaseBitemporalDTO> implements BaseConverter<E,D> 
 {
 	/**
-	 * if returns <b>true:</b> open period -currently the beginning of month- is calculated, </br> else now is used as effective start date in conversion process 
+	 * <b>if true:</b> open period -currently the beginning day of month- is calculated, </br> <b>else:</b> now is used as effective start date in conversion process 
 	 * @return boolean to calculate the effective begin date
 	 */
 	public abstract boolean overrideEffectiveStartToCurrentBeginPeriodAlways();

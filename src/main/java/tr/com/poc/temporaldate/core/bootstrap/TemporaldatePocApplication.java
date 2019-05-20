@@ -1,7 +1,9 @@
 package tr.com.poc.temporaldate.core.bootstrap;
 
+import static tr.com.poc.temporaldate.common.Constants.SCAN_PATH_SPRING_COMPONENTS;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Bootstrap class for boot application
@@ -9,7 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication
-public class TemporaldatePocApplication 
+@ComponentScan(SCAN_PATH_SPRING_COMPONENTS)
+public class TemporaldatePocApplication
 {
 	public static void main(String[] args) 
 	{

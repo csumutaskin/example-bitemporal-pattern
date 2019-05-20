@@ -10,26 +10,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.service.BaseService;
-import tr.com.poc.temporaldate.onlyauditdatesexample.dao.VersionedOrganizationDao;
-import tr.com.poc.temporaldate.onlyauditdatesexample.dto.converter.VersionedOrganizationDTOConverter;
-import tr.com.poc.temporaldate.onlyauditdatesexample.model.VersionedOrganization;
+import tr.com.poc.temporaldate.onlyauditdatesexample.dao.AuditedOrganizationDao;
+import tr.com.poc.temporaldate.onlyauditdatesexample.dto.converter.AuditedOrganizationDTOConverter;
+import tr.com.poc.temporaldate.onlyauditdatesexample.model.AuditedOrganization;
 import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
 
 /**
- * Transactional service operations for {@link VersionedOrganization} entity
+ * Transactional service operations for {@link AuditedOrganization} entity
  * @author umutaskin
  */
 @Service
 @Transactional
 @Log4j2
-public class VersionedOrganizationService  implements BaseService
+public class AuditedOrganizationService  implements BaseService
 {
 	@Autowired
-	private VersionedOrganizationDao versionedOrganizationDao;
+	private AuditedOrganizationDao versionedOrganizationDao;
 	
 	public Boolean updateVersionedOrganization(Serializable id, OrganizationDTO toUpdate)
 	{
-		VersionedOrganization updateEntityByDTO = versionedOrganizationDao.updateEntityByDTO(id, toUpdate, VersionedOrganizationDTOConverter.class);
+		AuditedOrganization updateEntityByDTO = versionedOrganizationDao.updateEntityByDTO(id, toUpdate, AuditedOrganizationDTOConverter.class);
 		if(updateEntityByDTO == null)
 		{
 			log.info("No versioned organization with id: {} is detected on db. Thus no update operation will be performed this time using DTO: {}." , id, toUpdate);
@@ -46,17 +46,17 @@ public class VersionedOrganizationService  implements BaseService
 	
 	public BigDecimal saveVersionedOrganization(OrganizationDTO toSave)
 	{
-		VersionedOrganization versionedOrganizationSaved = versionedOrganizationDao.saveDTOReturnEntity(toSave, VersionedOrganizationDTOConverter.class);
+		AuditedOrganization versionedOrganizationSaved = versionedOrganizationDao.saveDTOReturnEntity(toSave, AuditedOrganizationDTOConverter.class);
 		return versionedOrganizationSaved.getId();
 	}
 	
 	public List<OrganizationDTO> getAllOrganizations()
 	{
-		return versionedOrganizationDao.getDTOList(VersionedOrganizationDTOConverter.class);		
+		return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
 	}
 	
 	public OrganizationDTO getOrganization(Serializable id) 
 	{
-		return versionedOrganizationDao.getDTO(id, VersionedOrganizationDTOConverter.class);
+		return versionedOrganizationDao.getDTO(id, AuditedOrganizationDTOConverter.class);
 	}
 }

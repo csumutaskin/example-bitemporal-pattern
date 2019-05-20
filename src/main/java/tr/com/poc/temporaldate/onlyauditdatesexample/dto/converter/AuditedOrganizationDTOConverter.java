@@ -10,16 +10,16 @@ import org.springframework.util.CollectionUtils;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
 import tr.com.poc.temporaldate.core.util.StringUtils;
-import tr.com.poc.temporaldate.onlyauditdatesexample.model.VersionedOrganization;
+import tr.com.poc.temporaldate.onlyauditdatesexample.model.AuditedOrganization;
 import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
 import tr.com.poc.temporaldate.temporalexample.model.Organization;
 
 @Component
 @Log4j2
-public class VersionedOrganizationDTOConverter  implements BaseConverter<VersionedOrganization, OrganizationDTO>
+public class AuditedOrganizationDTOConverter  implements BaseConverter<AuditedOrganization, OrganizationDTO>
 {
 	@Override
-	public VersionedOrganization convertToEntity(OrganizationDTO bd) 
+	public AuditedOrganization convertToEntity(OrganizationDTO bd) 
 	{		
 		if(bd == null)
 		{
@@ -31,11 +31,11 @@ public class VersionedOrganizationDTOConverter  implements BaseConverter<Version
 		{
 			log.debug(bd.toString() + " object converted to " + toReturn.toString());
 		}
-		return new VersionedOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());	
+		return new AuditedOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());	
 	}
 
 	@Override
-	public OrganizationDTO convertToDTO(VersionedOrganization be) 
+	public OrganizationDTO convertToDTO(AuditedOrganization be) 
 	{
 		if(be == null)
 		{
@@ -51,7 +51,7 @@ public class VersionedOrganizationDTOConverter  implements BaseConverter<Version
 	}
 
 	@Override
-	public Collection<OrganizationDTO> convertEntityCollectionToDTOCollection(Collection<VersionedOrganization> entityList) 
+	public Collection<OrganizationDTO> convertEntityCollectionToDTOCollection(Collection<AuditedOrganization> entityList) 
 	{
 		if(CollectionUtils.isEmpty(entityList))
 		{
@@ -59,7 +59,7 @@ public class VersionedOrganizationDTOConverter  implements BaseConverter<Version
 			return new ArrayList<>();
 		}
 		Collection<OrganizationDTO> toReturn = new ArrayList<>();
-		for(VersionedOrganization entity : entityList)
+		for(AuditedOrganization entity : entityList)
 		{
 			toReturn.add(convertToDTO(entity));
 		}
@@ -71,14 +71,14 @@ public class VersionedOrganizationDTOConverter  implements BaseConverter<Version
 	}
 
 	@Override
-	public Collection<VersionedOrganization> convertDTOCollectiontoEntityCollection(Collection<OrganizationDTO> dtoList) 
+	public Collection<AuditedOrganization> convertDTOCollectiontoEntityCollection(Collection<OrganizationDTO> dtoList) 
 	{
 		if(CollectionUtils.isEmpty(dtoList))
 		{
 			log.debug("empty collection converted to new Arraylist");
 			return new ArrayList<>();
 		}
-		Collection<VersionedOrganization> toReturn = new ArrayList<>();
+		Collection<AuditedOrganization> toReturn = new ArrayList<>();
 		for(OrganizationDTO dto : dtoList)
 		{
 			toReturn.add(convertToEntity(dto));

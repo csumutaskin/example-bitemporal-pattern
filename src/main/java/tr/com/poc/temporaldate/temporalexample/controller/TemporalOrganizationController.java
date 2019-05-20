@@ -26,8 +26,8 @@ import tr.com.poc.temporaldate.temporalexample.service.OrganizationService;
  */
 @RestController
 @Log4j2
-@RequestMapping(value = "/organization")
-public class OrganizationController 
+@RequestMapping(value = "/temporal-organization")
+public class TemporalOrganizationController 
 {
 	@Autowired
 	private OrganizationService organizationService;

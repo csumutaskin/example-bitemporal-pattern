@@ -31,7 +31,7 @@ public class BitemporalOrganizationService  implements BaseService
 
 	public Boolean updateOrganization(Serializable id, BitemporalOrganizationDTO toUpdate)
 	{
-		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class, false);		
+		BitemporalOrganization updateEntityByDTO = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toUpdate, BitemporalOrganizationDTOConverter.class);		
 		if(updateEntityByDTO == null)
 		{
 			log.info("No BitemporalOrganization with id: {} is detected on db. Thus no update operation will be performed this time using DTO: {}." , id, toUpdate);
@@ -53,7 +53,7 @@ public class BitemporalOrganizationService  implements BaseService
 		{
 			throw new ApplicationException();//TODO: validation layerina cek
 		}		
-		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toSave, BitemporalOrganizationDTOConverter.class, (id == null) ? false : true);
+		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toSave, BitemporalOrganizationDTOConverter.class);
 		return organizationSaved.getId();		
 	}
 	

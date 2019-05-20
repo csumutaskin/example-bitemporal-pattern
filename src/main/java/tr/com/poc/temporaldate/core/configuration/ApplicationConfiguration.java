@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.google.common.base.Predicates;
+
 import lombok.extern.log4j.Log4j2;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -30,16 +32,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EntityListeners(AuditingEntityListener.class)
 @EnableSwagger2
 @Log4j2
-public class ApplicationConfiguration 
+public class ApplicationConfiguration
 {	
 	@Bean
     public Docket api() 
 	{
 		log.debug("Creating docket for SWAGGER_2");
         return new Docket(DocumentationType.SWAGGER_2)  
+        		.host("http://localhost:8080")
           .select()                                  
           .apis(RequestHandlerSelectors.any())              
-          .paths(PathSelectors.any())                          
+          .paths(PathSelectors.any())          
+          .paths(Predicates.not(PathSelectors.regex("/error.*")))
           .build().apiInfo(apiInformation());                                        
     }
 	

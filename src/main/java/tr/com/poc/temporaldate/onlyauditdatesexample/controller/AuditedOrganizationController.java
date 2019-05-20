@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.onlyauditdatesexample.service.VersionedOrganizationService;
+import tr.com.poc.temporaldate.onlyauditdatesexample.service.AuditedOrganizationService;
 import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
 
 /**
@@ -27,10 +27,10 @@ import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
 @RestController
 @Log4j2
 @RequestMapping(value = "/versioned-organization")
-public class VersionedOrganizationController 
+public class AuditedOrganizationController 
 {
 	@Autowired
-	private VersionedOrganizationService versionedOrganizationService;
+	private AuditedOrganizationService versionedOrganizationService;
 	
 	@GetMapping(value = "/getAll" , produces= {"application/json"})
 	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()

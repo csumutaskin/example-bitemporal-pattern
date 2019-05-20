@@ -26,7 +26,7 @@ import tr.com.poc.temporaldate.core.model.versioned.BaseVersionedEntity;
 @Setter 
 @ToString 
 @Builder
-public class VersionedOrganization extends BaseVersionedEntity
+public class AuditedOrganization extends BaseVersionedEntity
 {
 	@Id
 	@Column(name = "ID")
