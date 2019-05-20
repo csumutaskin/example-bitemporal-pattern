@@ -3,9 +3,7 @@ package tr.com.poc.temporaldate.core.exception;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
@@ -16,15 +14,20 @@ import lombok.extern.log4j.Log4j2;
  * @author umutaskin
  */
 @SuppressWarnings("serial")
-@AllArgsConstructor 
-@NoArgsConstructor
 @Getter 
 @Setter 
 @ToString 
 @Log4j2
 public class BusinessValidationException extends BusinessException 
 {
+	private static final String VALIDATION_EXCEPTION_CODE = ""; 
+			
 	private Deque<BusinessValidationExceptionItem> businessValidationExceptionItemList;
+	
+	public BusinessValidationException()
+	{
+		super(VALIDATION_EXCEPTION_CODE);
+	}
 	
 	public void addBusinessValidationItem(BusinessValidationExceptionItem item)
 	{
@@ -44,5 +47,10 @@ public class BusinessValidationException extends BusinessException
 	{
 		businessValidationExceptionItemList =  new ArrayDeque<>();
 		log.debug("All BusinessValidationItems in a BusinessValidationException are deleted");
+	}
+	
+	public void addBusinessValidationItem(String exceptionCode)
+	{
+		
 	}
 }

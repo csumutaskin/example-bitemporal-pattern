@@ -39,7 +39,6 @@ public class ApplicationConfiguration
 	{
 		log.debug("Creating docket for SWAGGER_2");
         return new Docket(DocumentationType.SWAGGER_2)  
-        		.host("http://localhost:8080")
           .select()                                  
           .apis(RequestHandlerSelectors.any())              
           .paths(PathSelectors.any())          
