@@ -26,7 +26,7 @@ import tr.com.poc.temporaldate.temporalexample.dto.TemporalOrganizationDTO;
  */
 @RestController
 @Log4j2
-@RequestMapping(value = "/versioned-organization")
+@RequestMapping(value = "/audited-organization")
 public class AuditedOrganizationController 
 {
 	@Autowired
