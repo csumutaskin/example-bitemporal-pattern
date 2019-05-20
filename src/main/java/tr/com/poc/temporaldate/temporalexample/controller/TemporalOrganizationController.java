@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
-import tr.com.poc.temporaldate.temporalexample.service.OrganizationService;
+import tr.com.poc.temporaldate.temporalexample.dto.TemporalOrganizationDTO;
+import tr.com.poc.temporaldate.temporalexample.service.TemporalOrganizationService;
 
 /**
  * Sample organization controller having temporal data
@@ -30,22 +30,22 @@ import tr.com.poc.temporaldate.temporalexample.service.OrganizationService;
 public class TemporalOrganizationController 
 {
 	@Autowired
-	private OrganizationService organizationService;
+	private TemporalOrganizationService organizationService;
 	
 	@GetMapping(value = "/getAll" , produces= {"application/json"})
-	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()
+	public ResponseEntity<List<TemporalOrganizationDTO>> getOrganizationList()
 	{		
 		return new ResponseEntity<>(organizationService.getAllOrganizations(), HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody OrganizationDTO toUpdate)
+	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody TemporalOrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(organizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
+	public ResponseEntity<Boolean> saveOrganization(@RequestBody TemporalOrganizationDTO toSave)
 	{	
 		BigDecimal organizationId = organizationService.saveOrganization(toSave);
 		log.debug("Organization created with id: {}", organizationId);

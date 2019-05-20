@@ -13,7 +13,7 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalDTO;
 @Getter 
 @Setter 
 @ToString
-public class OrganizationDTO extends BaseTemporalDTO
+public class TemporalOrganizationDTO extends BaseTemporalDTO
 {
 	private String name;
 	private String shortName;

@@ -26,7 +26,7 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 @Setter 
 @ToString 
 @Builder
-public class Organization extends BaseTemporalEntity
+public class TemporalOrganization extends BaseTemporalEntity
 {
 	@Id
 	@Column(name = "ID")

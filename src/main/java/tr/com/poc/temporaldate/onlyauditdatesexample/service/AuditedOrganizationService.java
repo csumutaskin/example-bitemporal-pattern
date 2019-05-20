@@ -13,7 +13,7 @@ import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dao.AuditedOrganizationDao;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dto.converter.AuditedOrganizationDTOConverter;
 import tr.com.poc.temporaldate.onlyauditdatesexample.model.AuditedOrganization;
-import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
+import tr.com.poc.temporaldate.temporalexample.dto.TemporalOrganizationDTO;
 
 /**
  * Transactional service operations for {@link AuditedOrganization} entity
@@ -27,7 +27,7 @@ public class AuditedOrganizationService  implements BaseService
 	@Autowired
 	private AuditedOrganizationDao versionedOrganizationDao;
 	
-	public Boolean updateVersionedOrganization(Serializable id, OrganizationDTO toUpdate)
+	public Boolean updateVersionedOrganization(Serializable id, TemporalOrganizationDTO toUpdate)
 	{
 		AuditedOrganization updateEntityByDTO = versionedOrganizationDao.updateEntityByDTO(id, toUpdate, AuditedOrganizationDTOConverter.class);
 		if(updateEntityByDTO == null)
@@ -44,18 +44,18 @@ public class AuditedOrganizationService  implements BaseService
 		return Boolean.valueOf(entityDeleted);
 	}
 	
-	public BigDecimal saveVersionedOrganization(OrganizationDTO toSave)
+	public BigDecimal saveVersionedOrganization(TemporalOrganizationDTO toSave)
 	{
 		AuditedOrganization versionedOrganizationSaved = versionedOrganizationDao.saveDTOReturnEntity(toSave, AuditedOrganizationDTOConverter.class);
 		return versionedOrganizationSaved.getId();
 	}
 	
-	public List<OrganizationDTO> getAllOrganizations()
+	public List<TemporalOrganizationDTO> getAllOrganizations()
 	{
 		return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
 	}
 	
-	public OrganizationDTO getOrganization(Serializable id) 
+	public TemporalOrganizationDTO getOrganization(Serializable id) 
 	{
 		return versionedOrganizationDao.getDTO(id, AuditedOrganizationDTOConverter.class);
 	}

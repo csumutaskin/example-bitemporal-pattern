@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.onlyauditdatesexample.service.AuditedOrganizationService;
-import tr.com.poc.temporaldate.temporalexample.dto.OrganizationDTO;
+import tr.com.poc.temporaldate.temporalexample.dto.TemporalOrganizationDTO;
 
 /**
  * Sample organization controller having version data
@@ -33,19 +33,19 @@ public class AuditedOrganizationController
 	private AuditedOrganizationService versionedOrganizationService;
 	
 	@GetMapping(value = "/getAll" , produces= {"application/json"})
-	public ResponseEntity<List<OrganizationDTO>> getOrganizationList()
+	public ResponseEntity<List<TemporalOrganizationDTO>> getOrganizationList()
 	{		
 		return new ResponseEntity<>(versionedOrganizationService.getAllOrganizations(), HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody OrganizationDTO toUpdate)
+	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody TemporalOrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(versionedOrganizationService.updateVersionedOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> saveOrganization(@RequestBody OrganizationDTO toSave)
+	public ResponseEntity<Boolean> saveOrganization(@RequestBody TemporalOrganizationDTO toSave)
 	{	
 		BigDecimal organizationId = versionedOrganizationService.saveVersionedOrganization(toSave);
 		log.debug("Organization created with id: {}", organizationId);
