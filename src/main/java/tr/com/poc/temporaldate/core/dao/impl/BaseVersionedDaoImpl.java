@@ -112,7 +112,7 @@ public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String exceptionMessage = "Can not update an entity using DTO. Detail is." + ExceptionUtils.getStackTrace(e);
 			log.info("Can not update an entity using DTO. See error log for details.");
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.UPDATE_ENTITY_BY_DTO, exceptionMessage, e);
+			throw new ApplicationException(ExceptionConstants.UPDATE_ENTITY_BY_DTO, e);
 		}
 		return convertedEntity;
 	}
@@ -149,7 +149,7 @@ public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String errorMessage = "Can not instantiate a user given null base converter object in repository layer. Detail: A null object is given as parameter to the method";	
 			log.info("Can not instantiate a user given null base converter object in repository layer. See error log for details.");
 			log.error(errorMessage);
-			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, errorMessage, new NullPointerException());
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, new NullPointerException());
 		}
 		try 
 		{
@@ -161,7 +161,7 @@ public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String errorMessage = "Can not instantiate/or locate an existing base converter object in repository layer. Detail: " + ExceptionUtils.getStackTrace(e);	
 			log.info("Can not instantiate/or locate an existing base converter object in repository layer. See error log for details.");
 			log.error(errorMessage);
-			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, ExceptionUtils.getMessage(e), e);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, e);
 		}		
 	}
 		

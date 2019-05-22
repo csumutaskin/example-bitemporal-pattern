@@ -114,13 +114,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			String exceptionMessage = NON_UNIQUE_PERSPECTIVE_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(nure);	
 			log.info(NON_UNIQUE_PERSPECTIVE_EXC_STRING);
 			log.error(exceptionMessage);				
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_DATE, ExceptionUtils.getMessage(nure) ,nure);	
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_DATE, nure);	
 		}
 		catch(Exception e)
 		{
 			String exceptionMessage = UNEXCPECTED_QUERY_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_DATE, ExceptionUtils.getMessage(e) ,e);	
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_DATE, e);	
 		}
 		return toReturn;
 	}
@@ -154,13 +154,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			String exceptionMessage = NON_UNIQUE_PERSPECTIVE_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(nure);	
 			log.info(NON_UNIQUE_PERSPECTIVE_EXC_STRING);
 			log.error(exceptionMessage);				
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_TIME_FROM_PERSPECTIVE_TIME, ExceptionUtils.getMessage(nure) ,nure);	
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_TIME_FROM_PERSPECTIVE_TIME, nure);	
 		}
 		catch(Exception e)
 		{
 			String exceptionMessage = UNEXCPECTED_QUERY_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_TIME_FROM_PERSPECTIVE_TIME, ExceptionUtils.getMessage(e) ,e);	
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_TIME_FROM_PERSPECTIVE_TIME, e);	
 		}
 		return toReturn;
 	}
@@ -264,7 +264,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			String errorMessage = "Can not retrieve all tuples of type " + beType.getSimpleName() +"  withing given effective date range with a begin date of: " + effectiveStartDate + " and an end date of: " + effectiveEndDate + ". Detail: " + ExceptionUtils.getStackTrace(e);
 			log.error(errorMessage);
 			log.info("Can not retrieve all tuples of type " + beType.getSimpleName() + "  within given effective date. See errog log for details.");					 
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_THAT_INTERSECT_BEGIN_AND_END_DATE, ExceptionUtils.getMessage(e) ,e);	
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_THAT_INTERSECT_BEGIN_AND_END_DATE, e);	
 		}		
 		return toReturnCollection;
 	}
@@ -407,7 +407,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			String errorMessage = "Can not instantiate a user given null base converter object in repository layer. Detail: A null object is given as parameter to the method";	
 			log.info("Can not instantiate a user given null base converter object in repository layer. See error log for details.");
 			log.error(errorMessage);
-			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, errorMessage, new NullPointerException());
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, new NullPointerException());
 		}
 		try 
 		{
@@ -419,7 +419,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			String errorMessage = "Can not instantiate/or locate an existing base converter object in repository layer. Detail: " + ExceptionUtils.getStackTrace(e);	
 			log.info("Can not instantiate/or locate an existing base converter object in repository layer. See error log for details.");
 			log.error(errorMessage);
-			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, ExceptionUtils.getMessage(e), e);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, e);
 		}		
 	}
 }

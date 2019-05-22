@@ -31,7 +31,7 @@ public class DateUtils
 		if(toCompare == null || beginDate == null || endDate == null)
 		{
 			//TODO: get log message with dynamic parameters from property file
-			throw new ApplicationException(ExceptionConstants.DATE_UTILS_NOT_EXPECTING_NULL_OBJECT_COMPARISON_EXCEPTION , "At lease one of the date fields compared is null", new NullPointerException());
+			throw new ApplicationException(ExceptionConstants.DATE_UTILS_NOT_EXPECTING_NULL_OBJECT_COMPARISON_EXCEPTION , new NullPointerException());
 		}
 		int comparisonResult = beginDate.compareTo(toCompare) * toCompare.compareTo(endDate);
 		if(beginEndDatesInclusive)

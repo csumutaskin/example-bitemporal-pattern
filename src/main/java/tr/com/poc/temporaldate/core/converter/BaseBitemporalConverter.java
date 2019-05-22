@@ -220,7 +220,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			String exceptionMessage = "Exception in creating an instance of a null given entity object in a converter. Detail is: " + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION, ExceptionUtils.getMessage(e) ,e);				
+			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION, e);				
 		}
 		return toReturn;
 	}
@@ -243,7 +243,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			String exceptionMessage = "Exception in creating an instance of a null given DTO object in a converter. Detail is: " + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION, ExceptionUtils.getMessage(e) ,e);				
+			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION, e);				
 		}
 		return toReturn;
 	}

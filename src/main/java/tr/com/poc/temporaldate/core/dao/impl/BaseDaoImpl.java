@@ -127,7 +127,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String exceptionMessage = "Can not update an entity using DTO. Detail is." + ExceptionUtils.getStackTrace(e);
 			log.info("Can not update an entity using DTO. See error log for details.");
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.UPDATE_ENTITY_BY_DTO, exceptionMessage, e);
+			throw new ApplicationException(ExceptionConstants.UPDATE_ENTITY_BY_DTO, e);
 		}
 		return convertedEntity;
 	}
@@ -203,7 +203,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);
 				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);
-				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_BY_ENTITY_CRITERIA_EXCEPTION, ExceptionUtils.getMessage(e) ,e);				
+				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_BY_ENTITY_CRITERIA_EXCEPTION, e);				
 			}
 		}
 		criteria.select(pRoot);
@@ -233,7 +233,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);
 				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);
-				throw new ApplicationException(ExceptionConstants.GET_ROW_COUNT_BY_ENTITY_CRITERIA_EXCEPTION, ExceptionUtils.getMessage(e) ,e);			
+				throw new ApplicationException(ExceptionConstants.GET_ROW_COUNT_BY_ENTITY_CRITERIA_EXCEPTION, e);			
 			}
 		}
 		criteria.select(builder.count(pRoot));
@@ -263,7 +263,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING+ ExceptionUtils.getStackTrace(e);
 				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);
-				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_COUNT_BY_ENTITY_CRITERIA_WITH_PAGINATION, ExceptionUtils.getMessage(e) ,e);	
+				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_COUNT_BY_ENTITY_CRITERIA_WITH_PAGINATION, e);	
 			}
 		}
 		criteria.select(pRoot);
@@ -307,7 +307,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		{
 			String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.GET_ENTITY_BY_ENTITY_CRITERIA, ExceptionUtils.getMessage(e) ,e);	
+			throw new ApplicationException(ExceptionConstants.GET_ENTITY_BY_ENTITY_CRITERIA, e);	
 		}
 		return toReturn;
 	}
@@ -333,7 +333,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			{
 				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 				log.error(exceptionMessage);
-				throw new ApplicationException(ExceptionConstants.GET_ENTITY_FOR_UPDATE_BY_ENTITY_CRITERIA, ExceptionUtils.getMessage(e) ,e);				
+				throw new ApplicationException(ExceptionConstants.GET_ENTITY_FOR_UPDATE_BY_ENTITY_CRITERIA, e);				
 			}
 		}
 		criteria.select(pRoot);
@@ -380,7 +380,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			{
 				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 				log.error(exceptionMessage);
-				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_BY_ENTITY_OR_CRITERIA, ExceptionUtils.getMessage(e) ,e);
+				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_BY_ENTITY_OR_CRITERIA, e);
 			}
 		}
 		criteria.select(pRoot);
@@ -409,7 +409,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			{
 				String exceptionMessage = UNEXCPECTED_CRITERIA_BUILD_EXC_PREFIX_STRING + ExceptionUtils.getStackTrace(e);	
 				log.error(exceptionMessage);
-				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_FOR_UPDATE_BY_ENTITY_CRITERIA, ExceptionUtils.getMessage(e) ,e);
+				throw new ApplicationException(ExceptionConstants.GET_ENTITY_LIST_FOR_UPDATE_BY_ENTITY_CRITERIA, e);
 			}
 		}
 		criteria.select(pRoot);
@@ -695,7 +695,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String exceptionMessage = "Exception using reflections in repository. Detail: " + ExceptionUtils.getStackTrace(e);
 			log.info(UNEXCPECTED_EXC_INFO_STRING);
 			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.SAVE_DTO_RETURN_DTO_EXCEPTION, ExceptionUtils.getMessage(e) ,e);		
+			throw new ApplicationException(ExceptionConstants.SAVE_DTO_RETURN_DTO_EXCEPTION, e);		
 		}
 		return baseDTO;
 	}
@@ -852,7 +852,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		}
 		catch (Exception e)
 		{
-			throw new ApplicationException(ExceptionConstants.SET_NOT_NULL_AND_NOT_ID_PARAMETERS_OF_SAME_TYPE_EXCEPTION, ExceptionUtils.getMessage(e), e);
+			throw new ApplicationException(ExceptionConstants.SET_NOT_NULL_AND_NOT_ID_PARAMETERS_OF_SAME_TYPE_EXCEPTION, e);
 		}
 		return setterValuePairs;
 	}
@@ -877,7 +877,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 				}
 				catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 				{
-					throw new ApplicationException(ExceptionConstants.COPY_FROM_BUFFER_TO_DESTINATION_COLLECTION_EXCEPTION, ExceptionUtils.getMessage(e), e);
+					throw new ApplicationException(ExceptionConstants.COPY_FROM_BUFFER_TO_DESTINATION_COLLECTION_EXCEPTION, e);
 				}
 			}
 		}
@@ -896,7 +896,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			}
 			catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 			{
-				throw new ApplicationException(ExceptionConstants.COPY_FROM_BUFFER_TO_DESTINATION_OBJECT_EXCEPTION, ExceptionUtils.getMessage(e), e);
+				throw new ApplicationException(ExceptionConstants.COPY_FROM_BUFFER_TO_DESTINATION_OBJECT_EXCEPTION, e);
 			}
 		}
 		return true;
@@ -909,7 +909,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String errorMessage = "Can not instantiate a user given null base converter object in repository layer. Detail: A null object is given as parameter to the method";	
 			log.info("Can not instantiate a user given null base converter object in repository layer. See error log for details.");
 			log.error(errorMessage);
-			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, errorMessage, new NullPointerException());
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, new NullPointerException());
 		}
 		try 
 		{
@@ -921,7 +921,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 			String errorMessage = "Can not instantiate/or locate an existing base converter object in repository layer. Detail: " + ExceptionUtils.getStackTrace(e);	
 			log.info("Can not instantiate/or locate an existing base converter object in repository layer. See error log for details.");
 			log.error(errorMessage);
-			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, ExceptionUtils.getMessage(e), e);
+			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, e);
 		}		
 	}
 	
@@ -938,7 +938,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		}
 		catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 		{
-			throw new ApplicationException(ExceptionConstants.GET_ENTITY_USING_DTO_WITH_ID_EXCEPTION, ExceptionUtils.getMessage(e), e);
+			throw new ApplicationException(ExceptionConstants.GET_ENTITY_USING_DTO_WITH_ID_EXCEPTION, e);
 		}
 		return getEntityForUpdate(id);
 	}
@@ -982,7 +982,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 				String exceptionMessage = "Exception calling reflections in repository. Detail: " + ExceptionUtils.getStackTrace(e);
 				log.info(UNEXCPECTED_EXC_INFO_STRING);
 				log.error(exceptionMessage);								
-				throw new ApplicationException(ExceptionConstants.CALL_SETTERS_ON_OBJECT_WITHOUT_NULL_AND_ID_FIELDS_EXCEPTION, ExceptionUtils.getMessage(e), e);
+				throw new ApplicationException(ExceptionConstants.CALL_SETTERS_ON_OBJECT_WITHOUT_NULL_AND_ID_FIELDS_EXCEPTION, e);
 			}
 		}
 	}

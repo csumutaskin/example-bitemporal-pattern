@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<start-class>tr.com.poc.temporaldate.core.bootstrap.TemporaldatePocApplication</start-class>
+		<springsecurity.version>5.1.5.RELEASE</springsecurity.version>
 	</properties>
 
 	<dependencies>
@@ -45,15 +46,33 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
+		
+		<!-- Spring Security Begin-->
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-core</artifactId>
+    		<version>${springsecurity.version}</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+ 
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-config</artifactId>
+    		<version>${springsecurity.version}</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+ 
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-web</artifactId>
+    		<version>${springsecurity.version}</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+		<!-- Security End-->
 		
 		<dependency>
     		<groupId>org.apache.tomcat</groupId>
     		<artifactId>tomcat-jdbc</artifactId>    		
 		</dependency>
-			
-		
+					
 		<dependency>
     		<groupId>io.springfox</groupId>
     		<artifactId>springfox-swagger2</artifactId>

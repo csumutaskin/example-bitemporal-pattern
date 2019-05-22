@@ -25,7 +25,6 @@ import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.util.RandomGenerator;
 
-@Component
 @Log4j2
 public class AuditLoggingFilter extends GenericFilterBean
 {

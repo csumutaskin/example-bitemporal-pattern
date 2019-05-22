@@ -14,6 +14,7 @@ import tr.com.poc.temporaldate.bitemporalexample.dao.BitemporalOrganizationDao;
 import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.bitemporalexample.dto.converter.BitemporalOrganizationDTOConverter;
 import tr.com.poc.temporaldate.bitemporalexample.model.BitemporalOrganization;
+import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.service.BaseService;
 
@@ -51,7 +52,7 @@ public class BitemporalOrganizationService  implements BaseService
 	{		
 		if(toSave == null)
 		{
-			throw new ApplicationException();//TODO: validation layerina cek
+			throw new ApplicationException(ExceptionConstants.NULL_OBJECT_CAN_NOT_BE_SAVED_EXCEPTION);//TODO: validation layerina cek
 		}		
 		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toSave, BitemporalOrganizationDTOConverter.class);
 		return organizationSaved.getId();		

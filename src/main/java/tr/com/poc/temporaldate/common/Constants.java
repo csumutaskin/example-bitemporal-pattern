@@ -4,6 +4,7 @@ public class Constants
 {
 	private Constants()
 	{}
+	
 	public static final String NA = "NA";
 	
 	public static final String SCAN_PATH_JPA_ENTITIES = "tr.com";//Root path to scan entities
@@ -21,5 +22,12 @@ public class Constants
 	public static final String MDC_TRANSACTION_NO = "TransactionNo";
 	public static final String MDC_USERNAME = "UserName";
 	public static final String MDC_URI = "URI";
-	public static final String MDC_HOST_ADDRESS = "HostAddress";	
+	public static final String MDC_HOST_ADDRESS = "HostAddress";
+	
+	/* Security Parameters */
+	public static final String IGNORE_SECURITY_AT_SWAGGER_WEBJARS_URL = "/webjars/**";
+	public static final String IGNORE_SECURITY_AT_SWAGGER_CORS_URL = "/swagger-resources/**";
+	public static final String IGNORE_SECURITY_AT_ERROR_URL = "/error/**";
+	public static final String IGNORE_SECURITY_AT_RESOURCES_URL = "/resources/**";
+	
 }
