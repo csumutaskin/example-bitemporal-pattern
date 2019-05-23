@@ -25,6 +25,7 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 	private String status;
 	private String transactionId;	
 	private String hostName;
+	private String clientIp;
 	private String userName;
 	private String errorCode;
 	private List<String> errorMessages;	

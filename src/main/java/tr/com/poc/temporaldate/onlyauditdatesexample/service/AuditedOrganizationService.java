@@ -53,7 +53,7 @@ public class AuditedOrganizationService  implements BaseService
 	
 	public List<TemporalOrganizationDTO> getAllOrganizations()
 	{
-		throw new ApplicationException("10000");
+		throw new ApplicationException("10000");//TODO:!!!!
 		//return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
 	}
 	
