@@ -26,8 +26,12 @@ public class Constants
 	
 	/* Security Parameters */
 	public static final String IGNORE_SECURITY_AT_SWAGGER_WEBJARS_URL = "/webjars/**";
-	public static final String IGNORE_SECURITY_AT_SWAGGER_CORS_URL = "/swagger-resources/**";
+	public static final String IGNORE_SECURITY_AT_SWAGGER_URL = "/swagger*/**";
+	public static final String IGNORE_SECURITY_AT_SWAGGER_API_DOCS_URL = "/v2/api-docs";
 	public static final String IGNORE_SECURITY_AT_ERROR_URL = "/error/**";
 	public static final String IGNORE_SECURITY_AT_RESOURCES_URL = "/resources/**";
 	
+	/* Message Bundle File Parameters */
+	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS = "application-exception"; //application-exception_LOCALE.properties
+	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS = "business-exception"; //business-exception_LOCALE.properties
 }

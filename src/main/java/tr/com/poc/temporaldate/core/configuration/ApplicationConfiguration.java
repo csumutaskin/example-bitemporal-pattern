@@ -4,8 +4,13 @@ import java.util.Collections;
 
 import javax.persistence.EntityListeners;
 
+import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS;
+import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS;
+
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -34,6 +39,28 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Log4j2
 public class ApplicationConfiguration
 {	
+	@Bean
+	public MessageSource applicationExceptionMessageSource() 
+	{
+	    final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+	    messageSource.setBasename("classpath:/" + MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS);
+	    messageSource.setFallbackToSystemLocale(true);
+	    messageSource.setDefaultEncoding("UTF-8");
+	    messageSource.setCacheSeconds(0);
+	    return messageSource;
+	}
+		
+	@Bean
+	public MessageSource businessExceptionMessageSource() 
+	{
+	    final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+	    messageSource.setBasename("classpath:/" + MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS);
+	    messageSource.setFallbackToSystemLocale(true);
+	    messageSource.setDefaultEncoding("UTF-8");
+	    messageSource.setCacheSeconds(0);
+	    return messageSource;
+	}
+	
 	@Bean
     public Docket api() 
 	{

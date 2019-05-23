@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dao.AuditedOrganizationDao;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dto.converter.AuditedOrganizationDTOConverter;
@@ -52,7 +53,8 @@ public class AuditedOrganizationService  implements BaseService
 	
 	public List<TemporalOrganizationDTO> getAllOrganizations()
 	{
-		return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
+		throw new ApplicationException("10000");
+		//return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
 	}
 	
 	public TemporalOrganizationDTO getOrganization(Serializable id) 
