@@ -3,13 +3,16 @@ package tr.com.poc.temporaldate.core.exception;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.core.util.request.RequestThreadLocalHolder;
 
 /**
- * Validation exception
+ * Validation exception, thrown in case of erroneous input data by the end user for a particular service request
  * 
  * @author umutaskin
  */
@@ -24,12 +27,30 @@ public class BusinessValidationException extends BusinessException
 			
 	private Deque<BusinessValidationExceptionItem> businessValidationExceptionItemList;
 	
-	public BusinessValidationException()
+	public BusinessValidationException(String exceptionItemCode, String... exceptionMessageItemParameters)
 	{
 		super(VALIDATION_EXCEPTION_CODE);
+		this.addBusinessValidationItem(exceptionItemCode, exceptionMessageItemParameters);
 	}
 	
-	public void addBusinessValidationItem(BusinessValidationExceptionItem item)
+	public BusinessValidationException(BusinessValidationExceptionItem item)
+	{
+		super(VALIDATION_EXCEPTION_CODE);
+		this.addBusinessValidationItem(item);
+	}
+	
+	public BusinessValidationException(Deque<BusinessValidationExceptionItem> businessValidationExceptionItemList) 
+	{
+		super(VALIDATION_EXCEPTION_CODE);
+		this.businessValidationExceptionItemList = businessValidationExceptionItemList;
+	}
+		
+	public void throwFinally() 
+	{
+		RequestThreadLocalHolder.getInstance().addValidationException(this);
+	}
+	
+	private void addBusinessValidationItem(BusinessValidationExceptionItem item)
 	{
 		if(item == null)
 		{
@@ -42,15 +63,15 @@ public class BusinessValidationException extends BusinessException
 		businessValidationExceptionItemList.add(item);
 		log.debug("A businessvalidationitem is added to a business exception with exceptionItemCode: {} and exceptionItemMessage: {} ",item.getExceptionItemCode(), item.getExceptionItemMessage());
 	}
-	
-	public void deleteBusinessValidationItemList()
+
+	private void addBusinessValidationItem(String exceptionItemCode, String... exceptionMessageItemParameters)
 	{
-		businessValidationExceptionItemList =  new ArrayDeque<>();
-		log.debug("All BusinessValidationItems in a BusinessValidationException are deleted");
-	}
-	
-	public void addBusinessValidationItem(String exceptionCode)
-	{
-		
+		if(StringUtils.isBlank(exceptionItemCode))
+		{
+			return;
+		}
+		BusinessValidationExceptionItem item = new BusinessValidationExceptionItem(exceptionItemCode, exceptionMessageItemParameters);
+		addBusinessValidationItem(item);		
+		log.debug("A businessvalidationitem is added to a business exception with exceptionItemCode: {} and exceptionItemMessage: {} ",item.getExceptionItemCode(), item.getExceptionItemMessage());
 	}
 }

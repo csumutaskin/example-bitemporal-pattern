@@ -11,8 +11,6 @@ import java.util.UUID;
  */
 public class RandomGenerator 
 {
-	private static final RandomGenerator INSTANCE = new RandomGenerator();
-
     private RandomGenerator() 
     {}
 
@@ -22,7 +20,7 @@ public class RandomGenerator
      */
     public static RandomGenerator getInstance()
     {
-    	return INSTANCE;
+    	return RandomGeneratorHolder.INSTANCE;
     }
     
     /**
@@ -68,4 +66,9 @@ public class RandomGenerator
     {
        	return String.format("%0" + maxDigitNumber + "d", getRandomInteger(maxValue));
     }    
+    
+    private static class RandomGeneratorHolder 
+    {
+    	private static RandomGenerator INSTANCE = new RandomGenerator();
+    }
 }

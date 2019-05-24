@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.core.util;
+package tr.com.poc.temporaldate.core.util.response;
 
 import java.io.Serializable;
 import java.util.List;

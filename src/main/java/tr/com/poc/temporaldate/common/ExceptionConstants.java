@@ -4,6 +4,10 @@ public class ExceptionConstants
 {
 	private ExceptionConstants() {}
 	
+	public static final String APPLICATION_ERROR_PREFIX = "APP";
+	public static final String BUSINESS_ERROR_PREFIX = "BUS";
+	public static final String VALIDATION_ERROR_PREFIX = "VAL";
+	
 	public static final String UNEXPECTED = "00001";
 	public static final String USER_INPUT_NOT_VALIDATED = "00002";
 	

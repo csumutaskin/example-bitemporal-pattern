@@ -19,6 +19,7 @@ import org.springframework.security.web.session.SessionManagementFilter;
 
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.filter.AuditLoggingFilter;
+import tr.com.poc.temporaldate.core.filter.ThreadLocalCleanerFilter;
 
 /**
  * Security Configuration, embeds Spring Security Module to the project.
@@ -57,7 +58,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 		@Override
 		protected void configure(HttpSecurity http) throws Exception 
 		{		
-			http.addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterBefore(new ThreadLocalCleanerFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
 		}
 		
 		/**
