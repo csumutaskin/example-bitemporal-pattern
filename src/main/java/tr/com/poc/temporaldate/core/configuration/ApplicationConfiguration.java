@@ -2,6 +2,8 @@ package tr.com.poc.temporaldate.core.configuration;
 
 import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS;
 import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS;
+import static tr.com.poc.temporaldate.common.Constants.UTF8;
+import static tr.com.poc.temporaldate.common.Constants.CLASSPATH_FOR_EXCEPTION_PROPERTIES;
 
 import java.util.Collections;
 
@@ -41,14 +43,14 @@ import tr.com.poc.temporaldate.core.aspect.AspectBusinessValidationExceptionChec
 @EnableSwagger2
 @Log4j2
 public class ApplicationConfiguration
-{	
+{		
 	@Bean
 	public MessageSource applicationExceptionMessageSource() 
 	{
 	    final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-	    messageSource.setBasename("classpath:/" + MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS);
+	    messageSource.setBasename(CLASSPATH_FOR_EXCEPTION_PROPERTIES + MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS);
 	    messageSource.setFallbackToSystemLocale(false);
-	    messageSource.setDefaultEncoding("UTF-8");
+	    messageSource.setDefaultEncoding(UTF8);
 	    messageSource.setCacheSeconds(0);
 	    return messageSource;
 	}
@@ -57,9 +59,9 @@ public class ApplicationConfiguration
 	public MessageSource businessExceptionMessageSource() 
 	{
 	    final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-	    messageSource.setBasename("classpath:/" + MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS);
+	    messageSource.setBasename(CLASSPATH_FOR_EXCEPTION_PROPERTIES + MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS);
 	    messageSource.setFallbackToSystemLocale(false);
-	    messageSource.setDefaultEncoding("UTF-8");
+	    messageSource.setDefaultEncoding(UTF8);
 	    messageSource.setCacheSeconds(0);
 	    return messageSource;
 	}

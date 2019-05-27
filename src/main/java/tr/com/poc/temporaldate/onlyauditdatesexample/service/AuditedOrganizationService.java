@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
+import tr.com.poc.temporaldate.core.exception.BusinessValidationException;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dao.AuditedOrganizationDao;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dto.converter.AuditedOrganizationDTOConverter;
@@ -53,7 +54,10 @@ public class AuditedOrganizationService  implements BaseService
 	
 	public List<TemporalOrganizationDTO> getAllOrganizations()
 	{
-		throw new ApplicationException("10000");//TODO:!!!!
+		//throw new ApplicationException("10000");//TODO:!!!!
+		new BusinessValidationException("10000").throwFinally();
+		new BusinessValidationException("10001").throwFinally();
+		return null;
 		//return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
 	}
 	

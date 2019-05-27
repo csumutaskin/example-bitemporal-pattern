@@ -19,6 +19,8 @@ import org.springframework.security.web.session.SessionManagementFilter;
 
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.filter.AuditLoggingFilter;
+import tr.com.poc.temporaldate.core.filter.ExceptionHandlerFilter;
+import tr.com.poc.temporaldate.core.filter.RequestResponseLoggingFilter;
 import tr.com.poc.temporaldate.core.filter.ThreadLocalCleanerFilter;
 
 /**
@@ -41,7 +43,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 	 *  <li>{@link HeaderWriterFilter}
 	 *  <li>{@link CsrfFilter}
 	 *  <li>{@link LogoutFilter}
+	 *  <li>{@link ExceptionHandlerFilter} - Custom Filter
+	 *  <li>{@link ThreadLocalCleanerFilter} - Custom Filter
 	 *  <li>{@link AuditLoggingFilter} - Custom Filter
+	 *  <li>{@link RequestResponseLoggingFilter} - Custom Filter
 	 *  <li>{@link RequestCacheAwareFilter}
 	 *  <li>{@link SecurityContextHolderAwareRequestFilter}
 	 *  <li>{@link AnonymousAuthenticationFilter}
@@ -58,8 +63,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 		@Override
 		protected void configure(HttpSecurity http) throws Exception 
 		{		
-			http.addFilterBefore(new ThreadLocalCleanerFilter(), UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+			http.addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new ThreadLocalCleanerFilter(), UsernamePasswordAuthenticationFilter.class)
+			    .addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
+			    .addFilterBefore(new RequestResponseLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
 		}
 		
 		/**

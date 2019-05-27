@@ -16,27 +16,37 @@ import tr.com.poc.temporaldate.core.exception.BusinessValidationExceptionItem;
  * @author umutaskin
  *
  */
-public class RequestThreadLocalHolder 
-{
-	private ThreadLocal<Deque<BusinessValidationExceptionItem>> businessValidationExceptionItems = new ThreadLocal<>();
+public class BusinessValidationExceptionsHolder 
+{	
+	private ThreadLocal<Deque<BusinessValidationExceptionItem>> businessValidationExceptionItems;
 	
-	private RequestThreadLocalHolder()
+	private BusinessValidationExceptionsHolder()
 	{}
 
-	public static final RequestThreadLocalHolder getInstance() 
+	public static final BusinessValidationExceptionsHolder getInstance() 
 	{
 		return RequestThreadLocalHolderHolder.INSTANCE;
 	}
 	
 	public void addExceptionItem(BusinessValidationExceptionItem toAdd) 
 	{
-		Deque<BusinessValidationExceptionItem> deque = businessValidationExceptionItems.get();
-		if(deque == null)
+		if(businessValidationExceptionItems == null || businessValidationExceptionItems.get() == null)
 		{
-			deque = new ArrayDeque<>();
+			businessValidationExceptionItems = new ThreadLocal<Deque<BusinessValidationExceptionItem>>() {
+		        										@Override 
+		        										public Deque<BusinessValidationExceptionItem> initialValue() 
+		        										{
+		        											return new ArrayDeque<BusinessValidationExceptionItem>();
+		        										}};
 		}
+		Deque<BusinessValidationExceptionItem> deque = businessValidationExceptionItems.get();
 		deque.add(toAdd);		
 		businessValidationExceptionItems.set(deque);
+	}
+	
+	public Deque<BusinessValidationExceptionItem> getBusinessValidationExceptionItems()
+	{
+		return  businessValidationExceptionItems.get();
 	}
 	
 	public void addValidationException(BusinessValidationException toAdd)
@@ -54,13 +64,17 @@ public class RequestThreadLocalHolder
 		
 	public void clean() 
 	{
+		if(businessValidationExceptionItems == null)
+		{
+			return;
+		}
 		businessValidationExceptionItems.remove();
-		businessValidationExceptionItems = null;
+		businessValidationExceptionItems = null;		
 	}
 	
 	private static class RequestThreadLocalHolderHolder
 	{
-		private static final RequestThreadLocalHolder INSTANCE = new RequestThreadLocalHolder();
+		private static final BusinessValidationExceptionsHolder INSTANCE = new BusinessValidationExceptionsHolder();
 	}
 }
 

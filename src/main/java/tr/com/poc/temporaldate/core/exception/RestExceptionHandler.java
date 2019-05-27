@@ -62,7 +62,7 @@ public class RestExceptionHandler
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessValidationException(BusinessValidationException bvexc, Locale locale) 
 	{
 		Deque<BusinessValidationExceptionItem> businessValidationExceptionItemList = bvexc.getBusinessValidationExceptionItemList();
-		List<String> formattedErrorMessages = businessValidationExceptionItemList.stream().map(bvei -> new StringBuilder(VALIDATION_ERROR_PREFIX).append(bvei.getExceptionItemMessage()).append("(").append(bvei.getExceptionItemCode()).append(")").toString()).collect(Collectors.toList());
+		List<String> formattedErrorMessages = businessValidationExceptionItemList.stream().map(bvei -> new StringBuilder(StringUtils.isBlank(bvei.getExceptionItemMessage()) ? businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode(), bvei.getExceptionItemMessageParameters() ,locale): bvei.getExceptionItemMessage()).append(" (").append(VALIDATION_ERROR_PREFIX).append(bvei.getExceptionItemCode()).append(")").toString()).collect(Collectors.toList());
 		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), VALIDATION_ERROR_PREFIX + USER_INPUT_NOT_VALIDATED ,formattedErrorMessages, null), HttpStatus.BAD_REQUEST);
 	}
 

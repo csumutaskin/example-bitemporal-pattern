@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.core.util.request.RequestThreadLocalHolder;
+import tr.com.poc.temporaldate.core.util.request.BusinessValidationExceptionsHolder;
 
 /**
  * Validation exception, thrown in case of erroneous input data by the end user for a particular service request
@@ -47,7 +47,7 @@ public class BusinessValidationException extends BusinessException
 		
 	public void throwFinally() 
 	{
-		RequestThreadLocalHolder.getInstance().addValidationException(this);
+		BusinessValidationExceptionsHolder.getInstance().addValidationException(this);
 	}
 	
 	private void addBusinessValidationItem(BusinessValidationExceptionItem item)
