@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -77,7 +78,7 @@ public class RestExceptionHandler
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc, Locale locale) 
 	{
 		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
-		log.error("----------------------");
+		log.error(ExceptionUtils.getMessage(exc));
 		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
