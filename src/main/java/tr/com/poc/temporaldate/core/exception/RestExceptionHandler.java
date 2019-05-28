@@ -23,9 +23,11 @@ import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
@@ -36,6 +38,7 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
  */
 @ControllerAdvice
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@Log4j2
 public class RestExceptionHandler 
 {
 	@Resource(name = "applicationExceptionMessageSource")
@@ -48,6 +51,7 @@ public class RestExceptionHandler
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessException(BusinessException bexc, Locale locale) 
 	{
 		String errorMessage = businessExceptionMessageSource.getMessage(bexc.getExceptionCode(), bexc.getExceptionMessageParameters(), locale);
+		log.error("----------------------");//TODO: Fix error messages after log format is cleared
 		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.BAD_REQUEST);
 	}
 
@@ -55,6 +59,7 @@ public class RestExceptionHandler
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleApplicationException(ApplicationException aexc, Locale locale) 
 	{
 		String errorMessage = applicationExceptionMessageSource.getMessage(aexc.getExceptionCode(), aexc.getExceptionMessageParameters(), locale);
+		log.error("----------------------");
 		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.BAD_REQUEST);
 	}
 	
@@ -62,14 +67,17 @@ public class RestExceptionHandler
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessValidationException(BusinessValidationException bvexc, Locale locale) 
 	{
 		Deque<BusinessValidationExceptionItem> businessValidationExceptionItemList = bvexc.getBusinessValidationExceptionItemList();
+		int exceptionItemSize = CollectionUtils.isEmpty(businessValidationExceptionItemList) ? 0 : businessValidationExceptionItemList.size();
 		List<String> formattedErrorMessages = businessValidationExceptionItemList.stream().map(bvei -> new StringBuilder(StringUtils.isBlank(bvei.getExceptionItemMessage()) ? businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode(), bvei.getExceptionItemMessageParameters() ,locale): bvei.getExceptionItemMessage()).append(" (").append(VALIDATION_ERROR_PREFIX).append(bvei.getExceptionItemCode()).append(")").toString()).collect(Collectors.toList());
-		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), VALIDATION_ERROR_PREFIX + USER_INPUT_NOT_VALIDATED ,formattedErrorMessages, null), HttpStatus.BAD_REQUEST);
+		log.error("----------------------");
+		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), VALIDATION_ERROR_PREFIX + ((exceptionItemSize == 1) ? businessValidationExceptionItemList.getFirst().getExceptionItemCode() : USER_INPUT_NOT_VALIDATED) ,formattedErrorMessages, null), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc, Locale locale) 
 	{
 		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
+		log.error("----------------------");
 		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	

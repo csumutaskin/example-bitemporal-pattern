@@ -5,6 +5,12 @@ public class Constants
 	private Constants()
 	{}
 	
+	public static final String PROFILE_DEV = "DEV";
+	public static final String PROFILE_QA = "QA";
+	public static final String PROFILE_UAT = "UAT";
+	public static final String PROFILE_PREPROD = "PREPROD";
+	public static final String PROFILE_PROD = "PROD";	
+	
 	public static final String NA = "NA";
 	public static final String UTF8 = "UTF-8";
 	

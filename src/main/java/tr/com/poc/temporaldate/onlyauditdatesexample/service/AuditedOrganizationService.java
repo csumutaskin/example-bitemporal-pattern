@@ -55,8 +55,11 @@ public class AuditedOrganizationService  implements BaseService
 	public List<TemporalOrganizationDTO> getAllOrganizations()
 	{
 		//throw new ApplicationException("10000");//TODO:!!!!
-		new BusinessValidationException("10000").throwFinally();
+	//	new BusinessValidationException("10000").throwFinally();
 		new BusinessValidationException("10001").throwFinally();
+		
+	//	throw new BusinessValidationException("10000");
+		
 		return null;
 		//return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
 	}
