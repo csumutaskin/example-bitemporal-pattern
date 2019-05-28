@@ -9,7 +9,8 @@ import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 
 /**
- * Sorts Any bitemporal entity by effective start date
+ * Sorts Any bi-temporal entity by effective start date
+ * 
  * @author umutaskin
  */
 @Log4j2

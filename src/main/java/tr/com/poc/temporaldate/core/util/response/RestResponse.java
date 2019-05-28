@@ -13,6 +13,13 @@ import lombok.Setter;
 import lombok.ToString;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 
+/**
+ * A template response for the Rest End points that include necessary information about a particular request
+ * 
+ * @author umutaskin
+ *
+ * @param <T> any {@link BaseDTO} object that can be a potential rest response body
+ */
 @SuppressWarnings("serial")
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)

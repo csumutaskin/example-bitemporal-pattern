@@ -24,7 +24,8 @@ import tr.com.poc.temporaldate.core.model.BaseEntity;
  * A super class for entity objects that hold effective date information
  * for temporal objects no perspective time interval is used, tuples which are fixed historically are updated 
  * and no older information for updated tuples exist for these objects. 
- * @author umut
+ * 
+ * @author umutaskin
  *
  */
 @SuppressWarnings("serial")

@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * A marker interface indicating a Data Transfer Object
  * 
- * @author umut
+ * @author umutaskin
  */
 @XmlRootElement
 public interface BaseDTO extends Serializable  

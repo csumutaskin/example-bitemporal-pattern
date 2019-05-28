@@ -22,7 +22,7 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 /**
  * For versioned (indicated by effective date) entities 
  * 
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor 

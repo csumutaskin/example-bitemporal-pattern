@@ -24,7 +24,7 @@ import tr.com.poc.temporaldate.core.model.BaseEntity;
 /**
  * Super class for objects that are bitemporal entities  
  * 
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor 

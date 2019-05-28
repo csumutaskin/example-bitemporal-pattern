@@ -5,6 +5,12 @@ import java.util.Iterator;
 
 import org.springframework.util.CollectionUtils;
 
+/**
+ * Project specific String Utility Methods reside here... 
+ * 
+ * @author umutaskin
+ *
+ */
 public class StringUtils 
 {
 	private StringUtils() {}

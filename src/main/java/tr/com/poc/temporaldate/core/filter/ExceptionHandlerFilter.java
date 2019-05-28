@@ -9,8 +9,10 @@ import javax.servlet.ServletResponse;
 
 import org.springframework.web.filter.GenericFilterBean;
 
+import tr.com.poc.temporaldate.core.exception.RestExceptionHandler;
+
 /**
- * Handles all exceptions which  
+ * Handles all exceptions which are not caught by the {@link RestExceptionHandler}
  * 
  * @author umutaskin
  *

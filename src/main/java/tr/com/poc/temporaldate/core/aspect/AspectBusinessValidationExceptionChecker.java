@@ -16,6 +16,13 @@ import tr.com.poc.temporaldate.core.exception.BusinessValidationException;
 import tr.com.poc.temporaldate.core.exception.BusinessValidationExceptionItem;
 import tr.com.poc.temporaldate.core.util.request.BusinessValidationExceptionsHolder;
 
+/**
+ * Aspect to intersect all controller methods just after they run, so it is ensured that all service level methods have already run 
+ * and all validation exceptions have already been collected...
+ * 
+ * @author umutaskin
+ *
+ */
 @Aspect
 @Order(1)
 @Log4j2

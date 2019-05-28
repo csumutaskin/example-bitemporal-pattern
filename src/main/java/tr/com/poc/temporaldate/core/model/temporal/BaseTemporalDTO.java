@@ -12,7 +12,7 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 /**
  * An extended Data Transfer Object class that contains temporal date data
  * 
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @XmlRootElement

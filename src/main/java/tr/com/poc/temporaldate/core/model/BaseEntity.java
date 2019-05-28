@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * A marker interface that should be implemented by any entities used in this software
  * 
- * @author umut
+ * @author umutaskin
  */
 public interface BaseEntity extends Serializable 
 {}

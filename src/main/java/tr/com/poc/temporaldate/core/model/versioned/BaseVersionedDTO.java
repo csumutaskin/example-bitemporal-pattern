@@ -15,7 +15,7 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
  * only effective date is used and -can be considered as version- 
  * e.g. daily tuples can be versioned by dates whose hour part is truncated on effective date column.  
  * 
- * @author umut
+ * @author umutaskin
  */
 @SuppressWarnings("serial")
 @XmlRootElement
