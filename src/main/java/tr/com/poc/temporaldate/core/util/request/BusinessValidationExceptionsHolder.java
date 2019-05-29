@@ -25,7 +25,7 @@ public class BusinessValidationExceptionsHolder
 
 	public static final BusinessValidationExceptionsHolder getInstance() 
 	{
-		return RequestThreadLocalHolderHolder.INSTANCE;
+		return BusinessValidationExceptionsHolderHolder.INSTANCE;
 	}
 	
 	public void addExceptionItem(BusinessValidationExceptionItem toAdd) 
@@ -46,6 +46,10 @@ public class BusinessValidationExceptionsHolder
 	
 	public Deque<BusinessValidationExceptionItem> getBusinessValidationExceptionItems()
 	{
+		if(businessValidationExceptionItems == null)
+		{
+			return null;
+		}
 		return  businessValidationExceptionItems.get();
 	}
 	
@@ -72,7 +76,7 @@ public class BusinessValidationExceptionsHolder
 		businessValidationExceptionItems = null;		
 	}
 	
-	private static class RequestThreadLocalHolderHolder
+	private static class BusinessValidationExceptionsHolderHolder
 	{
 		private static final BusinessValidationExceptionsHolder INSTANCE = new BusinessValidationExceptionsHolder();
 	}

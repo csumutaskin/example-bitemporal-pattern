@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.AllArgsConstructor;
@@ -35,6 +36,8 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 	private String clientIp;
 	private String userName;
 	private String errorCode;
-	private List<String> errorMessages;	
+	private List<String> errorMessages;
+	   
+    @XmlAnyElement(lax = true)
 	private T body;
 }
