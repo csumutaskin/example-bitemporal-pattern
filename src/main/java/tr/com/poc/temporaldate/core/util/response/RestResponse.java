@@ -28,7 +28,7 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 @Getter
 @Setter
 @ToString
-public class RestResponse<T extends BaseDTO> implements Serializable
+public class RestResponse<T extends Object> implements Serializable//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! T extends BaseDTO
 {	
 	private String status;
 	private String transactionId;	
@@ -38,6 +38,6 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 	private String errorCode;
 	private List<String> errorMessages;
 	   
-    @XmlAnyElement(lax = true)
-	private T body;
+    //@XmlAnyElement(lax = true)
+	private String body;
 }

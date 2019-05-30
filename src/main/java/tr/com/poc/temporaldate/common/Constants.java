@@ -5,11 +5,11 @@ public class Constants
 	private Constants()
 	{}
 	
-	public static final String PROFILE_DEV = "DEV";
-	public static final String PROFILE_QA = "QA";
-	public static final String PROFILE_UAT = "UAT";
-	public static final String PROFILE_PREPROD = "PREPROD";
-	public static final String PROFILE_PROD = "PROD";	
+	public static final String PROFILE_DEV = "dev";
+	public static final String PROFILE_QA = "qa";
+	public static final String PROFILE_UAT = "uat";
+	public static final String PROFILE_PREPROD = "preprod";
+	public static final String PROFILE_PROD = "prod";	
 	
 	public static final String NA = "NA";
 	public static final String UTF8 = "UTF-8";
@@ -33,12 +33,15 @@ public class Constants
 	public static final String MDC_URI = "URI";
 	public static final String MDC_HOST_ADDRESS = "HostAddress";
 	
-	/* Security Parameters */
+	/* Security and Security byPass Parameters */
 	public static final String IGNORE_SECURITY_AT_SWAGGER_WEBJARS_URL = "/webjars/**";
 	public static final String IGNORE_SECURITY_AT_SWAGGER_URL = "/swagger*/**";
 	public static final String IGNORE_SECURITY_AT_SWAGGER_API_DOCS_URL = "/v2/api-docs";
 	public static final String IGNORE_SECURITY_AT_ERROR_URL = "/error/**";
 	public static final String IGNORE_SECURITY_AT_RESOURCES_URL = "/resources/**";
+	public static final String IGNORE_SECURITY_AT_H2_URL = "/h2-console/**";
+	
+	
 	
 	/* Message Bundle File Parameters */
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS = "application-exception"; //application-exception_LOCALE.properties

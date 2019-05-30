@@ -13,9 +13,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +32,7 @@ import tr.com.poc.temporaldate.core.aspect.AspectBusinessValidationExceptionChec
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EntityListeners(AuditingEntityListener.class)
+@PropertySource({ "classpath:/dev/application-dev.properties", "classpath:/${spring.profiles.active}/application-${spring.profiles.active}.properties"})
 @Log4j2
 public class ApplicationConfiguration
 {		

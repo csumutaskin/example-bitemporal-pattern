@@ -78,7 +78,8 @@ public class RestExceptionHandler
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc, Locale locale) 
 	{
 		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
-		log.error(ExceptionUtils.getMessage(exc));
+		//log.error(ExceptionUtils.getMessage(exc));
+		exc.printStackTrace();		
 		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	

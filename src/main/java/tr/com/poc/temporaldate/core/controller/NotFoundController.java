@@ -28,11 +28,11 @@ public class NotFoundController
 	@Value("${spring.profiles.active:NoProfileChosen}")
 	private String activeProfile;
 	
-	@GetMapping(value = {"/swagger-ui.html"}, produces= {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<RestResponse<NoBodyDTO>> promptResourceNotFound()
+	@GetMapping(value = {"/swagger-ui.html"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces= {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<RestResponse<String>> promptResourceNotFound()
 	{
 		log.info("Current profile is: {}. SWAGGER is not enabled on this profile.", activeProfile);
-		RestResponse<NoBodyDTO> toReturn = new RestResponse<NoBodyDTO>(HttpStatus.OK.toString(), null, null , null, null, null, null, null);
+		RestResponse<String> toReturn = new RestResponse<String>(HttpStatus.OK.toString(), null, null , null, null, null, null, "asdf");
 		return new ResponseEntity<>(toReturn, HttpStatus.OK);
 	}
 }
