@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -32,13 +33,14 @@ import tr.com.poc.temporaldate.core.aspect.AspectBusinessValidationExceptionChec
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EntityListeners(AuditingEntityListener.class)
-@PropertySource({ "classpath:/dev/application-dev.properties", "classpath:/${spring.profiles.active}/application-${spring.profiles.active}.properties"})
+//@PropertySource({ "classpath:/dev/application-dev.properties", "classpath:/${spring.profiles.active}/application-${spring.profiles.active}.properties"})
+@PropertySource({ "classpath:application.properties"})
 @Log4j2
 public class ApplicationConfiguration
 {		
 	@Value("${spring.profiles.active:NoProfileChosen}")
 	private String activeProfile;
-	
+
 	@Bean
 	public MessageSource applicationExceptionMessageSource() 
 	{
@@ -71,8 +73,14 @@ public class ApplicationConfiguration
     public void promptSystemInfoLog()
     {
     	log.info("****************************************************************************************");
-      	log.info("Current profile is: {}",activeProfile);
+      	log.info("Current profile is: {}",activeProfile);      	
     	log.info("****************************************************************************************");
     }
+    
+//    //Used in addition of @PropertySource
+//    @Bean
+//    public static PropertySourcesPlaceholderConfigurer   propertySourcesPlaceholderConfigurer() {
+//        return new PropertySourcesPlaceholderConfigurer();
+//    }
 
 }
