@@ -33,13 +33,14 @@ import tr.com.poc.temporaldate.core.aspect.AspectBusinessValidationExceptionChec
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EntityListeners(AuditingEntityListener.class)
-//@PropertySource({ "classpath:/dev/application-dev.properties", "classpath:/${spring.profiles.active}/application-${spring.profiles.active}.properties"})
-@PropertySource({ "classpath:application.properties"})
 @Log4j2
 public class ApplicationConfiguration
 {		
 	@Value("${spring.profiles.active:NoProfileChosen}")
 	private String activeProfile;
+	
+	@Value("${management.server.port:can_not_resolve}")
+	private String actuatorPort;
 
 	@Bean
 	public MessageSource applicationExceptionMessageSource() 
@@ -73,14 +74,8 @@ public class ApplicationConfiguration
     public void promptSystemInfoLog()
     {
     	log.info("****************************************************************************************");
-      	log.info("Current profile is: {}",activeProfile);      	
+      	log.info("Current profile is: {}",activeProfile);      
+      	log.info("Actuator port is: {}",actuatorPort);
     	log.info("****************************************************************************************");
     }
-    
-//    //Used in addition of @PropertySource
-//    @Bean
-//    public static PropertySourcesPlaceholderConfigurer   propertySourcesPlaceholderConfigurer() {
-//        return new PropertySourcesPlaceholderConfigurer();
-//    }
-
 }

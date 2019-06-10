@@ -37,6 +37,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer
     public MappingJackson2HttpMessageConverter jsonConverter() 
     {
     	MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    	converter.setPrettyPrint(true);
         return converter;
     }
 }
