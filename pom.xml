@@ -56,6 +56,24 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 		
+		<!-- Logging Begin -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+  			<groupId>org.springframework.boot</groupId>
+  			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		<!-- Logging End -->
+		
 		<!-- Spring Security Begin -->
 		<dependency>
     		<groupId>org.springframework.security</groupId>

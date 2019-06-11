@@ -1,13 +1,13 @@
 package tr.com.poc.temporaldate.core.exception;
 
+import static tr.com.poc.temporaldate.common.Constants.MDC_CLIENT_IP;
 import static tr.com.poc.temporaldate.common.Constants.MDC_HOST_ADDRESS;
 import static tr.com.poc.temporaldate.common.Constants.MDC_TRANSACTION_NO;
-import static tr.com.poc.temporaldate.common.Constants.MDC_CLIENT_IP;
 import static tr.com.poc.temporaldate.common.Constants.MDC_USERNAME;
-import static tr.com.poc.temporaldate.common.ExceptionConstants.UNEXPECTED;
-import static tr.com.poc.temporaldate.common.ExceptionConstants.USER_INPUT_NOT_VALIDATED;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.APPLICATION_ERROR_PREFIX;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.BUSINESS_ERROR_PREFIX;
+import static tr.com.poc.temporaldate.common.ExceptionConstants.UNEXPECTED;
+import static tr.com.poc.temporaldate.common.ExceptionConstants.USER_INPUT_NOT_VALIDATED;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.VALIDATION_ERROR_PREFIX;
 
 import java.util.Deque;
@@ -22,7 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -77,10 +79,18 @@ public class RestExceptionHandler
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc, Locale locale) 
 	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		MediaType returnMediaType = headers.getContentType();
+		if(returnMediaType == null)
+		{
+			headers.setContentType(MediaType.APPLICATION_JSON);
+		}
+		
 		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
-		//log.error(ExceptionUtils.getMessage(exc));
-		exc.printStackTrace();		
-		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.INTERNAL_SERVER_ERROR);
+		log.error(ExceptionUtils.getMessage(exc));
+		RestResponse restResponse = new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null);
+		return new ResponseEntity<>(restResponse, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/* Replaces ThreadContext value with "N.A." if the current request URL does not get through AuditLoggingFilter to fill ThreadContext map */

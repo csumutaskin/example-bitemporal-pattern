@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -39,5 +40,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer
     	MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
     	converter.setPrettyPrint(true);
         return converter;
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) 
+    {
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

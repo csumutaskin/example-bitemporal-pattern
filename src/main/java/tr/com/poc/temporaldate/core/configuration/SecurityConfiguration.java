@@ -70,17 +70,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 		}
 		
 		/**
-		 * Ignore Unnecessary URLs from web filters
+		 * Ignore anonymous URLs from web filters
 		 */
 		@Override
 		public void configure(WebSecurity web) throws Exception 
 		{
+			/*
 			web.ignoring().antMatchers(Constants.IGNORE_SECURITY_AT_SWAGGER_WEBJARS_URL)
 				.antMatchers(Constants.IGNORE_SECURITY_AT_ERROR_URL)
 				.antMatchers(Constants.IGNORE_SECURITY_AT_RESOURCES_URL)
 				.antMatchers(Constants.IGNORE_SECURITY_AT_SWAGGER_URL)
 				.antMatchers(Constants.IGNORE_SECURITY_AT_SWAGGER_API_DOCS_URL)
 				.antMatchers(Constants.IGNORE_SECURITY_AT_H2_URL);
+			*/
 		}
 	}
 }

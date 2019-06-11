@@ -23,7 +23,15 @@ public class ExceptionHandlerFilter extends GenericFilterBean
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException 
 	{
-		chain.doFilter(request, response);
+//		try
+//		{
+			chain.doFilter(request, response);
+//		}
+//		catch(Exception e)
+//		{
+//			//TODO: Refactor exception message to the common DTO format
+//			e.printStackTrace();
+//		}
 	}
 
 }

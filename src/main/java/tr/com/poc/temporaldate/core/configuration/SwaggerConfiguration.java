@@ -34,7 +34,7 @@ public class SwaggerConfiguration
 	@Bean
     public Docket api() 
 	{
-		log.debug("Enabling SWAGGER on current profile. Swagger link is: http://domain/swagger-ui.html");
+		log.debug("Enabling SWAGGER on current profile. Swagger link is: http://domain_url/swagger-ui.html");
         return new Docket(DocumentationType.SWAGGER_2)  
           .select()                                  
           .apis(RequestHandlerSelectors.any())              
