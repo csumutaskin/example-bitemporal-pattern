@@ -27,10 +27,7 @@ public class AuditedOrganizationDTOConverter  implements BaseConverter<AuditedOr
 			return null;
 		}
 		TemporalOrganization toReturn = new TemporalOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug(bd.toString() + " object converted to " + toReturn.toString());
-		}
+		log.debug(() -> bd.toString() + " object converted to " + toReturn.toString());
 		return new AuditedOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());	
 	}
 
@@ -43,10 +40,7 @@ public class AuditedOrganizationDTOConverter  implements BaseConverter<AuditedOr
 			return null;
 		}
 		TemporalOrganizationDTO toReturn = new TemporalOrganizationDTO(be.getName(), be.getShortName(), be.getFineAmount(), be.getEarnAmount());
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug(be.toString() + " object converted to " + toReturn.toString());
-		}
+		log.debug(() -> be.toString() + " object converted to " + toReturn.toString());
 		return toReturn;
 	}
 
@@ -63,10 +57,7 @@ public class AuditedOrganizationDTOConverter  implements BaseConverter<AuditedOr
 		{
 			toReturn.add(convertToDTO(entity));
 		}
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug("VersionedOrganization list converted to OrganizationDTO Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
-		}
+		log.debug(() -> "VersionedOrganization list converted to OrganizationDTO Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
 		return toReturn;
 	}
 
@@ -83,10 +74,7 @@ public class AuditedOrganizationDTOConverter  implements BaseConverter<AuditedOr
 		{
 			toReturn.add(convertToEntity(dto));
 		}
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug("OrganizationDTO list converted to VersionedOrganization Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
-		}
+		log.debug(() -> "OrganizationDTO list converted to VersionedOrganization Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
 		return toReturn;
 	}
 }

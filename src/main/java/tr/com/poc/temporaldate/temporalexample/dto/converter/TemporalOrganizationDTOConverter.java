@@ -21,10 +21,7 @@ public class TemporalOrganizationDTOConverter extends BaseTemporalConverter<Temp
 			return null;
 		}
 		TemporalOrganization toReturn = new TemporalOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug(bd.toString() + " object converted to " + toReturn.toString());
-		}
+		log.debug(() -> bd.toString() + " object converted to " + toReturn.toString());
 		return new TemporalOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());	
 	}
 
@@ -37,10 +34,7 @@ public class TemporalOrganizationDTOConverter extends BaseTemporalConverter<Temp
 			return null;
 		}
 		TemporalOrganizationDTO toReturn = new TemporalOrganizationDTO(be.getName(), be.getShortName(), be.getFineAmount(), be.getEarnAmount());
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug(be.toString() + " object converted to " + toReturn.toString());
-		}
+		log.debug(() -> be.toString() + " object converted to " + toReturn.toString());
 		return toReturn;
 	}
 }

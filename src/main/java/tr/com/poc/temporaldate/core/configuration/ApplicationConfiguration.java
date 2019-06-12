@@ -5,19 +5,29 @@ import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_
 import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS;
 import static tr.com.poc.temporaldate.common.Constants.UTF8;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityListeners;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.aspect.AspectBusinessValidationExceptionChecker;
 
 /**
@@ -33,7 +43,9 @@ import tr.com.poc.temporaldate.core.aspect.AspectBusinessValidationExceptionChec
 @EntityListeners(AuditingEntityListener.class)
 @Log4j2
 public class ApplicationConfiguration
-{		
+{
+	private List<String> validEnvironments = Stream.of(Constants.PROFILE_DEV, Constants.PROFILE_QA,Constants.PROFILE_UAT,Constants.PROFILE_PREPROD,Constants.PROFILE_PROD).collect(Collectors.toList());
+	
 	@Value("${spring.profiles.active:NoProfileChosen}")
 	private String activeProfile;
 	
@@ -69,11 +81,32 @@ public class ApplicationConfiguration
     }
     
     @PostConstruct
-    public void promptSystemInfoLog()
+    public void promptSystemInfoLog() throws IOException
     {
     	log.info("****************************************************************************************");
-      	log.info("Current profile is: {}",activeProfile);      
+    	if(isValidEnvironment(activeProfile))
+    	{
+    		LoggerContext context = (LoggerContext) LogManager.getContext(false);
+    		File file = new ClassPathResource(activeProfile + "/log4j2.xml").getFile(); 
+    		context.setConfigLocation(file.toURI());
+    		log.info("Current profile is: {}",activeProfile);      
+    	}
+    	else
+    	{
+    		log.warn("Current profile is: {}, This is NOT a predefined environment, some functions may not function properly if the profiling is not correct...", activeProfile);
+    		log.info("Valid predefined environment set: {}, current profile is: {}", validEnvironments, activeProfile);
+    	}      	
       	log.info("Actuator port is: {}",actuatorPort);
     	log.info("****************************************************************************************");
+    }
+    
+    //Checks whether current profile is a known profile
+    private boolean isValidEnvironment(String activeProfile)
+    {
+    	if(validEnvironments.contains(activeProfile))
+    	{
+    		return true;
+    	}
+    	return false;
     }
 }

@@ -46,10 +46,7 @@ public abstract class BaseTemporalConverter<E extends BaseTemporalEntity, D exte
 		{
 			toReturn.add(convertToDTO(entity));
 		}
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug("Temporal Entity collection converted to Temporal DTO Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
-		}
+		log.debug(() -> "Temporal Entity collection converted to Temporal DTO Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
 		return toReturn;		
 	}
 	
@@ -65,10 +62,7 @@ public abstract class BaseTemporalConverter<E extends BaseTemporalEntity, D exte
 		{
 			toReturn.add(convertToEntity(dto));
 		}
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug("Temporal DTO list converted to Temporal Entity Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
-		}
+		log.debug(() -> "Temporal DTO list converted to Temporal Entity Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
 		return toReturn;		
 	}
 }

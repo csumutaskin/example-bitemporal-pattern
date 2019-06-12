@@ -23,10 +23,7 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 		BitemporalOrganization toReturn = new BitemporalOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());
 		toReturn.setEffectiveDateStart(bd.getEffectiveDateStart());
 		toReturn.setEffectiveDateEnd(bd.getEffectiveDateEnd());
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug(bd.toString() + " object converted to " + toReturn.toString());
-		}
+		log.debug(() -> bd.toString() + " object converted to " + toReturn.toString());
 		return toReturn;	
 	}
 
@@ -39,10 +36,7 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 			return null;
 		}
 		BitemporalOrganizationDTO toReturn = new BitemporalOrganizationDTO(be.getName(), be.getShortName(), be.getFineAmount(), be.getEarnAmount());
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug(be.toString() + " object converted to " + toReturn.toString());
-		}
+		log.debug(() -> be.toString() + " object converted to " + toReturn.toString());
 		return toReturn;
 	}
 

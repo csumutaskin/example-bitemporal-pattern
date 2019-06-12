@@ -176,10 +176,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			toReturn.add(convertToDTO(entity));
 		}
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug("Bitemporal Entity collection converted to Bitemporal DTO Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
-		}
+		log.debug(() -> "Bitemporal Entity collection converted to Bitemporal DTO Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
 		return toReturn;		
 	}
 	
@@ -195,10 +192,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			toReturn.add(convertToEntity(dto));
 		}
-		if(log.isEnabled(Level.DEBUG))
-		{
-			log.debug("Bitemporal DTO list converted to Bitemporal Entity Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
-		}
+		log.debug(() -> "Bitemporal DTO list converted to Bitemporal Entity Arraylist with contents: " + StringUtils.toStringCollection(toReturn));
 		return toReturn;		
 	}
 	
