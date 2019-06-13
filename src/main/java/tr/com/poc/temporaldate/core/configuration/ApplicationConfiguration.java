@@ -82,7 +82,7 @@ public class ApplicationConfiguration
     
     @PostConstruct
     public void promptSystemInfoLog() throws IOException
-    {
+    {    	
     	log.info("****************************************************************************************");
     	if(isValidEnvironment(activeProfile))
     	{
