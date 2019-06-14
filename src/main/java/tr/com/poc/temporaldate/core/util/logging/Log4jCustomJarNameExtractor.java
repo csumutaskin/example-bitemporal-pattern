@@ -57,12 +57,12 @@ public class Log4jCustomJarNameExtractor extends LogEventPatternConverter
             	{
             		return toReturn.get(0) + ".jar";
             	}
-            }
-            return null;
+            }           
+            return "NA";
         } 
         catch (Exception e) 
         {
-            return null;
+            return "NA";
         }
     }
 }

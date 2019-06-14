@@ -49,6 +49,9 @@ public class ApplicationConfiguration
 	@Value("${spring.profiles.active:NoProfileChosen}")
 	private String activeProfile;
 	
+	@Value("${common.log.pattern:[!CommonLogPatternRetrieveProblem for Dev profile!]%msg%n}")
+	private String commonLogPattern;
+	
 	@Value("${management.server.port:can_not_resolve}")
 	private String actuatorPort;
 
@@ -82,7 +85,8 @@ public class ApplicationConfiguration
     
     @PostConstruct
     public void promptSystemInfoLog() throws IOException
-    {    	
+    {       	
+    	System.setProperty("common.log.pattern", commonLogPattern);
     	log.info("****************************************************************************************");
     	if(isValidEnvironment(activeProfile))
     	{

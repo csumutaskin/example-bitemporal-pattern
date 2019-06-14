@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration  xmlns="http://logging.apache.org/log4j/2.0/config" status="INFO" packages="com.custom.pattern">
+ 	<Properties>
+        <Property name="common_log_pattern">${sys:common.log.pattern}</Property>
+    </Properties> 
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="%highlight{APP}|%highlight{T:} %d{HH:mm:ss.SSS}|%highlight{URI:} %-40.-40X{URI}|%highlight{TX:} %-25.25X{TransactionNo}|%highlight{User:} %-14.-14X{UserName}|%highlight{L:} %level{length=1}|%highlight{@C:} %-30.-30logger{1}|%highlight{@M:} %30.-30M|%highlight{MSG:} %msg%n" />
+			<PatternLayout pattern="%highlight{APP}|%highlight{T:} %d{HH:mm:ss.SSS}|%highlight{SRC:}%-50.50jarLocator|%highlight{TX:}%-5.5X{TransactionNo}|%highlight{U:}%-11.-11X{UserName}|${common_log_pattern}"/>
 		</Console>
 	</Appenders>
 	<Loggers>
