@@ -17,7 +17,6 @@ import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 
-import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.filter.AuditLoggingFilter;
 import tr.com.poc.temporaldate.core.filter.ExceptionHandlerFilter;
 import tr.com.poc.temporaldate.core.filter.RequestResponseLoggingFilter;

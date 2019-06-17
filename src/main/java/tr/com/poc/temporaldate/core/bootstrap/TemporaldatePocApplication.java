@@ -24,7 +24,6 @@ public class TemporaldatePocApplication
 {
 	public static void main(String[] args) 
 	{
-		//System.setProperty("key", "value");
 		SpringApplication.run(TemporaldatePocApplication.class, args);
 	}
 }

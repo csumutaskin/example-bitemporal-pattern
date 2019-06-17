@@ -51,18 +51,18 @@ public class Log4jCustomJarNameExtractor extends LogEventPatternConverter
             URL url = loader.getResource(name);
             String fullJarPath = url.getPath();
             if(StringUtils.isNotBlank(fullJarPath))
-            {            	
+            {         
             	List<String> toReturn = Arrays.asList(fullJarPath.split("/")).stream().filter(s -> s.contains(".jar")).map(s-> s.substring(0, s.indexOf(".jar"))).limit(1).collect(Collectors.toList());
             	if(!CollectionUtils.isEmpty(toReturn))
             	{
-            		return toReturn.get(0) + ".jar";
+            		return "(" + toReturn.get(0) + ")";
             	}
             }           
-            return "NA";
+            return "";
         } 
         catch (Exception e) 
         {
-            return "NA";
+            return "";
         }
     }
 }
