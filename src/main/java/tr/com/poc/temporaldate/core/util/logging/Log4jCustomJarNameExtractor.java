@@ -43,7 +43,7 @@ public class Log4jCustomJarNameExtractor extends LogEventPatternConverter
 	
 	//extracts jar name from classname if possible...
 	private String getJarContainer(String className) 
-	{
+	{		
         try 
         {
             ClassLoader loader = Log4jCustomJarNameExtractor.class.getClassLoader();
@@ -55,7 +55,12 @@ public class Log4jCustomJarNameExtractor extends LogEventPatternConverter
             	List<String> toReturn = Arrays.asList(fullJarPath.split("/")).stream().filter(s -> s.contains(".jar")).map(s-> s.substring(0, s.indexOf(".jar"))).limit(1).collect(Collectors.toList());
             	if(!CollectionUtils.isEmpty(toReturn))
             	{
-            		return "(" + toReturn.get(0) + ")";
+            		String toReturnSubstr = toReturn.get(0);
+            		if(StringUtils.isNotBlank(toReturnSubstr) && toReturnSubstr.length() > 28)
+            		{
+            			toReturnSubstr = toReturnSubstr.substring(0, 27);
+            		}
+            		return "(" + toReturnSubstr + ")";
             	}
             }           
             return "";

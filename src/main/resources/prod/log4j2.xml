@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration  xmlns="http://logging.apache.org/log4j/2.0/config" status="INFO" packages="com.custom.pattern">
+	<Appenders>
+		<Console name="Console_Json" target="SYSTEM_OUT">
+			<JSONLayout compact="false" stacktraceAsString="true" eventEol="false" properties="true">
+				 <KeyValuePair key="tx" value="${ctx:TransactionNo}"/>
+    			 <KeyValuePair key="user" value="${ctx:UserName}"/>
+    			 <KeyValuePair key="uri" value="${ctx:URI}"/>
+    			 <KeyValuePair key="host" value="${ctx:HostAddress}"/>
+    			 <KeyValuePair key="ip" value="${ctx:ClientIP}"/>
+			</JSONLayout>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="INFO">
+			<appender-ref ref="Console_Json" />
+		</Root>		
+	</Loggers>
+</Configuration>

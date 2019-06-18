@@ -13,6 +13,7 @@ public class Constants
 	
 	public static final String NA = "NA";
 	public static final String UTF8 = "UTF-8";
+	public static final String STARTUP = "STARTUP";
 	
 	public static final String SCAN_PATH_JPA_ENTITIES = "tr.com";//Root path to scan entities
 	public static final String SCAN_PATH_SPRING_COMPONENTS = "tr.com";//Root path to scan spring beans

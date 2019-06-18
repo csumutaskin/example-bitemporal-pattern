@@ -1,12 +1,19 @@
 package tr.com.poc.temporaldate.core.configuration;
 
 import static tr.com.poc.temporaldate.common.Constants.CLASSPATH_FOR_EXCEPTION_PROPERTIES;
+import static tr.com.poc.temporaldate.common.Constants.MDC_CLIENT_IP;
+import static tr.com.poc.temporaldate.common.Constants.MDC_HOST_ADDRESS;
+import static tr.com.poc.temporaldate.common.Constants.MDC_TRANSACTION_NO;
+import static tr.com.poc.temporaldate.common.Constants.MDC_URI;
+import static tr.com.poc.temporaldate.common.Constants.MDC_USERNAME;
 import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS;
 import static tr.com.poc.temporaldate.common.Constants.MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS;
+import static tr.com.poc.temporaldate.common.Constants.STARTUP;
 import static tr.com.poc.temporaldate.common.Constants.UTF8;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityListeners;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -49,7 +57,7 @@ public class ApplicationConfiguration
 	@Value("${spring.profiles.active:NoProfileChosen}")
 	private String activeProfile;
 	
-	@Value("${common.log.pattern:[!CommonLogPatternRetrieveProblem for Dev profile!]%msg%n}")
+	@Value("${common.log.pattern:[!CommonLogPatternRetrieveProblemDevProfile]%msg%n}")
 	private String commonLogPattern;
 	
 	@Value("${management.server.port:can_not_resolve}")
@@ -86,6 +94,8 @@ public class ApplicationConfiguration
     @PostConstruct
     public void promptSystemInfoLog() throws IOException
     {       	
+    	setMDCDefaults();
+    	
     	System.setProperty("common.log.pattern", commonLogPattern);
     	log.info("****************************************************************************************");
     	if(isValidEnvironment(activeProfile))
@@ -112,5 +122,15 @@ public class ApplicationConfiguration
     		return true;
     	}
     	return false;
+    }
+    
+    //Sets ThreadContextMap Default values
+    private void setMDCDefaults() throws IOException
+    {
+    	ThreadContext.put(MDC_CLIENT_IP, STARTUP);
+		ThreadContext.put(MDC_TRANSACTION_NO, STARTUP);
+		ThreadContext.put(MDC_USERNAME, STARTUP);
+		ThreadContext.put(MDC_URI, STARTUP);
+		ThreadContext.put(MDC_HOST_ADDRESS, InetAddress.getLocalHost().getHostAddress());		
     }
 }
