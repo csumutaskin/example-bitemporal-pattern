@@ -3,7 +3,6 @@ package tr.com.poc.temporaldate.onlyauditdatesexample.dto.converter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.logging.log4j.Level;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

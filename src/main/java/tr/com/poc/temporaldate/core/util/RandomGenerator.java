@@ -1,7 +1,13 @@
 package tr.com.poc.temporaldate.core.util;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
+
+import lombok.extern.log4j.Log4j2;
+import tr.com.poc.temporaldate.common.ExceptionConstants;
+import tr.com.poc.temporaldate.core.exception.ApplicationException;
 
 /**
  * Random UUID generator utility class
@@ -9,10 +15,23 @@ import java.util.UUID;
  * @author umutaskin
  *
  */
-public class RandomGenerator 
+@Log4j2
+public class RandomGenerator
 {
+	private Random random;
+			
     private RandomGenerator() 
-    {}
+    {
+    	try 
+		{
+			random = SecureRandom.getInstanceStrong();
+		} 
+		catch (NoSuchAlgorithmException e) 
+		{		
+			log.error("Error initializing a random object in singleton RandomGenerator class initialization");
+			throw new ApplicationException(ExceptionConstants.SERVER_STARTUP_EXCEPTION, e);			
+		}
+    }
 
     /**
      * Returns Singleton Random Generator instance
@@ -47,28 +66,16 @@ public class RandomGenerator
      * @return a random integer value
      */
     public int getRandomInteger(int maxValue)
-    {    	
-    	Random rand = new Random();
-    	if(maxValue <= 0)
+    {
+       	if(maxValue <= 0)
     	{
     		maxValue = Integer.MAX_VALUE;
     	}
-       	return rand.nextInt(maxValue);
+       	return random.nextInt(maxValue);
     }
-    
-    /**
-     * Returns a random integer in String while padding left with 0s. The string max length can be maxDigitNumber.
-     * @param maxValue max exclusive value of the random integer. If 0 or negative Integer.maxvalue will be applied
-     * @param maxDigitNumber Maximum length of the String with zeros. If generated integer digit number is more than maxDigitNumber no padding with 0s will be applied to the integer.
-     * @return
-     */
-    public String getRandomIntegerLeftPadWithZeros(int maxValue, int maxDigitNumber)
-    {
-       	return String.format("%0" + maxDigitNumber + "d", getRandomInteger(maxValue));
-    }    
     
     private static class RandomGeneratorHolder 
     {
-    	private static RandomGenerator INSTANCE = new RandomGenerator();
+    	private static final RandomGenerator INSTANCE = new RandomGenerator();
     }
 }

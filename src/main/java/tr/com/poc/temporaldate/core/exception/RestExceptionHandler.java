@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.core.exception;
+package tr.com.poc.temporaldate.core.exception; 
 
 import static tr.com.poc.temporaldate.common.Constants.MDC_CLIENT_IP;
 import static tr.com.poc.temporaldate.common.Constants.MDC_HOST_ADDRESS;
@@ -14,7 +14,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -30,6 +29,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
@@ -55,7 +56,8 @@ public class RestExceptionHandler
 	{
 		String errorMessage = businessExceptionMessageSource.getMessage(bexc.getExceptionCode(), bexc.getExceptionMessageParameters(), locale);
 		log.error("----------------------");//TODO: Fix error messages after log format is cleared
-		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.BAD_REQUEST);
+		//return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), errorMessage, null), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(ApplicationException.class)
@@ -63,17 +65,32 @@ public class RestExceptionHandler
 	{
 		String errorMessage = applicationExceptionMessageSource.getMessage(aexc.getExceptionCode(), aexc.getExceptionMessageParameters(), locale);
 		log.error("----------------------");
-		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.BAD_REQUEST);
+		//return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), Stream.of(errorMessage).collect(Collectors.toList()), null), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), errorMessage, null), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(BusinessValidationException.class)
-	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessValidationException(BusinessValidationException bvexc, Locale locale) 
-	{
+	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessValidationException(BusinessValidationException bvexc)//, final Locale locale) 
+	{		
 		Deque<BusinessValidationExceptionItem> businessValidationExceptionItemList = bvexc.getBusinessValidationExceptionItemList();
 		int exceptionItemSize = CollectionUtils.isEmpty(businessValidationExceptionItemList) ? 0 : businessValidationExceptionItemList.size();
-		List<String> formattedErrorMessages = businessValidationExceptionItemList.stream().map(bvei -> new StringBuilder(StringUtils.isBlank(bvei.getExceptionItemMessage()) ? businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode(), bvei.getExceptionItemMessageParameters() ,locale): bvei.getExceptionItemMessage()).append(" (").append(VALIDATION_ERROR_PREFIX).append(bvei.getExceptionItemCode()).append(")").toString()).collect(Collectors.toList());
-		log.error("----------------------");
-		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), VALIDATION_ERROR_PREFIX + ((exceptionItemSize == 1) ? businessValidationExceptionItemList.getFirst().getExceptionItemCode() : USER_INPUT_NOT_VALIDATED) ,formattedErrorMessages, null), HttpStatus.BAD_REQUEST);
+		//List<String> formattedErrorMessages = businessValidationExceptionItemList.stream().map(bvei -> new StringBuilder(StringUtils.isBlank(bvei.getExceptionItemMessage()) ? businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|GUI", bvei.getExceptionItemMessageParameters() ,locale): bvei.getExceptionItemMessage()).append(" (").append(VALIDATION_ERROR_PREFIX).append(bvei.getExceptionItemCode()).append(")").toString()).collect(Collectors.toList());
+		
+		Locale locale = Locale.ENGLISH;
+		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
+		List<ExceptionLog> errorMessageExplanations = businessValidationExceptionItemList.stream().map
+				(
+						bvei -> StringUtils.isBlank(bvei.getExceptionItemMessage()) 
+						? 
+						new ExceptionLog(new StringBuilder(businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|GUI", bvei.getExceptionItemMessageParameters(), anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES ,locale)).append("(").append(bvei.getExceptionItemCode()).append(")").toString(), businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|LOG", bvei.getExceptionItemMessageParameters(), null ,locale)) 
+						:
+						new ExceptionLog(bvei.getExceptionItemMessage(),null)).collect(Collectors.toList());
+		log.error(new StringBuilder(Constants.BUSINESS_VALIDATION_EXCEPTION_PREFIX).append(errorMessageExplanations.stream().map(el -> "[GUI:" + el.getGuiLog() + (StringUtils.isBlank(el.getServerLog()) ? "":", LOG:" + el.getServerLog()) + "]").collect(Collectors.joining(", "))).toString());
+		String guiErrorMessagesAppendedString = errorMessageExplanations.stream().map(el -> el.getGuiLog()).collect(Collectors.joining(", "));
+		//List<String> formattedErrorLogMessages = businessValidationExceptionItemList.stream().map(bvei -> new StringBuilder(StringUtils.isBlank(bvei.getExceptionItemMessage()) ? businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|GUI", bvei.getExceptionItemMessageParameters() ,locale): bvei.getExceptionItemMessage()).append(" (").append(VALIDATION_ERROR_PREFIX).append(bvei.getExceptionItemCode()).append(")").toString()).collect(Collectors.toList());
+		//log.error(businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|LOG", bvei.getExceptionItemMessageParameters() ,locale));
+		//return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), VALIDATION_ERROR_PREFIX + ((exceptionItemSize == 1) ? businessValidationExceptionItemList.getFirst().getExceptionItemCode() : USER_INPUT_NOT_VALIDATED) ,formattedErrorGUIMessages, null), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new RestResponse(HttpStatus.BAD_REQUEST.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), VALIDATION_ERROR_PREFIX + ((exceptionItemSize == 1) ? businessValidationExceptionItemList.getFirst().getExceptionItemCode() : USER_INPUT_NOT_VALIDATED) ,guiErrorMessagesAppendedString, null), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(Exception.class)
@@ -89,7 +106,8 @@ public class RestExceptionHandler
 		
 		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
 		log.error(ExceptionUtils.getMessage(exc));
-		RestResponse restResponse = new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null);
+		//RestResponse restResponse = new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED ,Stream.of(errorMessage).collect(Collectors.toList()), null);
+		RestResponse restResponse = new RestResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), getThreadContextKey(MDC_TRANSACTION_NO), getThreadContextKey(MDC_HOST_ADDRESS), getThreadContextKey(MDC_CLIENT_IP), getThreadContextKey(MDC_USERNAME), APPLICATION_ERROR_PREFIX + UNEXPECTED , errorMessage, null);
 		return new ResponseEntity<>(restResponse, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
@@ -103,5 +121,13 @@ public class RestExceptionHandler
 			toReturn = threadContextValue;
 		}
 		return toReturn;
+	}
+
+	@AllArgsConstructor
+	@Getter
+	private class ExceptionLog
+	{
+		private String guiLog;
+		private String serverLog;
 	}
 }

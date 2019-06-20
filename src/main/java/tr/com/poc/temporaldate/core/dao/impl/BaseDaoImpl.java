@@ -859,11 +859,11 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 
 	// Copy from buffer to destination collection
 	//TODO: Refactor...
-	private boolean copyFromBufferToDestinationCollection(Collection destinationObjectOrCollection, List<SetterAndValue> buffer)
+	private void copyFromBufferToDestinationCollection(Collection destinationObjectOrCollection, List<SetterAndValue> buffer)
 	{
 		if (destinationObjectOrCollection == null)
 		{
-			return true;
+			return;
 		}
 		Iterator iterator = destinationObjectOrCollection.iterator();
 		while (iterator.hasNext())
@@ -881,7 +881,6 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 				}
 			}
 		}
-		return true;
 	}
 
 	// Copy from buffer to destination object

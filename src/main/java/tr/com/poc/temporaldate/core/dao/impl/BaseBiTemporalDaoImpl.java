@@ -77,17 +77,6 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/**
-	 * Retrieves currently effective entity from current perspective with pessimistic lock for updating
-	 * @param pk primary key to be searched
-	 * @return {@link BaseTemporalEntity} object
-	 */
-	/*
-	public E getEntityForUpdate(final Serializable pk)
-	{
-		return getEntityForUpdateWithLockMode(pk, LockModeType.PESSIMISTIC_WRITE);
-	}*/
-	
-	/**
 	 * Retrieves entity effective at a given time from current perspective
 	 * @param pk primary key to be searched
 	 * @param effectiveDate

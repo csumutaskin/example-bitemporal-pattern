@@ -6,7 +6,7 @@
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<!-- PatternLayout pattern="%highlight{APP}|%highlight{T:} %d{HH:mm:ss.SSS}|%highlight{SRC:}%-50.50jarLocator|%highlight{TX:}%-5.5X{TransactionNo}|%highlight{U:}%-11.-11X{UserName}|${common_log_pattern}"/-->
-			<PatternLayout pattern="${common_log_pattern} | %highlight{MSG:} (%highlight{TX:}%-5.5X{TransactionNo} , %highlight{U:}%-12.-12X{UserName} ) %msg%n"/>
+			<PatternLayout pattern="${common_log_pattern} | %highlight{MSG:} (%highlight{TX:}%-36.-36X{TransactionNo} , %highlight{U:}%-12.-12X{UserName}, %highlight{URI:}%-40.40X{URI}) %msg%n"/>
 		</Console>
 	</Appenders>
 	<Loggers>

@@ -1,5 +1,11 @@
 package tr.com.poc.temporaldate.common;
 
+/**
+ * Contains all application scoped and reusable exception code constants
+ * 
+ * @author umutaskin
+ *
+ */
 public class ExceptionConstants 
 {
 	private ExceptionConstants() {}
@@ -7,7 +13,7 @@ public class ExceptionConstants
 	public static final String APPLICATION_ERROR_PREFIX = "APP";
 	public static final String BUSINESS_ERROR_PREFIX = "BUS";
 	public static final String VALIDATION_ERROR_PREFIX = "VAL";
-	
+		
 	public static final String UNEXPECTED = "00001";
 	public static final String USER_INPUT_NOT_VALIDATED = "99999";
 	
@@ -22,6 +28,11 @@ public class ExceptionConstants
 	 **************************************/
 	public static final String INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION = "10200";
 	public static final String INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION = "10201";
+	
+	/* *************************************
+	 *     Server startup Exception Constants
+	 **************************************/
+	public static final String SERVER_STARTUP_EXCEPTION = "10300";
 	
 	/* *************************************
 	 *     @Repository Layer Constants

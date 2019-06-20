@@ -117,11 +117,12 @@ public class ApplicationConfiguration
     //Checks whether current profile is a known profile
     private boolean isValidEnvironment(String activeProfile)
     {
+    	boolean toReturn = false;
     	if(validEnvironments.contains(activeProfile))
     	{
-    		return true;
+    		toReturn = true;
     	}
-    	return false;
+    	return toReturn;
     }
     
     //Sets ThreadContextMap Default values

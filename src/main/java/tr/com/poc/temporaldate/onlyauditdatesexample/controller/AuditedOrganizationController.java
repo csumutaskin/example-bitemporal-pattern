@@ -34,7 +34,7 @@ public class AuditedOrganizationController
 	
 	@GetMapping(value = "/getAll" , produces= {"application/json"})
 	public ResponseEntity<List<TemporalOrganizationDTO>> getOrganizationList()
-	{		
+	{			
 		return new ResponseEntity<>(versionedOrganizationService.getAllOrganizations(), HttpStatus.OK);
 	}
 	

@@ -2,6 +2,7 @@ package tr.com.poc.temporaldate.onlyauditdatesexample.service;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +55,11 @@ public class AuditedOrganizationService  implements BaseService
 	
 	public List<TemporalOrganizationDTO> getAllOrganizations()
 	{
-		//throw new ApplicationException("10000");//TODO:!!!!
-//		new BusinessValidationException("10000").throwFinally();
-//		new BusinessValidationException("10001").throwFinally();
-		
-	//	throw new BusinessValidationException("10000");
-		return versionedOrganizationDao.getDTOList(AuditedOrganizationDTOConverter.class);		
+		//TODO: Application Exception controlleri
+		//thr new ApplicationException("10000")
+		new BusinessValidationException("10000").throwFinally();
+		return new ArrayList<>();
+		//ret versionedOrganizationDao.getDTOList (AuditedOrganizationDTOConverter.class)		
 	}
 	
 	public TemporalOrganizationDTO getOrganization(Serializable id) 

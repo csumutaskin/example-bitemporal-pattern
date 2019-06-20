@@ -3,7 +3,6 @@ package tr.com.poc.temporaldate.core.converter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.logging.log4j.Level;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;

@@ -1,5 +1,11 @@
 package tr.com.poc.temporaldate.common;
 
+/**
+ * Contains all application scoped and reusable constants
+ * 
+ * @author umutaskin
+ *
+ */
 public class Constants 
 {
 	private Constants()
@@ -19,7 +25,7 @@ public class Constants
 	public static final String SCAN_PATH_SPRING_COMPONENTS = "tr.com";//Root path to scan spring beans
 	public static final String CLASSPATH_FOR_EXCEPTION_PROPERTIES = "classpath:/exception/";//classpath where application and business exception properties reside
 	
-	public static final int REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH = 100;
+	public static final int    REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH = 100;
 	public static final String ID_COLUMN_KEY = "id";
 	public static final String ID_GETTER_KEY = "getId";
 	public static final String ID_SETTER_KEY = "setId";
@@ -47,6 +53,13 @@ public class Constants
 	/* Message Bundle File Parameters */
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS = "application-exception"; //application-exception_LOCALE.properties
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS = "business-exception"; //business-exception_LOCALE.properties
+	public static final String MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES = "Sistemde ilgili hatanın açıklaması yer almamaktadır. Lütfen hata kodunuzu ve işlem numaranızı kullanarak sistem yöneticilerine başvurunuz."; //business-exception_LOCALE.properties
+	public static final String MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN = "There is no error explanation present in the system for the exception you recieved, please contact system administrators with your transaction number and exception code";
+	public static final String BUSINESS_VALIDATION_EXCEPTION_PREFIX = " (!) BUSINESS VALIDATION EXCEPTION (!) : ";
+	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS_DEFAULT_PATH = "exception/application-exception.properties";
+	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS_EN_PATH = "exception/application-exception_en.properties";
+	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS_DEFAULT_PATH = "exception/business-exception.properties";
+	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS_EN_PATH = "exception/business-exception_en.properties";
 	
 	/* Aspect Parameters */
 	public static final String EXECUTION_OF_CONTROLLER_METHODS = "execution(public * tr.com.poc.temporaldate.*.controller.*.*(..))";

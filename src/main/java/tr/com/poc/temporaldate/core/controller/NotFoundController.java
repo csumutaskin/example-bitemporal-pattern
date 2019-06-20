@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.Constants;
+import tr.com.poc.temporaldate.core.model.NoBodyDTO;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
 /**
@@ -28,10 +29,10 @@ public class NotFoundController
 	private String activeProfile;
 	
 	@GetMapping(value = {"/swagger-ui.html"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces= {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<RestResponse<String>> promptResourceNotFound()
+	public ResponseEntity<RestResponse<NoBodyDTO>> promptResourceNotFound()
 	{
 		log.info("Current profile is: {}. SWAGGER is not enabled on this profile.", activeProfile);
-		RestResponse<String> toReturn = new RestResponse<String>(HttpStatus.OK.toString(), null, null , null, null, null, null, "asdf");
+		RestResponse<NoBodyDTO> toReturn = new RestResponse<>(HttpStatus.OK.toString(), null, null , null, null, null, null, null);
 		return new ResponseEntity<>(toReturn, HttpStatus.OK);
 	}
 }

@@ -15,5 +15,7 @@ public class QAConfiguration
 {
 	@PostConstruct
 	public void printInfo()
-	{}
+	{
+		//In case of quality specific build is necessary for the project, this method can be used to differ environment specific logging
+	}
 }

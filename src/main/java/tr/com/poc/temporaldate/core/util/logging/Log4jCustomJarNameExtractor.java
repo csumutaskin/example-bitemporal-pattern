@@ -30,7 +30,7 @@ public class Log4jCustomJarNameExtractor extends LogEventPatternConverter
 		super(name, style);
 	}
 
-	public static Log4jCustomJarNameExtractor newInstance(String[] options) 
+	public static Log4jCustomJarNameExtractor newInstance() 
 	{
 		return new Log4jCustomJarNameExtractor("jarLocator", Thread.currentThread().getName());
 	}

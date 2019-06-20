@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.Level;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;

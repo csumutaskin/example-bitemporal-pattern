@@ -1,6 +1,5 @@
 package tr.com.poc.temporaldate.bitemporalexample.dto.converter;
 
-import org.apache.logging.log4j.Level;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;

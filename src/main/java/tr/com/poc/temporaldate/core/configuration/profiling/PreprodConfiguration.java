@@ -15,5 +15,7 @@ public class PreprodConfiguration
 {
 	@PostConstruct
 	public void printInfo()
-	{}
+	{
+		//In case of pre-production specific build is necessary for the project, this method can be used to differ environment specific logging
+	}
 }

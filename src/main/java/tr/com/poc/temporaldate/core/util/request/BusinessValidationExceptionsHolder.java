@@ -48,7 +48,7 @@ public class BusinessValidationExceptionsHolder
 	{
 		if(businessValidationExceptionItems == null)
 		{
-			return null;
+			return new ArrayDeque<>();
 		}
 		return  businessValidationExceptionItems.get();
 	}
