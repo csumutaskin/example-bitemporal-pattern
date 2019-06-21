@@ -53,7 +53,7 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseDao<E>
+public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseDao
 {
 	private static final String NO_SINGLE_RESULT_EXC_STRING = "Returning null since NoResultException is thrown and caught";
 	private static final String UNEXCPECTED_EXC_INFO_STRING = "An unexpected exception. See error log for details";

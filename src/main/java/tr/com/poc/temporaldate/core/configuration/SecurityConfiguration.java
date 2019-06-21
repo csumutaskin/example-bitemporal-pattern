@@ -17,6 +17,7 @@ import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 
+import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.filter.AuditLoggingFilter;
 import tr.com.poc.temporaldate.core.filter.ExceptionHandlerFilter;
 import tr.com.poc.temporaldate.core.filter.RequestResponseLoggingFilter;
@@ -73,8 +74,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 		 */
 		@Override
 		public void configure(WebSecurity web) throws Exception 
-		{
-			//can be configured for bypass pages or services... e.g. : not found page, error page...
+		{			
+			web.ignoring().antMatchers(Constants.IGNORE_SECURITY_AT_H2_URL);
 		}
 	}
 }

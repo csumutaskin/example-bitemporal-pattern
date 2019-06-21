@@ -4,11 +4,10 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 
@@ -22,9 +21,7 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
-@AllArgsConstructor
 @Getter
-@Setter
 @ToString
 public class RestResponse<T extends BaseDTO> implements Serializable
 {	
@@ -36,6 +33,77 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 	private String errorCode;
 	private String errorMessage;
 	   
-    //@XmlAnyElement(lax = true)
+    @XmlAnyElement(lax = true)
 	private T body;
+	
+	private RestResponse()
+	{}
+		
+	public static class Builder<T extends BaseDTO>
+	{
+		private String status;
+		private String transactionId;	
+		private String hostName;
+		private String clientIp;
+		private String userName;
+		private String errorCode;
+		private String errorMessage;
+		private T body;
+
+		public Builder(String status, String transactionId)
+		{
+			this.status = status;
+			this.transactionId = transactionId;
+		}
+		
+		public Builder<T> withHostName(String hostName)
+		{
+			this.hostName = hostName;
+			return this;
+		}
+		
+		public Builder<T> withClientIp(String clientIp)
+		{
+			this.clientIp = clientIp;
+			return this;
+		}
+		
+		public Builder<T> withUserName(String userName)
+		{
+			this.userName = userName;
+			return this;
+		}
+		
+		public Builder<T> withErrorCode(String errorCode)
+		{
+			this.errorCode = errorCode;
+			return this;
+		}
+		
+		public Builder<T> withErrorMessage(String errorMessage)
+		{
+			this.errorMessage = errorMessage;
+			return this;
+		}
+		
+		public Builder<T> withBody(T body)
+		{
+			this.body = body;
+			return this;
+		}
+		
+		public RestResponse<T> build()
+		{
+			RestResponse<T> restResponseBuilt = new RestResponse<>();
+			restResponseBuilt.status = status;
+			restResponseBuilt.transactionId = transactionId;
+			restResponseBuilt.hostName = hostName;
+			restResponseBuilt.clientIp = clientIp;
+			restResponseBuilt.userName = userName;
+			restResponseBuilt.errorCode = errorCode;
+			restResponseBuilt.errorMessage = errorMessage;
+			restResponseBuilt.body = body;
+			return restResponseBuilt;
+		}
+	}
 }

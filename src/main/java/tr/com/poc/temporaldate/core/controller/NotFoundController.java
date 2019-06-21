@@ -32,7 +32,7 @@ public class NotFoundController
 	public ResponseEntity<RestResponse<NoBodyDTO>> promptResourceNotFound()
 	{
 		log.info("Current profile is: {}. SWAGGER is not enabled on this profile.", activeProfile);
-		RestResponse<NoBodyDTO> toReturn = new RestResponse<>(HttpStatus.OK.toString(), null, null , null, null, null, null, null);
+		RestResponse<NoBodyDTO> toReturn = new RestResponse.Builder<NoBodyDTO>(HttpStatus.OK.toString(), null).build();		
 		return new ResponseEntity<>(toReturn, HttpStatus.OK);
 	}
 }

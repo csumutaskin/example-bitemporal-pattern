@@ -32,12 +32,7 @@ public class BusinessValidationExceptionsHolder
 	{
 		if(businessValidationExceptionItems == null || businessValidationExceptionItems.get() == null)
 		{
-			businessValidationExceptionItems = new ThreadLocal<Deque<BusinessValidationExceptionItem>>() {
-		        										@Override 
-		        										public Deque<BusinessValidationExceptionItem> initialValue() 
-		        										{
-		        											return new ArrayDeque<BusinessValidationExceptionItem>();
-		        										}};
+		    businessValidationExceptionItems = ThreadLocal.withInitial(ArrayDeque<BusinessValidationExceptionItem>::new);				
 		}
 		Deque<BusinessValidationExceptionItem> deque = businessValidationExceptionItems.get();
 		deque.add(toAdd);		

@@ -1,7 +1,6 @@
 package tr.com.poc.temporaldate.core.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -18,15 +17,13 @@ public class ApplicationException extends BaseException
 	
 	public ApplicationException(String exceptionCode, String... exceptionMessageParameters)
 	{
-		super(exceptionCode);
-		this.setExceptionMessageParameters(exceptionMessageParameters);
+		super(exceptionCode, null, null, exceptionMessageParameters);		
 		this.causeException = null;
 	}
 	
 	public ApplicationException(String exceptionCode, Exception causeException, String... exceptionMessageParameters)
 	{
-		super(exceptionCode);
-		this.causeException = causeException;
-		this.setExceptionMessageParameters(exceptionMessageParameters);
+		super(exceptionCode, null, null, exceptionMessageParameters);
+		this.causeException = causeException;		
 	}
 }

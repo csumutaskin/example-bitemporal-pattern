@@ -34,7 +34,7 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseDao<E> 
+public class BaseVersionedDaoImpl<E extends BaseTemporalEntity> implements BaseDao 
 {
 	@PersistenceContext
 	private EntityManager entityManager;
