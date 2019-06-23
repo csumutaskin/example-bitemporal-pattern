@@ -148,8 +148,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		E toReturn = convertDTOToEntity(bd);
 		Date now = new Date();
 		toReturn = enrichEntityRecordDates(toReturn, now);
-		toReturn = enrichEntityEffectiveDates(toReturn, now);		
-		return toReturn;
+		return enrichEntityEffectiveDates(toReturn, now);		
 	}
 	
 	/**

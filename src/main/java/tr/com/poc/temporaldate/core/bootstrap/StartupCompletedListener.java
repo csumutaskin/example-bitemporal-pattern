@@ -118,7 +118,7 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
     	
     	if(!CollectionUtils.isEmpty(differenceOf1))
     	{
-    		String dif1Message = differenceOf1.stream().filter(e -> e != null && e.toString().endsWith(suffix)).map(e -> e.toString()).collect(Collectors.joining(", "));    		
+    		String dif1Message = differenceOf1.stream().filter(e -> e != null && e.toString().endsWith(suffix)).map(Object::toString).collect(Collectors.joining(", "));
     		if(StringUtils.isNoneBlank(dif1Message))
     		{
     			message.append(pathOfFile).append(INTER_LOG_MESSAGE_1).append(dif1Message).append(INTER_LOG_MESSAGE_2);
@@ -126,7 +126,7 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
     	}
     	if(!CollectionUtils.isEmpty(differenceOf2))
     	{
-    		String dif2Message = differenceOf2.stream().filter(e -> e != null && e.toString().endsWith(suffix)).map(e -> e.toString()).collect(Collectors.joining(", "));
+    		String dif2Message = differenceOf2.stream().filter(e -> e != null && e.toString().endsWith(suffix)).map(Object::toString).collect(Collectors.joining(", "));
     		if(StringUtils.isNoneBlank(dif2Message))
     		{
     			if(message.length() == 0)

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.exception.BusinessValidationException;
 import tr.com.poc.temporaldate.core.service.BaseService;
 import tr.com.poc.temporaldate.onlyauditdatesexample.dao.AuditedOrganizationDao;

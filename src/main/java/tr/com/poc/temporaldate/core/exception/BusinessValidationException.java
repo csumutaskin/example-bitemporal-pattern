@@ -21,7 +21,7 @@ import tr.com.poc.temporaldate.core.util.request.BusinessValidationExceptionsHol
 @Setter 
 @ToString 
 @Log4j2
-public class BusinessValidationException extends BusinessException 
+public class BusinessValidationException extends BaseException 
 {
 	private static final String VALIDATION_EXCEPTION_CODE = ""; 
 			

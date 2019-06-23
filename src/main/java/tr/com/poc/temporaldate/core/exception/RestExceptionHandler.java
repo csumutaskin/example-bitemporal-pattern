@@ -98,7 +98,7 @@ public class RestExceptionHandler
 		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
 		List<ExceptionLog> errorMessageExplanations = businessValidationExceptionItemList.stream().map(bvei -> StringUtils.isBlank(bvei.getExceptionItemMessage()) ? new ExceptionLog(new StringBuilder(businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|GUI", bvei.getExceptionItemMessageParameters(), defaultMessage ,locale)).append("(").append(bvei.getExceptionItemCode()).append(")").toString(), businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|LOG", bvei.getExceptionItemMessageParameters(), null ,locale))	: new ExceptionLog(bvei.getExceptionItemMessage(),null)).collect(Collectors.toList());
 		log.error(new StringBuilder(Constants.BUSINESS_VALIDATION_EXCEPTION_PREFIX).append(errorMessageExplanations.stream().map(el -> "[GUI:" + el.getGuiLog() + (StringUtils.isBlank(el.getServerLog()) ? "":", LOG:" + el.getServerLog()) + "]").collect(Collectors.joining(", "))).toString());
-		String guiErrorMessagesAppendedString = errorMessageExplanations.stream().map(el -> el.getGuiLog()).collect(Collectors.joining(", "));
+		String guiErrorMessagesAppendedString = errorMessageExplanations.stream().map(ExceptionLog::getGuiLog).collect(Collectors.joining(", "));
 		return prepareResponse(null, HttpStatus.BAD_REQUEST, errorCode, guiErrorMessagesAppendedString);
 	}
 

@@ -13,11 +13,11 @@ import tr.com.poc.temporaldate.core.exception.ApplicationException;
  * @author umutaskin
  *
  */
-public class DateUtils 
+public final class DateUtils 
 {
 	private DateUtils() {}
 	
-	public static final Date END_OF_SOFTWARE = new GregorianCalendar(2100, 11, 31, 23, 59, 59).getTime();
+	public static final Date END_OF_SOFTWARE  = new GregorianCalendar(2100, 11, 31, 23, 59, 59).getTime();
 	
 	/**
 	 * Checks whether toCompare date is between beginDate and endDate

@@ -1,5 +1,6 @@
 package tr.com.poc.temporaldate.core.util.builder;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -34,9 +35,9 @@ public class Builder<T>
     {
        try 
        {
-           instance = clazz.newInstance();
+           instance = clazz.getDeclaredConstructor().newInstance();
        } 
-       catch (InstantiationException | IllegalAccessException e) 
+       catch (InstantiationException | IllegalAccessException|NoSuchMethodException|InvocationTargetException e) 
        {
     	   log.error("Instantiating an object using reflection in generic builder threw an unexpected exception, detail: {}", ExceptionUtils.getStackTrace(e));
            throw new ApplicationException(ExceptionConstants.UNEXPECTED_OBJECT_CREATION_EXCEPTION_THROUGH_REFLECTION, e);

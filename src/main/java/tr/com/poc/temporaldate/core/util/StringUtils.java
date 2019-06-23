@@ -1,7 +1,7 @@
 package tr.com.poc.temporaldate.core.util;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.stream.Collectors;
 
 import org.springframework.util.CollectionUtils;
 
@@ -15,24 +15,22 @@ public class StringUtils
 {
 	private StringUtils() {}
 	
-	//TODO: check!
+	/**
+	 * Converts any collection to comma separated string
+	 * @param collection collection to be converted
+	 * @return {@link String}
+	 */
 	public static String toStringCollection(Collection<?> collection)
 	{
-		StringBuilder toReturn = new StringBuilder();
+		String toReturn = null;
 		if(CollectionUtils.isEmpty(collection))
 		{
-			toReturn.append("Null or Empty Collection");
+			toReturn = "[Null or Empty Collection]";
 		}
-		Iterator<?> iterator = collection.iterator();
-		while(iterator.hasNext())
+		else
 		{
-			toReturn.append("[" + iterator.toString() + "], ");
+			toReturn = collection.stream().map(Object::toString).collect(Collectors.joining(", "));
 		}
-		int sbLength = toReturn.length();
-		if(sbLength > 0 && toReturn.lastIndexOf(",") == sbLength - 1)
-		{
-			return toReturn.substring(0, toReturn.length() - 1);
-		}
-		return toReturn.toString();
+		return toReturn;
 	}
 }
