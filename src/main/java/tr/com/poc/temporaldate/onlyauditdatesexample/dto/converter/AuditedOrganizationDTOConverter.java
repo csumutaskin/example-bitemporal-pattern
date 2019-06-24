@@ -27,7 +27,7 @@ public class AuditedOrganizationDTOConverter  implements BaseConverter<AuditedOr
 		}
 		TemporalOrganization toReturn = new TemporalOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());
 		log.debug(() -> bd.toString() + " object converted to " + toReturn.toString());
-		return new AuditedOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());	
+		return new AuditedOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount()/*, null*/);	
 	}
 
 	@Override

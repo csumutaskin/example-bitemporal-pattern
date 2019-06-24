@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
+import tr.com.poc.temporaldate.core.dao.annotation.PidDetector;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 
 /**
@@ -54,6 +55,10 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
     public void onApplicationEvent(ContextRefreshedEvent event) 
     {
         log.info("Spring Context is up and all beans are initialized now...");
+        
+        PidDetector.detectPidAnnotations();
+        
+        
         checkBusinessExceptionsI18NKeysAreSynchronizedOrNot();
         checkApplicationExceptionsI18NKeysAreSynchronizedOrNot();
         log.info("All startup checks are done, no important issue found to cancel build/startup process...");

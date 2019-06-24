@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import tr.com.poc.temporaldate.core.dao.annotation.Pid;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 
 @SuppressWarnings("serial")
@@ -40,6 +41,7 @@ public class BitemporalOrganization extends BaseBitemporalEntity
 	private String name;
 	
 	@Column(name = "SHORT_NAME")
+	@Pid
 	private String shortName;
 	
 	@Column(name = "FINE_AMOUNT")

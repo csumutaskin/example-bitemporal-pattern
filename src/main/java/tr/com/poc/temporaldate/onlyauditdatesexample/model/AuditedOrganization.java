@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import tr.com.poc.temporaldate.bitemporalexample.model.BitemporalOrganization;
+import tr.com.poc.temporaldate.core.dao.annotation.Pid;
 import tr.com.poc.temporaldate.core.model.versioned.BaseVersionedEntity;
 
 @SuppressWarnings("serial")
@@ -44,4 +46,8 @@ public class AuditedOrganization extends BaseVersionedEntity
 	
 	@Column(name = "EARN_AMOUNT")
 	private double earnAmount;
+	
+//	@Column(name = "BITEMPORAL_ORG")	
+//	private BitemporalOrganization biOrg;
+
 }

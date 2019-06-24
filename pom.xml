@@ -145,6 +145,13 @@
             <artifactId>ojdbc7</artifactId>
             <version>12.1.0</version>
         </dependency -->
+        
+        <!-- MISC Utility Jars -->
+		<dependency>
+    		<groupId>org.reflections</groupId>
+    		<artifactId>reflections</artifactId>
+    		<version>0.9.10</version>
+		</dependency>
 
 	</dependencies>
 
