@@ -56,6 +56,9 @@ public class ExceptionConstants
 	public static final String BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_DATE = "11014";
 	public static final String BITEMPORAL_GET_ENTITY_AT_EFFECTIVE_TIME_FROM_PERSPECTIVE_TIME = "11015";
 	public static final String BITEMPORAL_GET_ALL_ENTITIES_THAT_INTERSECT_BEGIN_AND_END_DATE = "11016";
+	public static final String BITEMPORAL_GET_ALL_ENTITIES_WITH_PID = "11017";
+	public static final String BITEMPORAL_PID_NOT_SERIALIZABLE_FIELD = "11018";
+	public static final String BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID = "11019";	
 		
 	//CREATE Exception Constants
 	public static final String NULL_OBJECT_CAN_NOT_BE_SAVED_EXCEPTION = "11200";

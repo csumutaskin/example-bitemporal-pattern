@@ -66,7 +66,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 			http.addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new ThreadLocalCleanerFilter(), UsernamePasswordAuthenticationFilter.class)
 			    .addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
-			    .addFilterBefore(new RequestResponseLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+			    .addFilterBefore(new RequestResponseLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
+			    .cors().and().csrf().disable();//TODO: Enable!!!
 		}
 		
 		/**

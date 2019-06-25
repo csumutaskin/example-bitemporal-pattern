@@ -40,9 +40,9 @@ public class BitemporalOrganization extends BaseBitemporalEntity
 	@Column(name = "NAME")
 	private String name;
 	
-	@Column(name = "SHORT_NAME")
+	@Column(name = "ORG_ID")
 	@Pid
-	private String shortName;
+	private Long orgId;
 	
 	@Column(name = "FINE_AMOUNT")
 	private double fineAmount;

@@ -19,7 +19,7 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 			log.debug("null object converted to null");
 			return null;
 		}
-		BitemporalOrganization toReturn = new BitemporalOrganization(null, bd.getName(), bd.getShortName(), bd.getFineAmount(), bd.getEarnAmount());
+		BitemporalOrganization toReturn = new BitemporalOrganization(null, bd.getName(), bd.getOrgId(), bd.getFineAmount(), bd.getEarnAmount());
 		toReturn.setEffectiveDateStart(bd.getEffectiveDateStart());
 		toReturn.setEffectiveDateEnd(bd.getEffectiveDateEnd());
 		log.debug(() -> bd.toString() + " object converted to " + toReturn.toString());
@@ -34,7 +34,7 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 			log.debug("null object converted to null");
 			return null;
 		}
-		BitemporalOrganizationDTO toReturn = new BitemporalOrganizationDTO(be.getName(), be.getShortName(), be.getFineAmount(), be.getEarnAmount());
+		BitemporalOrganizationDTO toReturn = new BitemporalOrganizationDTO(be.getName(), be.getOrgId(), be.getFineAmount(), be.getEarnAmount());
 		log.debug(() -> be.toString() + " object converted to " + toReturn.toString());
 		return toReturn;
 	}

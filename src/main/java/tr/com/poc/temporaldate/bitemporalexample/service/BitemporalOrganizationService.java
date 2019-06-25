@@ -29,6 +29,9 @@ public class BitemporalOrganizationService  implements BaseService
 {
 	@Autowired
 	private BitemporalOrganizationDao bitemporalOrganizationDao;
+	
+	@Autowired
+	private BitemporalOrganizationDTOConverter converter;
 
 	public Boolean updateOrganization(Serializable id, BitemporalOrganizationDTO toUpdate)
 	{
@@ -60,7 +63,11 @@ public class BitemporalOrganizationService  implements BaseService
 	
 	public List<BitemporalOrganizationDTO> getAllOrganizations(Date effectiveDate)
 	{
-		return bitemporalOrganizationDao.getDTOListAtEffectiveDate(BitemporalOrganizationDTOConverter.class, effectiveDate);		
+		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalId(12);
+		return (List<BitemporalOrganizationDTO>)converter.convertEntityCollectionToDTOCollection(entityWithNaturalId);
+		/*
+		return bitemporalOrganizationDao.getDTOListAtEffectiveDate(BitemporalOrganizationDTOConverter.class, effectiveDate);
+		*/		
 	}
 	
 	public BitemporalOrganizationDTO getOrganization(Serializable id, Date effectiveDate) 

@@ -73,11 +73,14 @@ public class RestExceptionHandler
 	 * @return {@link ResponseEntity}
 	 */
 	@ExceptionHandler(ApplicationException.class)
-	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleApplicationException(ApplicationException aexc, Locale locale) 
-	{
-		String errorMessage = applicationExceptionMessageSource.getMessage(aexc.getExceptionCode(), aexc.getExceptionMessageParameters(), locale);
-		log.error("user's {} call has an (application) erronous response, you can enable debug mode for detailled logging. Exception detail is: {}", getThreadContextKey(MDC_URI), errorMessage);
-		return prepareResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), errorMessage);
+	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleApplicationException(ApplicationException aexc) 
+	{	
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...
+		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
+		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
+		ExceptionLog errorMessageExplanations = new ExceptionLog(applicationExceptionMessageSource.getMessage(aexc.getExceptionCode() + "|GUI", aexc.getExceptionMessageParameters(), defaultMessage ,locale), applicationExceptionMessageSource.getMessage(aexc.getExceptionCode() + "|LOG", aexc.getExceptionMessageParameters(), null ,locale));
+		log.error("user's {} call has an (application) erronous response, you can enable debug mode for detailed logging. Exception detail is: {}", getThreadContextKey(MDC_URI), "[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG:" + errorMessageExplanations.getServerLog() + "]");
+		return prepareResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), errorMessageExplanations.getGuiLog());
 	}
 	
 	/**
@@ -93,7 +96,7 @@ public class RestExceptionHandler
 		int exceptionItemSize = CollectionUtils.isEmpty(businessValidationExceptionItemList) ? 0 : businessValidationExceptionItemList.size();
 		String errorCode = VALIDATION_ERROR_PREFIX + ((exceptionItemSize == 1) ? businessValidationExceptionItemList.getFirst().getExceptionItemCode() : USER_INPUT_NOT_VALIDATED);
 		
-		Locale locale = Locale.ENGLISH;
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...
 		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
 		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
 		List<ExceptionLog> errorMessageExplanations = businessValidationExceptionItemList.stream().map(bvei -> StringUtils.isBlank(bvei.getExceptionItemMessage()) ? new ExceptionLog(new StringBuilder(businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|GUI", bvei.getExceptionItemMessageParameters(), defaultMessage ,locale)).append("(").append(bvei.getExceptionItemCode()).append(")").toString(), businessExceptionMessageSource.getMessage(bvei.getExceptionItemCode() + "|LOG", bvei.getExceptionItemMessageParameters(), null ,locale))	: new ExceptionLog(bvei.getExceptionItemMessage(),null)).collect(Collectors.toList());

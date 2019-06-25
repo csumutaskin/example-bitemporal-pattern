@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -29,6 +30,8 @@ import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
+import tr.com.poc.temporaldate.core.dao.annotation.PidDetector;
+import tr.com.poc.temporaldate.core.dao.annotation.PidTypeAndName;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
@@ -56,18 +59,26 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	/**
+	 * Returns the entity manager object that can be used directly in sub dao classes
+	 * @return {@link EntityManager}
+	 */
 	public EntityManager getEntityManager()
 	{
 		return entityManager;
 	}
 
+	/**
+	 * Entity Manager setter
+	 * @param entityManager entityManager
+	 */
 	public void setEntityManager(EntityManager entityManager)
 	{
 		this.entityManager = entityManager;
 	}
 	
 	/**
-	 * Retrieves currently effective entity from current perspective using natural id
+	 * Retrieves currently effective entity from current perspective using generator id
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
@@ -75,6 +86,101 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	{		
 		return getEntityForUpdateWithLockMode(pk, null);				
 	}
+	
+	/**
+	 * Retrieves currently effective entity from current perspective using natural id
+	 * @param pk primary key to be searched
+	 * @return {@link List of BaseTemporalEntity} object
+	 */
+	public List<E> getEntityWithNaturalId(final Serializable pk)
+	{		
+		return getEntityWithNaturalIdForUpdateWithLockMode(pk, null);				
+	}
+	
+	/* Retrieves entity for reading or with pessimistic lock in case of a further update */
+	private E getEntityForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
+	{
+		 if(pk == null)
+		 {
+			return null;
+		 }
+		 Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		 Query selectCurrentDataUsingEffectiveTimeParameter = null;
+		 selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= recordDateStart and sysdate < recordDateEnd and E.id = :id");
+		 selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
+		 if(lockModeType != null)
+		 {
+			selectCurrentDataUsingEffectiveTimeParameter.setLockMode(lockModeType);
+		 }
+		 return (E) selectCurrentDataUsingEffectiveTimeParameter.getSingleResult();		
+	}
+	
+	/* Retrieves entity using @Pid for reading or with pessimistic lock in case of a further update */	
+	private List<E> getEntityWithNaturalIdForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
+	{
+		 Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];		 
+		 if(pk == null)
+		 {
+			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, beType.getSimpleName()); 
+		 }
+		 Map<Class<?>, PidTypeAndName> pidTypesAndNamesMap = PidDetector.getPidTypesAndNamesMap();
+		 PidTypeAndName pidTypeAndName = pidTypesAndNamesMap.get(beType);
+		 if(pidTypeAndName == null)
+		 {
+			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_PID, beType.getSimpleName()); 
+		 }
+		 if(pidTypeAndName.getType() == null || !Serializable.class.isAssignableFrom(pidTypeAndName.getType()))
+		 {
+			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_PID_NOT_SERIALIZABLE_FIELD, beType.getSimpleName(), pidTypeAndName.getType().toString());
+		 }
+		 Query selectCurrentDataUsingEffectiveTimeParameter = null;
+		 Object castedSerializableId = null;
+		 selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= recordDateStart and sysdate < recordDateEnd and E."+ pidTypeAndName.getName() +" = :pid");
+		 try 
+		 {
+			castedSerializableId = pidTypeAndName.getType().getDeclaredConstructor(String.class).newInstance(""+pk.toString());			
+		 } 
+		 catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
+		 {
+			log.error("Can not instantiate type: {} with value: {}, exception detail: {} ", pidTypeAndName.getType().toString(), pk, ExceptionUtils.getStackTrace(e));
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, beType.getSimpleName());
+		 }
+		 if(castedSerializableId == null)
+		 {
+			 log.error("...Where @Pid = null, for type: {} and value: {} that passed to the method.", pidTypeAndName.getType().toString(), pk);
+			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, beType.getSimpleName()); 
+		 }		 
+		 selectCurrentDataUsingEffectiveTimeParameter.setParameter("pid", castedSerializableId);
+		 if(lockModeType != null)
+		 {
+			selectCurrentDataUsingEffectiveTimeParameter.setLockMode(lockModeType);
+		 }
+		 return (List<E>) selectCurrentDataUsingEffectiveTimeParameter.getResultList();		 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Retrieves entity effective at a given time from current perspective
@@ -336,29 +442,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		}
 		return baseEntity;
 	}
-	
-    /* Saves or Updates entity with pessimistic lock in case of update */
-	private E getEntityForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
-	{
-		 if(pk == null)
-		 {
-			return null;
-		 }
-		 Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
-		 Query selectCurrentDataUsingEffectiveTimeParameter = null;
-		 selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd >= sysdate and sysdate >= recordDateStart and sysdate <= recordDateEnd and E.id = :id");
-		 selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
-		 if(lockModeType != null)
-		 {
-			selectCurrentDataUsingEffectiveTimeParameter.setLockMode(lockModeType);
-			return (E) selectCurrentDataUsingEffectiveTimeParameter.getSingleResult();
-		 }
-		 else
-		 {
-			return (E) selectCurrentDataUsingEffectiveTimeParameter.getSingleResult();
-		 }
-	}	
-	
+		
 	@SuppressWarnings("unused")
 	private E setIdusingReflection(E baseEntity, Serializable id) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException
 	{

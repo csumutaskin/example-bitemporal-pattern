@@ -22,7 +22,7 @@ import lombok.Setter;
 import tr.com.poc.temporaldate.core.model.BaseEntity;
 
 /**
- * Super class for objects that are bitemporal entities  
+ * Super class for objects that have bitemporal data structure   
  * 
  * @author umutaskin
  */
@@ -55,6 +55,9 @@ public class BaseBitemporalEntity implements BaseEntity
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate	
 	private Date modifyDate;
+	
+	@Column(name = "IS_DELETED")
+	private Boolean isDeleted;
 	
 	@Column(name = "EFFECTIVE_DATE_START")
 	@Temporal(TemporalType.TIMESTAMP)	

@@ -16,7 +16,7 @@ import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
 public class BitemporalOrganizationDTO extends BaseBitemporalDTO
 {
 	private String name;
-	private String shortName;
+	private Long orgId;
 	private double fineAmount;
 	private double earnAmount;
 }

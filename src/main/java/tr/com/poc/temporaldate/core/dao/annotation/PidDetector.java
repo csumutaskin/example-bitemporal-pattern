@@ -1,10 +1,10 @@
 package tr.com.poc.temporaldate.core.dao.annotation;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -28,8 +28,20 @@ import tr.com.poc.temporaldate.common.Constants;
 @Log4j2
 public class PidDetector 
 {
+	static Map<Class<?>, PidTypeAndName> pidTypesAndNamesMap;
+	
 	private PidDetector()
 	{}
+	
+	/**
+	 * Getter for pidTypesAndNamesMap Map that contains @Pid Metadata information for all @Entity classes that have it.
+	 * 
+	 * @return {@link ConcurrentHashMap}
+	 */
+	public static Map<Class<?>, PidTypeAndName> getPidTypesAndNamesMap()
+	{
+		return pidTypesAndNamesMap;
+	}	
 	
 	/**
 	 * Creates a map where keys are entities with @pid usage, values are where these key entities are used as attributes.
@@ -44,13 +56,13 @@ public class PidDetector
 		Set<Class<?>> notPidEntityClasses = Sets.difference(entityClasses, pidEntityClasses);
 		Map<Class<?>, Set<Class<?>>> pidEntityMap = getPidEntityMap(createEntityColumnMap(entityClasses),pidEntityClasses);
 		log.info("@Entity classes in projects: {}", entityClasses.toString());
-		log.info("@Pid annotated classes among entity classes: {}", pidEntityClasses.toString());
+	    pidTypesAndNamesMap = detectPidColumnNameAndType(pidEntityClasses);
+		log.info("-----@Pid annotated classes among entity classes: {}", pidTypesAndNamesMap.keySet().stream().map(key -> key + "=" + pidTypesAndNamesMap.get(key)).collect(Collectors.joining(", ", "{", "}")));
+		log.info("@Pid types and names in @Entity classes: {}",detectPidColumnNameAndType(pidEntityClasses));
 		log.info("Not @Pid annotated classes among entity classes: {}", notPidEntityClasses.toString());		
 		log.info("In case of auto update with @pid entity, other entities that should also be updated as key value pair: {}",  pidEntityMap.keySet().stream().map(key -> key + "=" + pidEntityMap.get(key)).collect(Collectors.joining(", ", "{", "}")));
 	}
-	
-	
-	
+		
 	/* Detects all entity classes that has @Pid annotation in one of their '@Column'ed fields */
 	public static Set<Class<?>> detectPidAnnotatedClassesAtColumnFields(Set<Class<?>> entityClasses)
 	{
@@ -72,7 +84,7 @@ public class PidDetector
 	
 	public static Map<Class<?>, Set<Class<?>>> createEntityColumnMap(Set<Class<?>> entityClasses)
 	{
-		Map<Class<?>, Set<Class<?>>> entityWithValues = new HashMap<>();
+		Map<Class<?>, Set<Class<?>>> entityWithValues = new ConcurrentHashMap<>();
 		for(Class<?> clazz : entityClasses)			
 		{
 			Field[] fields = clazz.getDeclaredFields();
@@ -101,7 +113,7 @@ public class PidDetector
 	 */
 	public static Map<Class<?>, Set<Class<?>>> getPidEntityMap(Map<Class<?>, Set<Class<?>>> entityColumnMap, Set<Class<?>> pidContainedEntitySet)
 	{
-		Map<Class<?>, Set<Class<?>>> pidMap = new HashMap<>();
+		Map<Class<?>, Set<Class<?>>> pidMap = new ConcurrentHashMap<>();
 		Set<Class<?>> keySet = entityColumnMap.keySet();
 		for(Class<?> key : keySet)
 		{
@@ -110,10 +122,33 @@ public class PidDetector
 		return convertKeyToValueViceVersa(pidMap);			
 	}
 	
+	/**
+	 *  Detects the name and the type of @Pid annotation for each entity in current entity set and stores it in a map 
+	 *  
+	 */
+	public static Map<Class<?>, PidTypeAndName> detectPidColumnNameAndType(Set<Class<?>> pidEntityClasses)
+	{
+		Map<Class<?>, PidTypeAndName> pidNamesAndTypes = new ConcurrentHashMap<>();
+		for(Class<?> clazz : pidEntityClasses)			
+		{
+			Field[] fields = clazz.getDeclaredFields();
+			for(Field field : fields)
+			{
+				if(field.isAnnotationPresent(Pid.class) && field.isAnnotationPresent(Column.class))
+				{
+					PidTypeAndName toAdd = new PidTypeAndName(field.getType(), field.getName());
+					pidNamesAndTypes.put(clazz, toAdd);
+					break;
+				}
+			}
+		}
+		return pidNamesAndTypes;
+	}
+	
 	/* Converts key to values and values to keys */
 	private static Map<Class<?>, Set<Class<?>>> convertKeyToValueViceVersa(Map<Class<?>, Set<Class<?>>> pidMap)
 	{
-		Map<Class<?>, Set<Class<?>>> reverseMap = new HashMap<>();
+		Map<Class<?>, Set<Class<?>>> reverseMap = new ConcurrentHashMap<>();
 		Set<Class<?>> keySet = pidMap.keySet();
 		for(Class<?> key : keySet)
 		{
