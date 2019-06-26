@@ -2,6 +2,7 @@ package tr.com.poc.temporaldate.bitemporalexample.service;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -63,7 +64,9 @@ public class BitemporalOrganizationService  implements BaseService
 	
 	public List<BitemporalOrganizationDTO> getAllOrganizations(Date effectiveDate)
 	{
-		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalId(12);
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.DAY_OF_MONTH, 7);
+		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalIdWithinDates(12, c.getTime(), null);
 		return (List<BitemporalOrganizationDTO>)converter.convertEntityCollectionToDTOCollection(entityWithNaturalId);
 		/*
 		return bitemporalOrganizationDao.getDTOListAtEffectiveDate(BitemporalOrganizationDTOConverter.class, effectiveDate);

@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -49,6 +48,7 @@ import tr.com.poc.temporaldate.core.util.comparator.SortBaseEntityByEffectiveSta
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
+//TODO: Append isDeleted = 0 condition to all queries...
 public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 {
 	private static final String NO_SINGLE_RESULT_EXC_STRING = "Returning null since NoResultException is thrown and caught";
@@ -82,19 +82,36 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
-	public E getEntity(final Serializable pk)
+	public E getEntityWithId(final Serializable pk)
 	{		
 		return getEntityForUpdateWithLockMode(pk, null);				
 	}
 	
 	/**
-	 * Retrieves currently effective entity from current perspective using natural id
-	 * @param pk primary key to be searched
-	 * @return {@link List of BaseTemporalEntity} object
+	 * Retrieves an entity list (or a single entity but in an ArrayList Collection) that match the given date criteria
+	 * @param pk - mandatory - natural key -which is marked with @Pid annotation- to be searched among the given entity. 
+	 * Natural key is normally the id of the entity, but this time it can be a repeatable tuple in a database table
+	 * @param perspectiveDate if null get all entities that fit the given effectiveDate with given natural id, if a valid date given, returns the tuples that are valid at that perspective date  
+	 * @param effectiveDate if null get all entities that fit the given perspective Date with given natural id, if a valid date given, returns the tuples that are valid at that effective date 
+	 * @return {@link List of BaseTemporalEntity} object collection that match the given criteria
 	 */
-	public List<E> getEntityWithNaturalId(final Serializable pk)
+	public List<E> getEntityWithNaturalIdWithinDates(final Serializable pk, Date perspectiveDate, Date effectiveDate)
 	{		
-		return getEntityWithNaturalIdForUpdateWithLockMode(pk, null);				
+		return getEntityWithNaturalIdForUpdateWithLockMode(pk, null, perspectiveDate, effectiveDate);				
+	}
+	
+	/**
+	 * Retrieves an entity list (or a single entity but in an ArrayList Collection) that match the given date criteria with pessimistic lock, for update 
+	 * @param pk - mandatory - natural key -which is marked with @Pid annotation- to be searched among the given entity. 
+	 * Natural key is normally the id of the entity, but this time it can be a repeatable tuple in a database table
+	 * @param perspectiveDate, if null get all entities that fit the given effectiveDate with given natural id, if a valid date given, returns the tuples that are valid at that perspective date  
+	 * @param effectiveDate, if null get all entities that fit the given perspective Date with given natural id, if a valid date given, returns the tuples that are valid at that effective date 
+	 * @return {@link List of BaseTemporalEntity} object
+	 * 
+	 */
+	public List<E> getEntityForUpdateWithNaturalId(final Serializable pk, Date perspectiveDate, Date effectiveDate)
+	{		
+		return getEntityWithNaturalIdForUpdateWithLockMode(pk, LockModeType.PESSIMISTIC_WRITE, perspectiveDate, effectiveDate);				
 	}
 	
 	/* Retrieves entity for reading or with pessimistic lock in case of a further update */
@@ -116,46 +133,83 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/* Retrieves entity using @Pid for reading or with pessimistic lock in case of a further update */	
-	private List<E> getEntityWithNaturalIdForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType)
+	private List<E> getEntityWithNaturalIdForUpdateWithLockMode(final Serializable pk, LockModeType lockModeType, Date perspectiveDate, Date effectiveDate)
 	{
 		 Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];		 
 		 if(pk == null)
 		 {
 			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, beType.getSimpleName()); 
 		 }
-		 Map<Class<?>, PidTypeAndName> pidTypesAndNamesMap = PidDetector.getPidTypesAndNamesMap();
-		 PidTypeAndName pidTypeAndName = pidTypesAndNamesMap.get(beType);
-		 if(pidTypeAndName == null)
-		 {
-			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_PID, beType.getSimpleName()); 
-		 }
-		 if(pidTypeAndName.getType() == null || !Serializable.class.isAssignableFrom(pidTypeAndName.getType()))
-		 {
-			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_PID_NOT_SERIALIZABLE_FIELD, beType.getSimpleName(), pidTypeAndName.getType().toString());
-		 }
-		 Query selectCurrentDataUsingEffectiveTimeParameter = null;
-		 Object castedSerializableId = null;
-		 selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery("SELECT E FROM " + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= recordDateStart and sysdate < recordDateEnd and E."+ pidTypeAndName.getName() +" = :pid");
-		 try 
-		 {
+		 PidTypeAndName pidTypeAndName = PidDetector.getPidTypesAndNamesMap().get(beType);
+		 Query query = queryGeneratorWithPidAndDates(beType, lockModeType, pidTypeAndName, perspectiveDate, effectiveDate, pk);
+		 return (List<E>) query.getResultList();		 
+	}
+	
+	/* Internal method used for getEntityWithNaturalIdForUpdateWithLockMode()'s query parameter setting only */
+	private Query queryGeneratorWithPidAndDates(Class<?> entityClazz, LockModeType lockModeType, PidTypeAndName pidTypeAndName, Date perspectiveDate, Date effectiveDate, Serializable pk)
+	{
+		String entityClassName = entityClazz.getSimpleName();
+		if(pidTypeAndName == null)
+		{
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_PID, entityClassName); 
+		}
+		if(pidTypeAndName.getType() == null || !Serializable.class.isAssignableFrom(pidTypeAndName.getType()))
+		{
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PID_NOT_SERIALIZABLE_FIELD, entityClassName, pidTypeAndName.getType().toString());
+		}
+				
+		boolean perspectiveDatePresent =  perspectiveDate != null;
+		boolean effectiveDatePresent = effectiveDate != null;
+		
+		StringBuilder queryStr = new StringBuilder("SELECT E FROM " + entityClassName + " E WHERE E."+ pidTypeAndName.getName() +" = :pid");
+		if(perspectiveDatePresent)
+		{
+			queryStr.append(" AND :perspectiveDate >= perspectiveDateStart and :perspectiveDate < perspectiveDateEnd");			
+		}
+		else
+		{
+			queryStr.append(" AND sysdate >= perspectiveDateStart and sysdate < perspectiveDateEnd");
+		}
+		if(effectiveDatePresent)
+		{
+			queryStr.append(" AND E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd > :effectiveDate");
+		}
+		else
+		{
+			queryStr.append(" AND E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate");
+		}
+		
+		Query query = entityManager.createQuery(queryStr.toString());
+		
+		Object castedSerializableId = null;
+		try 
+		{
 			castedSerializableId = pidTypeAndName.getType().getDeclaredConstructor(String.class).newInstance(""+pk.toString());			
-		 } 
-		 catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
-		 {
+		} 
+		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
+		{
 			log.error("Can not instantiate type: {} with value: {}, exception detail: {} ", pidTypeAndName.getType().toString(), pk, ExceptionUtils.getStackTrace(e));
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, beType.getSimpleName());
-		 }
-		 if(castedSerializableId == null)
-		 {
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, entityClassName);
+		}
+		if(castedSerializableId == null)
+		{
 			 log.error("...Where @Pid = null, for type: {} and value: {} that passed to the method.", pidTypeAndName.getType().toString(), pk);
-			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, beType.getSimpleName()); 
-		 }		 
-		 selectCurrentDataUsingEffectiveTimeParameter.setParameter("pid", castedSerializableId);
-		 if(lockModeType != null)
-		 {
-			selectCurrentDataUsingEffectiveTimeParameter.setLockMode(lockModeType);
-		 }
-		 return (List<E>) selectCurrentDataUsingEffectiveTimeParameter.getResultList();		 
+			 throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_WITH_NULL_PID, entityClassName); 
+		}	
+		query.setParameter("pid", castedSerializableId);
+		if(perspectiveDatePresent)
+		{
+			query.setParameter("perspectiveDate", perspectiveDate);
+		}
+		if(effectiveDatePresent)
+		{
+			query.setParameter("effectiveDate", effectiveDate);
+		}
+		if(lockModeType != null)
+		{
+			query.setLockMode(lockModeType);
+		}
+		return query;
 	}
 	
 	
@@ -466,8 +520,8 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	/* Sets an effective (actual) start date and end date for the current tuple */
 	private E enrichDateColumns(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
 	{
-		baseEntity.setRecordDateStart(new Date());//TODO: Audit create date alinmali...
-		baseEntity.setRecordDateEnd(END_OF_SOFTWARE);
+		baseEntity.setPerspectiveDateStart(new Date());
+		baseEntity.setPerspectiveDateEnd(END_OF_SOFTWARE);
 		baseEntity.setEffectiveDateStart(effectiveStartDate);
 		baseEntity.setEffectiveDateEnd(effectiveEndDate);
 		return baseEntity;

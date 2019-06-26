@@ -15,6 +15,7 @@ import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 import tr.com.poc.temporaldate.core.util.DateUtils;
 import tr.com.poc.temporaldate.core.util.StringUtils;
+import tr.com.poc.temporaldate.core.util.Trim;
 
 /**
  * A base converter that automates "record date" and "effective date" operations on bi-temporal objects' conversion
@@ -29,21 +30,11 @@ import tr.com.poc.temporaldate.core.util.StringUtils;
 public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D extends BaseBitemporalDTO> implements BaseConverter<E,D> 
 {
 	/**
-	 * <b>if true:</b> open period -currently the beginning day of month- is calculated, </br> <b>else:</b> now is used as effective start date in conversion process 
+	 * While converting an entity to DTO, if no effective begin date is set manually by the developer, the following rules are applied to the conversion process:</br> 
+	 * <b>if true:</b> open period <i>-currently the beginning day of month-</i> is calculated, </br> <b>else:</b> now is used as effective start date in conversion process 
 	 * @return boolean to calculate the effective begin date
 	 */
-	public abstract boolean overrideEffectiveStartToCurrentBeginPeriodAlways();
-	
-	/**
-	 * This method indicates whether any tuple inserted to database through this converter should have an infinite effective date to the end of the software or not
-	 * if true is returned in this method by the developer, any inserted tuple lasts till the end of the software (e.g. year "2100") before this end date is updated by any other insertion to the same table
-	 * if false is returned developer take cares of the effective end date of the tuple
-	 * Use it responsibly :) The risk totally belongs to you if you return "true" here... on the other hand if you want a full automation on effective end date for any inserted tuple, you can use it freely.
-	 *   
-	 * @return true if developer wants to always auto set the <b>"effectiveEndDate"</b> as infinitive, 
-	 * false if it is always to be set manually by the developer, or wanted to be left as null in insertions after using the conversion utility of this converter 
-	 */
-	public abstract boolean overrideEffectiveEndToEndofSoftwareAlways(); 
+	public abstract Trim overrideEffectiveStartToCurrentBeginPeriodAlways();	
 	
 	/**
 	 * Converts DTO object to the related Entity object
@@ -61,26 +52,26 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	public abstract D convertEntityToDTO(E be);
 	
 	/*
-	 * If record dates are still null on entity after convertDTOtoEntity method is called, 
+	 * If perspective dates are still null on entity after convertDTOtoEntity method is called, 
 	 * this method fills as below
 	 * 
 	 * perspective begin: "now" 
 	 * perspective end: end of software 
 	 */	
-	private E enrichEntityRecordDates(E entityToEnrich, Date now)
+	private E enrichEntityPerspectiveDates(E entityToEnrich, Date now)
 	{		
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);
-		if(entityToEnrich.getRecordDateStart() == null)
+		if(entityToEnrich.getPerspectiveDateStart() == null)
 		{
 			if(now == null)
 			{
 				now = new Date();
 			}
-			entityToEnrich.setRecordDateStart(now);
+			entityToEnrich.setPerspectiveDateStart(now);
 		}
-		if(entityToEnrich.getRecordDateEnd() == null)
+		if(entityToEnrich.getPerspectiveDateEnd() == null)
 		{
-			entityToEnrich.setRecordDateEnd(DateUtils.END_OF_SOFTWARE);
+			entityToEnrich.setPerspectiveDateEnd(DateUtils.END_OF_SOFTWARE);
 		}
 		return entityToEnrich;
 	}
@@ -97,13 +88,13 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);	
 		if(entityToEnrich.getEffectiveDateStart() == null)
 		{
-			if(now == null || overrideEffectiveStartToCurrentBeginPeriodAlways())
+			if(now == null)
 			{
-				now = DateUtils.getNowOrGivenOrOpenPeriodStartDate(!overrideEffectiveStartToCurrentBeginPeriodAlways());
+				now = DateUtils.getNowOrGivenOrOpenPeriodStartDate(overrideEffectiveStartToCurrentBeginPeriodAlways());
 			}
 			entityToEnrich.setEffectiveDateStart(now);
 		}
-		if(entityToEnrich.getEffectiveDateEnd() == null || overrideEffectiveEndToEndofSoftwareAlways())
+		if(entityToEnrich.getEffectiveDateEnd() == null)
 		{
 			entityToEnrich.setEffectiveDateEnd(DateUtils.END_OF_SOFTWARE);
 		}
@@ -111,28 +102,16 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	}
 	
 	/**
-	 * Sets dto's effective interval -if still null- by using the original entity's effective interval
-	 * @param dtoToEnrich destination {@link BaseBitemporalDTO} object to be set
-	 * @param sourceEntity source {@link BaseBitemporalEntity} to be converted from
-	 * @return {@link BaseBitemporalDTO} given in method parameter set: 1st parameter enriched with entities effective interval
+	 * Sets DTO's effective start and end, perspective start and end dates using the entities related date columns
+	 * 
+	 * @param entityThatWillEnrich object used to enrich dto
 	 */
-	public final D enrichDTOEffectiveDates(D dtoToEnrich, E sourceEntity)
-	{		
-		if(sourceEntity == null)//null is expected on enriched date columns so just return the object
-		{
-			log.info("while enriching DTO, since source entity is null, dto will return immediately without setting any values from converter. DTO is: {}", dtoToEnrich);
-			return dtoToEnrich;
-		}
-		dtoToEnrich = initializeObjectIfNull(dtoToEnrich);	
-		if(dtoToEnrich.getEffectiveDateStart() == null)
-		{
-			dtoToEnrich.setEffectiveDateStart(sourceEntity.getEffectiveDateStart());
-		}
-		if(dtoToEnrich.getEffectiveDateEnd() == null)
-		{
-			dtoToEnrich.setEffectiveDateEnd(sourceEntity.getEffectiveDateEnd());
-		}
-		return dtoToEnrich;
+	public void enrichDTODates(D dtoToEnrich, E entityThatWillEnrich)
+	{
+		dtoToEnrich.setEffectiveDateStart(entityThatWillEnrich.getEffectiveDateStart());
+		dtoToEnrich.setEffectiveDateEnd(entityThatWillEnrich.getEffectiveDateEnd());
+		dtoToEnrich.setPerspectiveDateStart(entityThatWillEnrich.getPerspectiveDateStart());
+		dtoToEnrich.setPerspectiveDateEnd(entityThatWillEnrich.getPerspectiveDateEnd());
 	}
 	
 	/**
@@ -146,9 +125,15 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 			return null;	
 		}
 		E toReturn = convertDTOToEntity(bd);
-		Date now = new Date();
-		toReturn = enrichEntityRecordDates(toReturn, now);
-		return enrichEntityEffectiveDates(toReturn, now);		
+		Date currentNow = new Date();
+		Date effectivenow = currentNow; 
+		Trim trimType = overrideEffectiveStartToCurrentBeginPeriodAlways();
+		if(trimType != null && trimType != Trim.NOW)//override now
+		{
+			effectivenow = DateUtils.getNowOrGivenOrOpenPeriodStartDate(trimType);
+		}
+		toReturn = enrichEntityPerspectiveDates(toReturn, currentNow);
+		return enrichEntityEffectiveDates(toReturn, effectivenow);		
 	}
 	
 	/**
@@ -157,9 +142,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	 */
 	public final D convertToDTO(E be)
 	{
-		D toReturn = convertEntityToDTO(be);
-		toReturn = enrichDTOEffectiveDates(toReturn, be);
-		return toReturn;
+		return convertEntityToDTO(be);
 	}
 	
 	public Collection<D> convertEntityCollectionToDTOCollection(Collection<E> entityList)
@@ -213,29 +196,6 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 			String exceptionMessage = "Exception in creating an instance of a null given entity object in a converter. Detail is: " + ExceptionUtils.getStackTrace(e);	
 			log.error(exceptionMessage);
 			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION, e);				
-		}
-		return toReturn;
-	}
-	
-	private D initializeObjectIfNull(D toInitialize)
-	{		
-		D toReturn = toInitialize;
-		if(toReturn != null)
-		{
-			return toReturn;
-		}
-		Class<D> bdType = (Class<D>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-		Class<?> clazz;
-		try 
-		{
-			clazz = Class.forName(bdType.getName());
-			toReturn = (D)clazz.getDeclaredConstructor().newInstance();
-		} 
-		catch (Exception e) 
-		{
-			String exceptionMessage = "Exception in creating an instance of a null given DTO object in a converter. Detail is: " + ExceptionUtils.getStackTrace(e);	
-			log.error(exceptionMessage);
-			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION, e);				
 		}
 		return toReturn;
 	}

@@ -24,8 +24,8 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 @AllArgsConstructor 
 public class BaseBitemporalDTO implements BaseDTO
 {
-	private Date recordDateStart;
-	private Date recordDateEnd;
+	private Date perspectiveDateStart;
+	private Date perspectiveDateEnd;
 	private Date effectiveDateStart;
 	private Date effectiveDateEnd;
 }

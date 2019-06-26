@@ -29,6 +29,7 @@ public class ExceptionHandlerFilter extends GenericFilterBean
 		}
 		catch(Exception e)
 		{
+			//TODO: Convert to custom output format for unexpectedly thrown exceptions
 			e.printStackTrace();
 		}
 	}

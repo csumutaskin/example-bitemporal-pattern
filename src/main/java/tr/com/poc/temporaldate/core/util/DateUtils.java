@@ -43,25 +43,55 @@ public final class DateUtils
 	}
 	
 	/** 
-	 * Returns "now" or calculates and returns the beginning day of current month 
+	 * Returns "now" or calculates and returns the beginning of the given period which is trimmed using trim type
 	 * </br> <b>e.g.</b> <i>03 - 01 -2019 for any date in March 2019</i> 	
-	 * @param alwaysGetNowAsDate </br>if <b><i>true</i></b> "now" is returned, </br><b><i>else</i></b> start day of current month is returned </br><b>e.g.</b> today is the 16th of March -> returns 1st of March with current Year
-	 *        </br> Attention: <i>false flow can be overridden according to different necessities</i>
+	 * @param alwaysGetNowAsDate true: now is returned
+	 * @param trimType 
 	 * @return Date needed (now or monthly period begin)
 	 */
-	//TODO: Temporary method, will be filled later using the new business requirements.
-	public static Date getNowOrGivenOrOpenPeriodStartDate(boolean alwaysGetNowAsDate)
+	public static Date getNowOrGivenOrOpenPeriodStartDate(Trim trimType)
 	{
-		if(alwaysGetNowAsDate)
-		{
-			return new Date();
-		}
 		Calendar c = Calendar.getInstance();
-		c.set(Calendar.DAY_OF_MONTH, 1);		
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
+		switch(trimType)
+		{
+			case MILISECOND:
+				c.set(Calendar.MILLISECOND, 0);
+				break;
+			case SECOND:
+				c.set(Calendar.SECOND, 0);
+				c.set(Calendar.MILLISECOND, 0);
+				break;
+			case MINUTE:
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
+				c.set(Calendar.MILLISECOND, 0);
+				break;
+			case HOUR:
+				c.set(Calendar.HOUR_OF_DAY, 0);
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
+				c.set(Calendar.MILLISECOND, 0);
+				break;
+			case DAY:
+				c.set(Calendar.DAY_OF_MONTH, 1);		
+				c.set(Calendar.HOUR_OF_DAY, 0);
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
+				c.set(Calendar.MILLISECOND, 0);
+				break;
+			case MONTH:
+				c.set(Calendar.MONTH, Calendar.JANUARY);
+				c.set(Calendar.DAY_OF_MONTH, 1);		
+				c.set(Calendar.HOUR_OF_DAY, 0);
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
+				c.set(Calendar.MILLISECOND, 0);
+				break;
+			case NOW:
+			default:
+				//return now.
+				break;
+		}
 		return c.getTime();
 	}
 }

@@ -44,6 +44,7 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
 @ControllerAdvice
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Log4j2
+//TODO: refactor, her methodun bası tekrar ediyor...
 public class RestExceptionHandler 
 {
 	@Resource(name = "applicationExceptionMessageSource")
@@ -59,11 +60,14 @@ public class RestExceptionHandler
 	 * @return {@link ResponseEntity}
 	 */
 	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessException(BusinessException bexc, Locale locale) 
+	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessException(BusinessException bexc) 
 	{
-		String errorMessage = businessExceptionMessageSource.getMessage(bexc.getExceptionCode(), bexc.getExceptionMessageParameters(), locale);
-		log.error("user's {} call has an (business) erronous response, you can enable debug mode for detailled logging. Exception detail is: {}", getThreadContextKey(MDC_URI), errorMessage);
-		return prepareResponse(null, HttpStatus.BAD_REQUEST, BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), errorMessage);		
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...
+		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
+		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
+		ExceptionLog errorMessageExplanations = new ExceptionLog(businessExceptionMessageSource.getMessage(bexc.getExceptionCode() + "|GUI", bexc.getExceptionMessageParameters(), defaultMessage ,locale), businessExceptionMessageSource.getMessage(bexc.getExceptionCode() + "|LOG", bexc.getExceptionMessageParameters(), null ,locale));
+		log.error("user's {} call has an (business) erronous response, you can enable debug mode for detailled logging. Exception detail is: {}", getThreadContextKey(MDC_URI), "[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG:" + errorMessageExplanations.getServerLog() + "]");
+		return prepareResponse(null, HttpStatus.BAD_REQUEST, BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), errorMessageExplanations.getGuiLog());		
 	}
 
 	/**
@@ -112,7 +116,7 @@ public class RestExceptionHandler
 	 * @return {@link ResponseEntity}
 	 */
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc, Locale locale) 
+	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc) 
 	{
 		HttpHeaders headers = new HttpHeaders();
 		
@@ -122,9 +126,12 @@ public class RestExceptionHandler
 			headers.setContentType(MediaType.APPLICATION_JSON);
 		}
 		
-		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
-		log.error("user's {} call got an UNEXPECTED EXCEPTION (not converted to known exceptions), you can enable debug logs for more information, detail is: {}", getThreadContextKey(MDC_URI), ExceptionUtils.getMessage(exc));
-		return prepareResponse(headers, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + UNEXPECTED, errorMessage);		
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...
+		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
+		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
+		ExceptionLog errorMessageExplanations = new ExceptionLog(applicationExceptionMessageSource.getMessage(UNEXPECTED+ "|GUI", null, defaultMessage ,locale), System.lineSeparator() + "UNHANDLED EXCEPTION DETAIL: " + ExceptionUtils.getStackTrace(exc));
+		log.error("user's {} call got an UNEXPECTED EXCEPTION (not converted to known exceptions), you can enable debug logs for more information, detail is: {}", getThreadContextKey(MDC_URI), errorMessageExplanations.getServerLog());
+		return prepareResponse(headers, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + UNEXPECTED, errorMessageExplanations.getGuiLog());		
 	}
 	
 	/* Replaces ThreadContext value with "N.A." if the current request URL does not get through AuditLoggingFilter to fill ThreadContext map */

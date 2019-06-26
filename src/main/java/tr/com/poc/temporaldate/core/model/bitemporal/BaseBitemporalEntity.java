@@ -67,13 +67,13 @@ public class BaseBitemporalEntity implements BaseEntity
 	@Temporal(TemporalType.TIMESTAMP)	
 	private Date effectiveDateEnd;
 	
-	@Column(name = "RECORD_DATE_START")
+	@Column(name = "PERSPECTIVE_DATE_START")
 	@Temporal(TemporalType.TIMESTAMP)	
-	private Date recordDateStart;
+	private Date perspectiveDateStart;
 	
-	@Column(name = "RECORD_DATE_END")
+	@Column(name = "PERSPECTIVE_DATE_END")
 	@Temporal(TemporalType.TIMESTAMP)	
-	private Date recordDateEnd;
+	private Date perspectiveDateEnd;
 	
 	@Version
 	private int version;
