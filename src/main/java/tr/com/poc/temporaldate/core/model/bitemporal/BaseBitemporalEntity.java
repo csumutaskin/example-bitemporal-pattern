@@ -1,5 +1,6 @@
 package tr.com.poc.temporaldate.core.model.bitemporal;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -47,33 +48,33 @@ public class BaseBitemporalEntity implements BaseEntity
 	private String modifyUser;
 		
 	@Column(name = "CREATE_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
+	//@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate	
-	private Date createDate;//this is the record date
+	private LocalDateTime createDate;//this is the record date
 		
 	@Column(name = "MODIFY_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
+	//@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate	
-	private Date modifyDate;
+	private LocalDateTime modifyDate;
 	
 	@Column(name = "IS_DELETED")
 	private Boolean isDeleted;
 	
 	@Column(name = "EFFECTIVE_DATE_START")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date effectiveDateStart;
+	//@Temporal(TemporalType.TIMESTAMP)	
+	private LocalDateTime effectiveDateStart;
 	
 	@Column(name = "EFFECTIVE_DATE_END")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date effectiveDateEnd;
+	//@Temporal(TemporalType.TIMESTAMP)	
+	private LocalDateTime effectiveDateEnd;
 	
 	@Column(name = "PERSPECTIVE_DATE_START")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date perspectiveDateStart;
+	//@Temporal(TemporalType.TIMESTAMP)	
+	private LocalDateTime perspectiveDateStart;
 	
 	@Column(name = "PERSPECTIVE_DATE_END")
-	@Temporal(TemporalType.TIMESTAMP)	
-	private Date perspectiveDateEnd;
+	//@Temporal(TemporalType.TIMESTAMP)	
+	private LocalDateTime perspectiveDateEnd;
 	
 	@Version
 	private int version;

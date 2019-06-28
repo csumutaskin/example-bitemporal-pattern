@@ -66,7 +66,7 @@ public class RestExceptionHandler
 		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
 		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
 		ExceptionLog errorMessageExplanations = new ExceptionLog(businessExceptionMessageSource.getMessage(bexc.getExceptionCode() + "|GUI", bexc.getExceptionMessageParameters(), defaultMessage ,locale), businessExceptionMessageSource.getMessage(bexc.getExceptionCode() + "|LOG", bexc.getExceptionMessageParameters(), null ,locale));
-		log.error("user's {} call has an (business) erronous response, you can enable debug mode for detailled logging. Exception detail is: {}", getThreadContextKey(MDC_URI), "[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG:" + errorMessageExplanations.getServerLog() + "]");
+		log.error("user's {} call has an (business) erronous response, you can enable debug mode for detailed logging. Exception detail is: {}", getThreadContextKey(MDC_URI), "[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG:" + errorMessageExplanations.getServerLog() + "]");
 		return prepareResponse(null, HttpStatus.BAD_REQUEST, BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), errorMessageExplanations.getGuiLog());		
 	}
 

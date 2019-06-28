@@ -1,6 +1,7 @@
 package tr.com.poc.temporaldate.core.converter;
 
 import java.lang.reflect.ParameterizedType;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -58,14 +59,15 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	 * perspective begin: "now" 
 	 * perspective end: end of software 
 	 */	
-	private E enrichEntityPerspectiveDates(E entityToEnrich, Date now)
+	//private E enrichEntityPerspectiveDates(E entityToEnrich, Date now)
+	private E enrichEntityPerspectiveDates(E entityToEnrich, LocalDateTime now)
 	{		
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);
 		if(entityToEnrich.getPerspectiveDateStart() == null)
 		{
 			if(now == null)
 			{
-				now = new Date();
+				now = LocalDateTime.now();
 			}
 			entityToEnrich.setPerspectiveDateStart(now);
 		}
@@ -83,7 +85,8 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	 * effective begin: "now" or end of period according to overridden getNowOrGivenOrOpenPeriodStartDate() method's return value
 	 * effective end: end of software 
 	 */	
-	private E enrichEntityEffectiveDates(E entityToEnrich, Date now)
+	//private E enrichEntityEffectiveDates(E entityToEnrich, Date now)
+	private E enrichEntityEffectiveDates(E entityToEnrich, LocalDateTime now)
 	{			
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);	
 		if(entityToEnrich.getEffectiveDateStart() == null)
@@ -125,15 +128,17 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 			return null;	
 		}
 		E toReturn = convertDTOToEntity(bd);
-		Date currentNow = new Date();
-		Date effectivenow = currentNow; 
+		//Date currentNow = new Date();
+		LocalDateTime currentNow = LocalDateTime.now();
+		//Date effectivenow = currentNow;
+		LocalDateTime effectiveNow = currentNow;
 		Trim trimType = overrideEffectiveStartToCurrentBeginPeriodAlways();
 		if(trimType != null && trimType != Trim.NOW)//override now
 		{
-			effectivenow = DateUtils.getNowOrGivenOrOpenPeriodStartDate(trimType);
+			effectiveNow = DateUtils.getNowOrGivenOrOpenPeriodStartDate(trimType);
 		}
 		toReturn = enrichEntityPerspectiveDates(toReturn, currentNow);
-		return enrichEntityEffectiveDates(toReturn, effectivenow);		
+		return enrichEntityEffectiveDates(toReturn, effectiveNow);		
 	}
 	
 	/**

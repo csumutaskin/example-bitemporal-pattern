@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -314,6 +315,20 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		return toReturn;
 	}
 	
+//	/**
+//	 * Saves or updates (with flush) entity from current perspective
+//	 * @param id primary key to be updated (if null data will be persisted)
+//	 * @param baseEntity entity to be saved or updated
+//	 * @param effectiveStartDate actual start date where the tuple is active
+//	 * @param effectiveEndDate actual final date where the tuple is active
+//	 * @param mergeAndRearrangeDates if true no tuple having the same id is deleted, instead the given parameters withing given date range is merged with the older same id tuple in the timeline
+//	 * @return {@link BaseTemporalEntity} that is saved or updated
+//	 */
+//	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+//	{		
+//		return saveOrUpdateEntityWithFlushOption(id, baseEntity, true, effectiveStartDate, effectiveEndDate);
+//	}
+	
 	/**
 	 * Saves or updates (with flush) entity from current perspective
 	 * @param id primary key to be updated (if null data will be persisted)
@@ -323,7 +338,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param mergeAndRearrangeDates if true no tuple having the same id is deleted, instead the given parameters withing given date range is merged with the older same id tuple in the timeline
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+	public E saveOrUpdateEntityWithFlush(Serializable id, E baseEntity, LocalDateTime effectiveStartDate, LocalDateTime effectiveEndDate)
 	{		
 		return saveOrUpdateEntityWithFlushOption(id, baseEntity, true, effectiveStartDate, effectiveEndDate);
 	}
@@ -366,7 +381,8 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
  	 * @param mergeAndRearrangeDates if true no tuple having the same id is deleted, instead the given parameters withing given date range is merged with the older same id tuple in the timeline
 	 * @return {@link BaseTemporalEntity} that is saved or updated
 	 */
-    public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+    //public E saveorUpdateEntity(Serializable id, E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+	public E saveorUpdateEntity(Serializable id, E baseEntity, LocalDateTime effectiveStartDate, LocalDateTime effectiveEndDate)
     {
     	return saveOrUpdateEntityWithFlushOption(id, baseEntity, false, effectiveStartDate, effectiveEndDate);
     }
@@ -392,7 +408,8 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param pk primary key to be searched
 	 * @return {@link BaseTemporalEntity} object
 	 */
-	public Collection<E> getAllEntitiesThatIntersectBeginAndEndDate(final Serializable pk, Date effectiveStartDate, Date effectiveEndDate)
+	//public Collection<E> getAllEntitiesThatIntersectBeginAndEndDate(final Serializable pk, Date effectiveStartDate, Date effectiveEndDate)
+    public Collection<E> getAllEntitiesThatIntersectBeginAndEndDate(final Serializable pk, LocalDateTime effectiveStartDate, LocalDateTime effectiveEndDate)
 	{
 		Collection<E> toReturnCollection = new ArrayList<>();
 		if(pk == null)
@@ -458,8 +475,10 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
     /* Saves or Updates entity */
-	private E saveOrUpdateEntityWithFlushOption(Serializable pk, E baseEntity, boolean flushNeeded, Date effectiveStartDate, Date effectiveEndDate)
+	//private E saveOrUpdateEntityWithFlushOption(Serializable pk, E baseEntity, boolean flushNeeded, Date effectiveStartDate, Date effectiveEndDate)
+	private E saveOrUpdateEntityWithFlushOption(Serializable pk, E baseEntity, boolean flushNeeded, LocalDateTime effectiveStartDate, LocalDateTime effectiveEndDate)
 	{	
+		//Collection<E> entitiesIntersected = getAllEntitiesThatIntersectBeginAndEndDate(pk, effectiveStartDate, effectiveEndDate);
 		Collection<E> entitiesIntersected = getAllEntitiesThatIntersectBeginAndEndDate(pk, effectiveStartDate, effectiveEndDate);
 		if(CollectionUtils.isEmpty(entitiesIntersected))
 		{
@@ -517,13 +536,35 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		return baseEntity;
 	}
 	
+//	/* Sets an effective (actual) start date and end date for the current tuple */
+//	private E enrichDateColumns(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+//	{
+//		baseEntity.setPerspectiveDateStart(new Date());
+//		baseEntity.setPerspectiveDateEnd(END_OF_SOFTWARE);
+//		baseEntity.setEffectiveDateStart(effectiveStartDate);
+//		baseEntity.setEffectiveDateEnd(effectiveEndDate);
+//		return baseEntity;
+//	}
+	
 	/* Sets an effective (actual) start date and end date for the current tuple */
-	private E enrichDateColumns(E baseEntity, Date effectiveStartDate, Date effectiveEndDate)
+	private E enrichDateColumns(E baseEntity, LocalDateTime effectiveStartDate, LocalDateTime effectiveEndDate)
 	{
-		baseEntity.setPerspectiveDateStart(new Date());
-		baseEntity.setPerspectiveDateEnd(END_OF_SOFTWARE);
-		baseEntity.setEffectiveDateStart(effectiveStartDate);
-		baseEntity.setEffectiveDateEnd(effectiveEndDate);
+		if(baseEntity.getPerspectiveDateStart() == null)
+		{
+			baseEntity.setPerspectiveDateStart(LocalDateTime.now());
+		}
+		if(baseEntity.getPerspectiveDateEnd() == null)
+		{
+			baseEntity.setPerspectiveDateEnd(END_OF_SOFTWARE);
+		}
+		if(baseEntity.getEffectiveDateStart() == null)
+		{
+			baseEntity.setEffectiveDateStart(effectiveStartDate);
+		}
+		if(baseEntity.getEffectiveDateEnd() == null)
+		{
+			baseEntity.setEffectiveDateEnd(effectiveEndDate);
+		}
 		return baseEntity;
 	}
 	

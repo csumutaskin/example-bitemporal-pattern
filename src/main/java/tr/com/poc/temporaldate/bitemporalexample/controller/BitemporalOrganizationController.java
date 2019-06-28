@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +38,7 @@ public class BitemporalOrganizationController
 	@Autowired
 	private BitemporalOrganizationService bitemporalOrganizationService;
 	
-	@GetMapping(value = "/getAll" , produces= {"application/json","application/xml"})
+	@GetMapping(value = "/getAll" , produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> getOrganizationList()
 	{		
 		//List<BitemporalOrganizationDTO> allOrganizations = bitemporalOrganizationService.getAllOrganizations(new Date());
@@ -49,7 +50,7 @@ public class BitemporalOrganizationController
 	}
 	
 	//TODO: Gereksiz sil....
-	@GetMapping(value = "/getAll2" , produces= {"application/json","application/xml"})
+	@GetMapping(value = "/getAll2" , produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> getOrganizationItem()
 	{		
 		//List<BitemporalOrganizationDTO> allOrganizations = bitemporalOrganizationService.getAllOrganizations(new Date());
@@ -63,13 +64,13 @@ public class BitemporalOrganizationController
 	 * @param toUpdate
 	 * @return
 	 */
-	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
+	@PutMapping(value = "/update/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody BitemporalOrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {"application/json"}, produces= {"application/json"})
+	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Boolean> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSave)
 	{			
 		if(!id.isPresent() || "undefined".equalsIgnoreCase(id.get()))

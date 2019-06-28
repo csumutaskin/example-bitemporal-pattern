@@ -1,7 +1,5 @@
 package tr.com.poc.temporaldate.core.exception;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 
 /**
@@ -13,6 +11,5 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
  *
  */
 @SuppressWarnings("serial")
-@XmlRootElement
 public class BaseExceptionDTO implements BaseDTO 
 {}

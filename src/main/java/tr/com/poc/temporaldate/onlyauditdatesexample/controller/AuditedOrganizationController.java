@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,19 +33,19 @@ public class AuditedOrganizationController
 	@Autowired
 	private AuditedOrganizationService versionedOrganizationService;
 	
-	@GetMapping(value = "/getAll" , produces= {"application/json"})
+	@GetMapping(value = "/getAll" , produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<List<TemporalOrganizationDTO>> getOrganizationList()
 	{			
 		return new ResponseEntity<>(versionedOrganizationService.getAllOrganizations(), HttpStatus.OK);
 	}
 	
-	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
+	@PutMapping(value = "/update/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody TemporalOrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(versionedOrganizationService.updateVersionedOrganization(id, toUpdate), HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/save" , consumes = {"application/json"}, produces= {"application/json"})
+	@PostMapping(value = "/save" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Boolean> saveOrganization(@RequestBody TemporalOrganizationDTO toSave)
 	{	
 		BigDecimal organizationId = versionedOrganizationService.saveVersionedOrganization(toSave);
