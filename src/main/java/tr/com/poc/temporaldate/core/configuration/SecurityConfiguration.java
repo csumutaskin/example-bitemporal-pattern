@@ -1,5 +1,10 @@
 package tr.com.poc.temporaldate.core.configuration;
 
+
+import javax.servlet.Filter;
+
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,8 +31,8 @@ import tr.com.poc.temporaldate.core.filter.ThreadLocalCleanerFilter;
 /**
  * Security Configuration, embeds Spring Security Module to the project.
  * This is also where different Web Filters are applied to different end points of the core module.
- * All Web / HTTP security related configuration is done here. 
- * 
+ * All Web / HTTP security related configuration is done here.
+ *
  * @author umutaskin
  *
  */
@@ -36,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 {
 	/**
 	 * For this static configuration, all applied filters are below (in order):
-	 * 
+	 *
 	 * <ul>
 	 * 	<li>{@link WebAsyncManagerIntegrationFilter}
 	 *  <li>{@link SecurityContextPersistenceFilter}
@@ -53,30 +58,43 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 	 *  <li>{@link SessionManagementFilter}
 	 *  <li>{@link ExceptionTranslationFilter}
 	 * </ul>
-	 * 
+	 *
 	 * @author umutaskin
 	 */
 	@Configuration
-	@Order(1)
+	@Order(13)
 	public static class SecurityConfigurationWithAuditFilter extends WebSecurityConfigurerAdapter
 	{
 		@Override
-		protected void configure(HttpSecurity http) throws Exception 
-		{		
+		protected void configure(HttpSecurity http) throws Exception
+		{
 			http.addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new ThreadLocalCleanerFilter(), UsernamePasswordAuthenticationFilter.class)
-			    .addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
-			    .addFilterBefore(new RequestResponseLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuditLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RequestResponseLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
 			    .cors().and().csrf().disable();//TODO: Enable!!!
 		}
-		
+
 		/**
 		 * Ignore anonymous URLs from web filters
 		 */
 		@Override
-		public void configure(WebSecurity web) throws Exception 
-		{			
+		public void configure(WebSecurity web) throws Exception
+		{
 			web.ignoring().antMatchers(Constants.IGNORE_SECURITY_AT_H2_URL);
 		}
-	}
+
+//		@Bean
+//        Filter requestResponseLoggingFilter() {
+//		    return new RequestResponseLoggingFilter();
+//        }
+
+//        @Bean
+//        public FilterRegistrationBean<RequestResponseLoggingFilter> registration(Filter requestResponseLoggingFilter) {
+//            FilterRegistrationBean registration = new FilterRegistrationBean<>(requestResponseLoggingFilter);
+//            registration.setEnabled(false);
+//            return registration;
+//        }
+
+    }
 }
