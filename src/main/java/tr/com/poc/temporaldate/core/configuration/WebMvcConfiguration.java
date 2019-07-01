@@ -7,10 +7,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * For Web MVC support and to configure object converters that are to be used in Rest Services as different media types.
@@ -32,14 +39,30 @@ public class WebMvcConfiguration implements WebMvcConfigurer
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) 
 	{
         converters.add(jsonConverter());
+        converters.add(xmlConverter());
     }
 
     @Bean
     public MappingJackson2HttpMessageConverter jsonConverter() 
     {
-    	MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    	converter.setPrettyPrint(true);
-        return converter;
+    	ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                
+        return new MappingJackson2HttpMessageConverter(mapper);
+    }
+    
+    @Bean
+    public MappingJackson2XmlHttpMessageConverter xmlConverter() 
+    {
+    	ObjectMapper mapper = new XmlMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    	return new MappingJackson2XmlHttpMessageConverter(mapper);
     }
     
     @Override

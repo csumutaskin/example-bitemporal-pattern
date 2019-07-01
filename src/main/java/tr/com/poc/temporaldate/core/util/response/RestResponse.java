@@ -1,14 +1,17 @@
 package tr.com.poc.temporaldate.core.util.response;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.logging.log4j.ThreadContext;
 
 import lombok.Getter;
 import lombok.ToString;
+import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 
 /**
@@ -33,8 +36,7 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 	private String errorCode;
 	private String errorMessage;
 	   
-    @XmlAnyElement(lax = true)
-	private T body;
+    private RestResponseBody<T> body;
 	
 	private RestResponse()
 	{}
@@ -48,12 +50,27 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 		private String userName;
 		private String errorCode;
 		private String errorMessage;
-		private T body;
+		private RestResponseBody<T> body;
 
+		private void buildFromMDC()
+		{
+			this.transactionId = ThreadContext.get(Constants.MDC_TRANSACTION_NO);
+			this.hostName = ThreadContext.get(Constants.MDC_HOST_ADDRESS);
+			this.clientIp = ThreadContext.get(Constants.MDC_CLIENT_IP);
+			this.userName = ThreadContext.get(Constants.MDC_USERNAME);			
+		}
+		
 		public Builder(String status, String transactionId)
 		{
-			this.status = status;
+			buildFromMDC();
+			this.status = status;			
 			this.transactionId = transactionId;
+		}
+		
+		public Builder(String status)
+		{
+			buildFromMDC();
+			this.status = status;			
 		}
 		
 		public Builder<T> withHostName(String hostName)
@@ -88,7 +105,13 @@ public class RestResponse<T extends BaseDTO> implements Serializable
 		
 		public Builder<T> withBody(T body)
 		{
-			this.body = body;
+			this.body = new RestResponseBody<>(body);
+			return this;
+		}
+		
+		public Builder<T> withBodyList(List<T> bodyList)
+		{
+			this.body = new RestResponseBody<>(bodyList);
 			return this;
 		}
 		

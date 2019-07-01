@@ -1,7 +1,7 @@
 package tr.com.poc.temporaldate.core.util.comparator;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.Date;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
@@ -25,10 +25,10 @@ public class SortBaseEntityByEffectiveStartDateComparator<E extends BaseBitempor
 			log.error("One of the items compared using SortBaseEntityByEffectiveStartDateComparator is null, none of the items should be null");
 			throw new ApplicationException(ExceptionConstants.CUSTOM_COMPARATOR_NOT_EXPECTING_NULL_OBJECT_EXCEPTION, new NullPointerException());
 		}		
+
+		LocalDateTime o1Start = o1.getEffectiveDateStart();
+		LocalDateTime o2Start = o2.getEffectiveDateStart();
 		
-		Date o1Start = o1.getEffectiveDateStart();
-		Date o2Start = o2.getEffectiveDateStart();
-				
 		if(o1Start == null || o2Start == null)
 		{
 			//TODO: get message from propery file with dynamic parameters appended to log

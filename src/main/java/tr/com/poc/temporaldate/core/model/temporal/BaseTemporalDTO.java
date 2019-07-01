@@ -2,8 +2,6 @@ package tr.com.poc.temporaldate.core.model.temporal;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +13,6 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
  * @author umutaskin
  */
 @SuppressWarnings("serial")
-@XmlRootElement
 @Getter
 @Setter
 @NoArgsConstructor 

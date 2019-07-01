@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import tr.com.poc.temporaldate.bitemporalexample.service.RestLogService;
+import tr.com.poc.temporaldate.core.configuration.ApplicationContextProvider;
 import tr.com.poc.temporaldate.core.util.logging.RestServerLogInit;
 import tr.com.poc.temporaldate.core.util.logging.RestRequestWrapper;
 import tr.com.poc.temporaldate.core.util.logging.RestResponseWrapper;
@@ -32,14 +33,12 @@ import tr.com.poc.temporaldate.core.util.logging.RestResponseWrapper;
 public class RequestResponseLoggingFilter implements Filter
 {
 
-	@Autowired
-	private RestLogService restLogService;
-
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 	{
-		String uri = ((HttpServletRequest) request).getRequestURI();
 
+		RestLogService restLogService = (RestLogService) ApplicationContextProvider.getBeanFromApplicationContext(RestLogService.class);
+		String uri = ((HttpServletRequest) request).getRequestURI();
 		RestServerLogDto dto = new RestServerLogDto();
 		dto.setUri(uri);
 		RestRequestWrapper wrappedRequest = null;

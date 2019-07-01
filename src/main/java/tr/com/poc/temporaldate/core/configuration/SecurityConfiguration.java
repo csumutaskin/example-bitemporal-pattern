@@ -1,10 +1,6 @@
 package tr.com.poc.temporaldate.core.configuration;
 
 
-import javax.servlet.Filter;
-
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -84,17 +80,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 			web.ignoring().antMatchers(Constants.IGNORE_SECURITY_AT_H2_URL);
 		}
 
-//		@Bean
-//        Filter requestResponseLoggingFilter() {
-//		    return new RequestResponseLoggingFilter();
-//        }
-
-//        @Bean
-//        public FilterRegistrationBean<RequestResponseLoggingFilter> registration(Filter requestResponseLoggingFilter) {
-//            FilterRegistrationBean registration = new FilterRegistrationBean<>(requestResponseLoggingFilter);
-//            registration.setEnabled(false);
-//            return registration;
-//        }
 
     }
 }

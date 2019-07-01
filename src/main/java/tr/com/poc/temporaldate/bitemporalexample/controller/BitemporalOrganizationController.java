@@ -1,12 +1,13 @@
 package tr.com.poc.temporaldate.bitemporalexample.controller;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,8 @@ import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
 import tr.com.poc.temporaldate.core.util.logging.RestLoggable;
+import tr.com.poc.temporaldate.core.model.BooleanDTO;
+import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
 /**
  * Sample organization controller having bi-temporal data
@@ -37,20 +40,36 @@ public class BitemporalOrganizationController
 	@Autowired
 	private BitemporalOrganizationService bitemporalOrganizationService;
 	
-	@GetMapping(value = "/getAll" , produces= {"application/json"})
-	public ResponseEntity<List<BitemporalOrganizationDTO>> getOrganizationList()
+	@GetMapping(value = "/getAll" , produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> getOrganizationList()
 	{		
-		return new ResponseEntity<>(bitemporalOrganizationService.getAllOrganizations(new Date()), HttpStatus.OK);
+		List<BitemporalOrganizationDTO> allOrganizations = bitemporalOrganizationService.getAllOrganizations(LocalDateTime.now(), null);
+		RestResponse<BitemporalOrganizationDTO> build = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBodyList(allOrganizations).build();
+		return new ResponseEntity<>(build, HttpStatus.OK);		
 	}
 	
-	@PutMapping(value = "/update/{id}" , consumes = {"application/json"}, produces= {"application/json"})
+	//TODO: Gereksiz sil....
+	@GetMapping(value = "/getAll2" , produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> getOrganizationItem()
+	{		
+		BitemporalOrganizationDTO a = new BitemporalOrganizationDTO("aboooTek1", 15l, 3d, 5d);
+		RestResponse<BitemporalOrganizationDTO> build = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBody(a).build();
+		return new ResponseEntity<>(build, HttpStatus.OK);		
+	}
+	
+	/**	 
+	 * @param id
+	 * @param toUpdate
+	 * @return
+	 */
+	@PutMapping(value = "/update/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody BitemporalOrganizationDTO toUpdate)
 	{		
 		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
 	}
-	
-	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {"application/json"}, produces= {"application/json"})
-	public ResponseEntity<Boolean> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSave)
+		
+	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<RestResponse<BooleanDTO>> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSave)
 	{			
 		if(!id.isPresent() || "undefined".equalsIgnoreCase(id.get()))
 		{			
@@ -63,8 +82,8 @@ public class BitemporalOrganizationController
 			BigDecimal organizationId = bitemporalOrganizationService.saveOrMergeOrganization(bd, toSave);
 			log.debug("Organization created with id: {}", organizationId);
 		}
-		
-		return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+		RestResponse<BooleanDTO> response = new RestResponse.Builder<BooleanDTO>(HttpStatus.OK.toString()).withBody(new BooleanDTO(Boolean.TRUE)).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/delete/{id}")

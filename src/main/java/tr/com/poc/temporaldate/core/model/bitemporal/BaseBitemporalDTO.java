@@ -1,8 +1,6 @@
 package tr.com.poc.temporaldate.core.model.bitemporal;
 
-import java.util.Date;
-
-import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,15 +15,14 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
  * @author umutaskin
  */
 @SuppressWarnings("serial")
-@XmlRootElement
 @Getter
 @Setter
 @NoArgsConstructor 
 @AllArgsConstructor 
 public class BaseBitemporalDTO implements BaseDTO
 {
-	private Date recordDateStart;
-	private Date recordDateEnd;
-	private Date effectiveDateStart;
-	private Date effectiveDateEnd;
+	private LocalDateTime perspectiveDateStart;
+	private LocalDateTime perspectiveDateEnd;
+	private LocalDateTime effectiveDateStart;
+	private LocalDateTime effectiveDateEnd;
 }

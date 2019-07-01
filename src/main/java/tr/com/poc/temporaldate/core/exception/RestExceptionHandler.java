@@ -8,8 +8,8 @@ import static tr.com.poc.temporaldate.common.Constants.MDC_USERNAME;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.APPLICATION_ERROR_PREFIX;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.BUSINESS_ERROR_PREFIX;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.UNEXPECTED;
-import static tr.com.poc.temporaldate.common.ExceptionConstants.VALIDATION_ERROR_PREFIX;
 import static tr.com.poc.temporaldate.common.ExceptionConstants.USER_INPUT_NOT_VALIDATED;
+import static tr.com.poc.temporaldate.common.ExceptionConstants.VALIDATION_ERROR_PREFIX;
 
 import java.util.Deque;
 import java.util.List;
@@ -44,14 +44,17 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
 @ControllerAdvice
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Log4j2
+//TODO: Inject locale from rest header/session/cookie
 public class RestExceptionHandler 
-{
+{	
+	private enum ExceptionType { BUSINESS, APPLICATION, BUSINESS_VALIDATION, UNEXPECTED }
+		
 	@Resource(name = "applicationExceptionMessageSource")
 	private MessageSource applicationExceptionMessageSource;
 	
 	@Resource(name = "businessExceptionMessageSource")
 	private MessageSource businessExceptionMessageSource;
-
+	
 	/**
 	 * An auto rest response converter in case of a BusinessException is thrown throughout the request.
 	 * @param bexc thrown exception through the request
@@ -59,11 +62,11 @@ public class RestExceptionHandler
 	 * @return {@link ResponseEntity}
 	 */
 	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessException(BusinessException bexc, Locale locale) 
+	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleBusinessException(BusinessException bexc) 
 	{
-		String errorMessage = businessExceptionMessageSource.getMessage(bexc.getExceptionCode(), bexc.getExceptionMessageParameters(), locale);
-		log.error("user's {} call has an (business) erronous response, you can enable debug mode for detailled logging. Exception detail is: {}", getThreadContextKey(MDC_URI), errorMessage);
-		return prepareResponse(null, HttpStatus.BAD_REQUEST, BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), errorMessage);		
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...
+		ExceptionLog errorMessageExplanations = getExceptionMessagesFromSource(locale, businessExceptionMessageSource, bexc, ExceptionType.BUSINESS);		
+		return prepareResponse(null, HttpStatus.BAD_REQUEST, BUSINESS_ERROR_PREFIX + bexc.getExceptionCode(), errorMessageExplanations.getGuiLog());		
 	}
 
 	/**
@@ -75,11 +78,8 @@ public class RestExceptionHandler
 	@ExceptionHandler(ApplicationException.class)
 	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleApplicationException(ApplicationException aexc) 
 	{	
-		Locale locale = Locale.ENGLISH;//TODO: Parametric...
-		boolean anyEnglishLocale = locale != null && locale.getLanguage() != null && locale.getLanguage().startsWith("en");
-		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
-		ExceptionLog errorMessageExplanations = new ExceptionLog(applicationExceptionMessageSource.getMessage(aexc.getExceptionCode() + "|GUI", aexc.getExceptionMessageParameters(), defaultMessage ,locale), applicationExceptionMessageSource.getMessage(aexc.getExceptionCode() + "|LOG", aexc.getExceptionMessageParameters(), null ,locale));
-		log.error("user's {} call has an (application) erronous response, you can enable debug mode for detailed logging. Exception detail is: {}", getThreadContextKey(MDC_URI), "[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG:" + errorMessageExplanations.getServerLog() + "]");
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...		
+		ExceptionLog errorMessageExplanations =  getExceptionMessagesFromSource(locale, applicationExceptionMessageSource, aexc, ExceptionType.APPLICATION);		
 		return prepareResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + aexc.getExceptionCode(), errorMessageExplanations.getGuiLog());
 	}
 	
@@ -112,7 +112,7 @@ public class RestExceptionHandler
 	 * @return {@link ResponseEntity}
 	 */
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc, Locale locale) 
+	public ResponseEntity<RestResponse<BaseExceptionDTO>> handleUnhandledExceptions(Exception exc) 
 	{
 		HttpHeaders headers = new HttpHeaders();
 		
@@ -122,9 +122,11 @@ public class RestExceptionHandler
 			headers.setContentType(MediaType.APPLICATION_JSON);
 		}
 		
-		String errorMessage = applicationExceptionMessageSource.getMessage(UNEXPECTED, null, locale);
-		log.error("user's {} call got an UNEXPECTED EXCEPTION (not converted to known exceptions), you can enable debug logs for more information, detail is: {}", getThreadContextKey(MDC_URI), ExceptionUtils.getMessage(exc));
-		return prepareResponse(headers, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + UNEXPECTED, errorMessage);		
+		Locale locale = Locale.ENGLISH;//TODO: Parametric...
+		BaseException be = new BaseException(UNEXPECTED);
+		ExceptionLog errorMessageExplanations = getExceptionMessagesFromSource(locale, applicationExceptionMessageSource, be, ExceptionType.UNEXPECTED);
+		log.error("UNHANDLED EXCEPTION DETAIL IS: {}",ExceptionUtils.getStackTrace(exc));
+		return prepareResponse(headers, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + UNEXPECTED, errorMessageExplanations.getGuiLog());		
 	}
 	
 	/* Replaces ThreadContext value with "N.A." if the current request URL does not get through AuditLoggingFilter to fill ThreadContext map */
@@ -137,6 +139,19 @@ public class RestExceptionHandler
 			toReturn = threadContextValue;
 		}
 		return toReturn;
+	}
+	
+	private ExceptionLog getExceptionMessagesFromSource(Locale locale, MessageSource source, BaseException exc, ExceptionType type)
+	{
+		if(locale == null)
+		{
+			locale = Constants.LOCALE_TR;
+		}			
+		boolean anyEnglishLocale = locale.getLanguage() != null && locale.getLanguage().startsWith("en");
+		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
+		ExceptionLog errorMessageExplanations = new ExceptionLog(source.getMessage(exc.getExceptionCode() + "|GUI", exc.getExceptionMessageParameters(), defaultMessage ,locale), businessExceptionMessageSource.getMessage(exc.getExceptionCode() + "|LOG", exc.getExceptionMessageParameters(), null ,locale));
+		log.error("user's {} call has an {} erronous response, you can enable debug mode for detailed logging. Exception detail is: {}", getThreadContextKey(MDC_URI), type.toString() ,"[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG" + errorMessageExplanations.getServerLog() + "]");
+		return errorMessageExplanations;
 	}
 	
 	/* Prepares an erroneous ResponseEntity Message with the given parameters and some thread context values for the request */

@@ -90,6 +90,11 @@ public class ApplicationConfiguration
     {
     	return new AspectBusinessValidationExceptionChecker();
     }
+
+    @Bean
+    public ApplicationContextProvider applicationContextProvider() {
+	    return new ApplicationContextProvider();
+    }
     
     @PostConstruct
     public void promptSystemInfoLog() throws IOException
