@@ -25,10 +25,8 @@ public class SortBaseEntityByEffectiveStartDateComparator<E extends BaseBitempor
 			log.error("One of the items compared using SortBaseEntityByEffectiveStartDateComparator is null, none of the items should be null");
 			throw new ApplicationException(ExceptionConstants.CUSTOM_COMPARATOR_NOT_EXPECTING_NULL_OBJECT_EXCEPTION, new NullPointerException());
 		}		
-		
-		//Date o1Start = o1.getEffectiveDateStart();
+
 		LocalDateTime o1Start = o1.getEffectiveDateStart();
-		//Date o2Start = o2.getEffectiveDateStart();
 		LocalDateTime o2Start = o2.getEffectiveDateStart();
 		
 		if(o1Start == null || o2Start == null)

@@ -7,8 +7,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
+import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.core.exception.RestExceptionHandler;
 
 /**
@@ -17,6 +19,7 @@ import tr.com.poc.temporaldate.core.exception.RestExceptionHandler;
  * @author umutaskin
  *
  */
+@Log4j2
 public class ExceptionHandlerFilter extends GenericFilterBean 
 {
 
@@ -30,7 +33,8 @@ public class ExceptionHandlerFilter extends GenericFilterBean
 		catch(Exception e)
 		{
 			//TODO: Convert to custom output format for unexpectedly thrown exceptions
-			e.printStackTrace();
+			log.error(ExceptionUtils.getStackTrace(e));
+			throw e;
 		}
 	}
 }

@@ -2,8 +2,6 @@ package tr.com.poc.temporaldate.core.model.bitemporal;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,12 +21,8 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 @AllArgsConstructor 
 public class BaseBitemporalDTO implements BaseDTO
 {
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH")
 	private LocalDateTime perspectiveDateStart;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
 	private LocalDateTime perspectiveDateEnd;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
 	private LocalDateTime effectiveDateStart;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
 	private LocalDateTime effectiveDateEnd;
 }

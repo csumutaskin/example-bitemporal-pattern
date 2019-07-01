@@ -128,9 +128,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 			return null;	
 		}
 		E toReturn = convertDTOToEntity(bd);
-		//Date currentNow = new Date();
 		LocalDateTime currentNow = LocalDateTime.now();
-		//Date effectivenow = currentNow;
 		LocalDateTime effectiveNow = currentNow;
 		Trim trimType = overrideEffectiveStartToCurrentBeginPeriodAlways();
 		if(trimType != null && trimType != Trim.NOW)//override now

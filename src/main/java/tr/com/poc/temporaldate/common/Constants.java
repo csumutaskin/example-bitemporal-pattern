@@ -1,5 +1,7 @@
 package tr.com.poc.temporaldate.common;
 
+import java.util.Locale;
+
 /**
  * Contains all application scoped and reusable constants
  * 
@@ -10,6 +12,8 @@ public class Constants
 {
 	private Constants()
 	{}
+	
+	public static final Locale LOCALE_TR = new Locale("tr-TR");
 	
 	public static final String PROFILE_DEV = "dev";
 	public static final String PROFILE_QA = "qa";

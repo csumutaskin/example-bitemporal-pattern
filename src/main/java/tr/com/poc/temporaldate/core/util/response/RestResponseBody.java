@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
 import lombok.Setter;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 
@@ -37,8 +36,6 @@ public class RestResponseBody<T extends BaseDTO> implements Serializable
 	@JsonIgnore
 	private List<T> bodyCollection;
 	
-	//private Object content;
-	
 	@JsonProperty("content")
 	public Object getContent()
 	{
@@ -59,7 +56,5 @@ public class RestResponseBody<T extends BaseDTO> implements Serializable
 	{
 		this.bodyCollection = bodyCollection;
 		this.body = null;
-	}	
-	
-	
+	}		
 }

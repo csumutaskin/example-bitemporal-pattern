@@ -18,11 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.ThreadContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.GenericFilterBean;
 
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.util.RandomGenerator;
 
