@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.MessageSource;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,10 +43,11 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
  * @author umutaskin
  *
  */
-@ControllerAdvice
+@ControllerAdvice(annotations = RestController.class)
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Log4j2
 //TODO: Inject locale from rest header/session/cookie
+@Order(10)
 public class RestExceptionHandler 
 {	
 	private enum ExceptionType { BUSINESS, APPLICATION, BUSINESS_VALIDATION, UNEXPECTED }

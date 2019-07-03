@@ -23,6 +23,7 @@ public class ExceptionConstants
 	 ************************************/
 	public static final String CUSTOM_COMPARATOR_NOT_EXPECTING_NULL_OBJECT_EXCEPTION = "10000";
 	public static final String DATE_UTILS_NOT_EXPECTING_NULL_OBJECT_COMPARISON_EXCEPTION = "10001";
+    public static final String NOT_EQUALS_AS_STRING_VALIDATOR_EXCEPTION = "10002";
 	
 	/* *************************************
 	 *     Converter Exception Constants
