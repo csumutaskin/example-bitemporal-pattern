@@ -3,7 +3,6 @@ package tr.com.poc.temporaldate.bitemporalexample.service;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +51,11 @@ public class BitemporalOrganizationService  implements BaseService
 		return Boolean.valueOf(entityDeleted);
 	}
 	
-	public BigDecimal saveOrMergeOrganization(Serializable id, BitemporalOrganizationDTO toSave)
+	public BitemporalOrganizationDTO saveOrMergeOrganization(Serializable id, BitemporalOrganizationDTO toSave)
 	{		
-		if(toSave == null)
-		{
-			throw new ApplicationException(ExceptionConstants.NULL_OBJECT_CAN_NOT_BE_SAVED_EXCEPTION);//TODO: validation layerina cek
-		}		
 		BitemporalOrganization organizationSaved = bitemporalOrganizationDao.saveorUpdateEntityByDTO(id, toSave, BitemporalOrganizationDTOConverter.class);
-		return organizationSaved.getId();		
+		BitemporalOrganizationDTO convertEntityToDTO = converter.convertEntityToDTO(organizationSaved);
+		return convertEntityToDTO;		
 	}
 	
 	//TODO Fix...
@@ -69,13 +65,13 @@ public class BitemporalOrganizationService  implements BaseService
 		{
 			perspectiveTime = LocalDateTime.now();
 		}
-		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalIdWithinDates(12, perspectiveTime, effectiveTime);
+		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalIdAtGivenDates(12, perspectiveTime, effectiveTime);
 		return (List<BitemporalOrganizationDTO>)converter.convertEntityCollectionToDTOCollection(entityWithNaturalId);
 	}
 	
-	public BitemporalOrganizationDTO getOrganization(Serializable id, Date effectiveDate) 
-	{		
-		return bitemporalOrganizationDao.getDTOAtEffectiveDate(id, BitemporalOrganizationDTOConverter.class, effectiveDate);
-	}
+//	public BitemporalOrganizationDTO getOrganization(Serializable id, Date effectiveDate) 
+//	{		
+//		return bitemporalOrganizationDao.getDTOAtEffectiveDate(id, BitemporalOrganizationDTOConverter.class, effectiveDate);
+//	}
 	
 }

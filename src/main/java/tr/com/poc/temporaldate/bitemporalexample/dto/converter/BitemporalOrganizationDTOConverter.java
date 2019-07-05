@@ -28,8 +28,6 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 		BitemporalOrganization toReturn = new BitemporalOrganization(null, bd.getName(), bd.getOrgId(), bd.getFineAmount(), bd.getEarnAmount());
 		toReturn.setEffectiveDateStart(bd.getEffectiveDateStart());
 		toReturn.setEffectiveDateEnd(bd.getEffectiveDateEnd());
-		toReturn.setPerspectiveDateStart(bd.getPerspectiveDateStart());
-		toReturn.setPerspectiveDateEnd(bd.getPerspectiveDateEnd());
 		log.debug(() -> bd.toString() + " object converted to " + toReturn.toString());
 		return toReturn;	
 	}
@@ -49,7 +47,7 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 	}
 
 	@Override
-	public Trim overrideEffectiveStartToCurrentBeginPeriodAlways() 
+	public Trim setEffectiveBeginDateTrimType() 
 	{
 		return null;
 	}

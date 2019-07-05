@@ -21,8 +21,6 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 @AllArgsConstructor 
 public class BaseBitemporalDTO implements BaseDTO
 {
-	private LocalDateTime perspectiveDateStart;
-	private LocalDateTime perspectiveDateEnd;
 	private LocalDateTime effectiveDateStart;
 	private LocalDateTime effectiveDateEnd;
 }
