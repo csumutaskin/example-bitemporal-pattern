@@ -317,12 +317,24 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		PidDetail pidDetail = getPidInfoOfCurrentEntity(beType, OperationType.UPDATE);		
 		Collection<E> allEntitiesWithinDates = getAllEntitiesWithinDates(pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd(), pidDetail);		
 		updateOldTuplesWithNewPerspectiveDates((List<E>)allEntitiesWithinDates, toUpdate.getPerspectiveDateStart(), toUpdate.getPerspectiveDateEnd());
+		checkNoGapsAfterUpdate();
 		if(autoUpdateChildren)
 		{
-			
+			updateAllPidsUsedAsForeignKey();
 		}
 		return toUpdate;
-		//TODO: Gap kontrolü
+	}
+	
+	private boolean checkNoGapsAfterUpdate()
+	{
+		//implement
+		return true;
+	}
+	
+	private boolean updateAllPidsUsedAsForeignKey()
+	{
+		//implement
+		return true;
 	}
 	
 	private void updateOldTuplesWithNewPerspectiveDates(List<E> allEntitiesToUpdate, LocalDateTime newPersectiveBeginDate, LocalDateTime newPerspectiveEndDate)
@@ -337,10 +349,18 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		while(iterator.hasNext())
 		{
 			E next = iterator.next();
-//			if(next.getPerspectiveDateStart().isBefore())
-//			{
-//				
-//			}
+			if(!next.getPerspectiveDateStart().isAfter(newPersectiveBeginDate) && (!next.getPerspectiveDateEnd().isBefore(newPersectiveBeginDate)))//Type 1
+			{
+				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+			}
+			else if(next.getPerspectiveDateStart().isAfter(newPersectiveBeginDate) && (next.getPerspectiveDateEnd().isBefore(newPerspectiveEndDate)))//Type 2
+			{
+				next.setIsDeleted(Boolean.TRUE);
+			}
+			else if(!next.getPerspectiveDateStart().isAfter(newPerspectiveEndDate) && (!next.getPerspectiveDateEnd().isBefore(newPerspectiveEndDate)))//Type 3
+			{
+				next.setPerspectiveDateStart(newPerspectiveEndDate);
+			}
 		}		
 	}
 

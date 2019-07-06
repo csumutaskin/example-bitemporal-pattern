@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
-import tr.com.poc.temporaldate.core.model.BooleanDTO;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
 /**
