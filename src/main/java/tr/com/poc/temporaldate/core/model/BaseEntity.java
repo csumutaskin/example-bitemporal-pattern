@@ -7,5 +7,5 @@ import java.io.Serializable;
  * 
  * @author umutaskin
  */
-public interface BaseEntity extends Serializable 
+public interface BaseEntity extends Serializable, Cloneable 
 {}

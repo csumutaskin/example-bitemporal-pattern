@@ -44,4 +44,10 @@ public class BitemporalOrganization extends BaseBitemporalEntity
 	
 	@Column(name = "EARN_AMOUNT")
 	private double earnAmount;
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
 }

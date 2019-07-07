@@ -4,6 +4,7 @@ import static tr.com.poc.temporaldate.common.Constants.ID_SETTER_KEY;
 import static tr.com.poc.temporaldate.core.util.DateUtils.END_OF_SOFTWARE;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -190,9 +191,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		{
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_EFFECTIVE_END_BEFORE_EFFECTIVE_BEGIN, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
 		}	
-		if(type == OperationType.SAVE && entityToBeChecked.getPerspectiveDateEnd().isBefore(END_OF_SOFTWARE))//Save operation without a perspective end date of end of software
+		if(type == OperationType.SAVE && entityToBeChecked.getPerspectiveDateEnd().isBefore(END_OF_SOFTWARE))//Save operation before a perspective end date of end of software
 		{
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_PERSPECTIVE_END_BEFORE_END_OF_SOFTWARE, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
+		}
+		if(type == OperationType.SAVE && entityToBeChecked.getEffectiveDateEnd().isBefore(END_OF_SOFTWARE))//Save operation before an effective end date of end of software
+		{
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_ENTITY_EFFECTIVE_END_BEFORE_END_OF_SOFTWARE, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
 		}
 	}
 	
@@ -313,11 +318,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	public  E updateEntityWithinEffectiveAndPerspectiveDates(Class<?> beType, Serializable pid, E toUpdate, boolean autoUpdateChildren)
 	{		
 		validateDates(beType, toUpdate, OperationType.UPDATE);
+		PidDetail pidDetail = getPidInfoOfCurrentEntity(beType, OperationType.UPDATE);
+		pidDetail.setPidColumnValue(beType, toUpdate, pid);
+		Collection<E> allEntitiesWithinDates = getAllEntitiesWithinDates(pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd(), pidDetail);
+		updateOldTuplesWithNewDates(beType, (List<E>)allEntitiesWithinDates, toUpdate.getPerspectiveDateStart(), toUpdate.getPerspectiveDateEnd(), toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd());
 		entityManager.persist(toUpdate);
-		PidDetail pidDetail = getPidInfoOfCurrentEntity(beType, OperationType.UPDATE);		
-		Collection<E> allEntitiesWithinDates = getAllEntitiesWithinDates(pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd(), pidDetail);		
-		updateOldTuplesWithNewPerspectiveDates((List<E>)allEntitiesWithinDates, toUpdate.getPerspectiveDateStart(), toUpdate.getPerspectiveDateEnd());
-		checkNoGapsAfterUpdate();
+//		checkNoPerspectiveDateGapsAfterUpdate(beType, pidDetail, pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd());
+//		checkNoEffectiveDateGapsAfterUpdate(beType, pidDetail, pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd());
 		if(autoUpdateChildren)
 		{
 			updateAllPidsUsedAsForeignKey();
@@ -325,9 +332,49 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		return toUpdate;
 	}
 	
-	private boolean checkNoGapsAfterUpdate()
+	private boolean checkNoEffectiveDateGapsAfterUpdate(Class<?> beType, PidDetail pidDetail, Serializable pid, LocalDateTime gapPossibleStartDate, LocalDateTime gapPossibleEndDate)//TODO: Get rid of all extra queries
 	{
-		//implement
+		return true;
+	}
+	
+	private boolean checkNoPerspectiveDateGapsAfterUpdate(Class<?> beType, PidDetail pidDetail, Serializable pid, LocalDateTime gapPossibleStartDate, LocalDateTime gapPossibleEndDate)//TODO: Get rid of all extra queries
+	{
+		if(pid == null)
+		{
+			throw new RuntimeException("asdfafadfa");
+		}
+		//select max effective end date which is closest to the newly inserted tuple's effective begin date, to check if there is a gap before the effective begin date of the new updated tuple
+		String queryToCheckBeginDate = "Select max(E.perspectiveDateEnd) from "+ beType.getSimpleName() +" E where E."+ pidDetail.getName() +" = :pid and E.perspectiveDateEnd <= :gapPossibleStartDate";
+		Query checkBeginQuery = entityManager.createQuery(queryToCheckBeginDate);
+		checkBeginQuery.setParameter("pid", pidDetail.castGivenValueToPidType(beType, pid));
+		checkBeginQuery.setParameter("gapPossibleStartDate", gapPossibleStartDate);
+		List<E> checkBeginList = checkBeginQuery.getResultList();
+		if(!CollectionUtils.isEmpty(checkBeginList))
+		{
+			E maxEndDateOnTable = checkBeginList.get(0);
+			if(maxEndDateOnTable.getEffectiveDateEnd().isBefore(gapPossibleStartDate))
+			{
+				throw new RuntimeException("Baslangic Tarihi tarafinda bosluk var...");
+			}
+		}
+		// select minimum effective start date which is closest to the newly inserted tuple's effective end date, to check if there is a gap after the effective end date of the new updated tuple
+		// if new end date is end of software no need to make any checks
+		if(gapPossibleEndDate.isBefore(END_OF_SOFTWARE))
+		{
+			String queryToSelectEndDate = "Select min(E.perspectiveDateStart) from "+ beType.getSimpleName() +" E, where E."+ pidDetail.getName() +" = :pid and E.perspectiveDateBegin >= :gapPossibleEndDate";
+			Query checkEndQuery = entityManager.createQuery(queryToSelectEndDate);
+			checkEndQuery.setParameter("pid", pidDetail.castGivenValueToPidType(beType, pid));
+			checkEndQuery.setParameter("gapPossibleEndDate", gapPossibleEndDate);
+			List<E> checkEndList = checkEndQuery.getResultList();
+			if(!CollectionUtils.isEmpty(checkEndList))
+			{
+				E minEndDateOnTable = checkEndList.get(0);
+				if(minEndDateOnTable.getEffectiveDateStart().isAfter(gapPossibleEndDate))
+				{
+					throw new RuntimeException("Bitis Tarihi tarafinda bosluk var...");
+				}
+			}	
+		}		
 		return true;
 	}
 	
@@ -337,7 +384,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		return true;
 	}
 	
-	private void updateOldTuplesWithNewPerspectiveDates(List<E> allEntitiesToUpdate, LocalDateTime newPersectiveBeginDate, LocalDateTime newPerspectiveEndDate)
+	private void updateOldTuplesWithNewDates(Class<?> parentClazzType, List<E> allEntitiesToUpdate, LocalDateTime newPersectiveBeginDate, LocalDateTime newPerspectiveEndDate, LocalDateTime newEffectiveBeginDate, LocalDateTime newEffectiveEndDate)
 	{
 		if(CollectionUtils.isEmpty(allEntitiesToUpdate))
 		{
@@ -347,20 +394,116 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		Collections.sort((List<E>)allEntitiesToUpdate, sortByEffectiveStartDateComparator);		
 		Iterator<E> iterator = allEntitiesToUpdate.iterator();
 		while(iterator.hasNext())
-		{
+		{			
 			E next = iterator.next();
-			if(!next.getPerspectiveDateStart().isAfter(newPersectiveBeginDate) && (!next.getPerspectiveDateEnd().isBefore(newPersectiveBeginDate)))//Type 1
+			if(!next.getEffectiveDateStart().isAfter(newEffectiveBeginDate) && !next.getEffectiveDateEnd().isBefore(newEffectiveBeginDate))//Type 1 and Type 2 or Type 1,6,5 (old tuple outer covering new one)
 			{
+				//Here in this if, type 1 operation is always common..
+				//Insert type1 object
+				E toInsertForType1;
+				Field declaredIdField;
+				try 
+				{
+					toInsertForType1 = (E)next.clone();
+					declaredIdField= parentClazzType.getDeclaredField(Constants.ID_COLUMN_KEY);
+					declaredIdField.setAccessible(true);
+					declaredIdField.set(toInsertForType1, null);
+				}	 
+				catch (CloneNotSupportedException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) 
+				{
+					throw new ApplicationException(ExceptionConstants.CLONING_ENTITY_EXCEPTION, e, parentClazzType.getSimpleName());					
+				}
+				toInsertForType1.setEffectiveDateEnd(newEffectiveBeginDate);
+				toInsertForType1.setPerspectiveDateEnd(END_OF_SOFTWARE);
+				if(toInsertForType1.getEffectiveDateStart().isBefore(toInsertForType1.getEffectiveDateEnd()))//Detect ederken buyuk esit ve kucuk esit almistim, yazmaya degecek bir araligi varsa kaydet.. 
+				{
+					entityManager.persist(toInsertForType1);
+				}	
+				
+				
+				if(!next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//type 1,6,5 object -- 1 already inserted
+				{
+					//insert type 5
+					E toInsertForType5;
+					try
+					{
+						toInsertForType5 = (E)next.clone();		
+						declaredIdField.set(toInsertForType5, null);
+					} 
+					catch (CloneNotSupportedException | SecurityException | IllegalArgumentException | IllegalAccessException  e) 
+					{
+						throw new ApplicationException(ExceptionConstants.CLONING_ENTITY_EXCEPTION, e, parentClazzType.getSimpleName());					
+					}
+					toInsertForType5.setEffectiveDateStart(newEffectiveEndDate);
+					toInsertForType5.setPerspectiveDateEnd(END_OF_SOFTWARE);
+					if(toInsertForType5.getEffectiveDateStart().isBefore(toInsertForType5.getEffectiveDateEnd()))//Detect ederken buyuk esit ve kucuk esit almistim, yazmaya degecek bir araligi varsa kaydet.. 
+					{
+						entityManager.persist(toInsertForType5);
+					}
+										
+					//update type 6
+					next.setEffectiveDateStart(newEffectiveBeginDate);
+					next.setEffectiveDateEnd(newEffectiveEndDate);
+					next.setPerspectiveDateEnd(newPersectiveBeginDate);					
+				}
+				else
+				{
+//					//Insert type1 object
+//					E toInsertForType1;
+//					Field declaredIdField;
+//					try 
+//					{
+//						toInsertForType1 = (E)next.clone();
+//						declaredIdField= parentClazzType.getDeclaredField(Constants.ID_COLUMN_KEY);
+//						declaredIdField.setAccessible(true);
+//						declaredIdField.set(toInsertForType1, null);
+//					}	 
+//					catch (CloneNotSupportedException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) 
+//					{
+//						throw new ApplicationException(ExceptionConstants.CLONING_ENTITY_EXCEPTION, e, parentClazzType.getSimpleName());					
+//					}
+//					toInsertForType1.setEffectiveDateEnd(newEffectiveBeginDate);
+//					toInsertForType1.setPerspectiveDateEnd(END_OF_SOFTWARE);
+//					if(toInsertForType1.getEffectiveDateStart().isBefore(toInsertForType1.getEffectiveDateEnd()))//Detect ederken buyuk esit ve kucuk esit almistim, yazmaya degecek bir araligi varsa kaydet.. 
+//					{
+//						entityManager.persist(toInsertForType1);
+//					}	
+					//Update type2 object
+					next.setEffectiveDateStart(newEffectiveBeginDate);
+					next.setPerspectiveDateEnd(newPersectiveBeginDate);
+				}
+			}
+			else if(next.getEffectiveDateStart().isAfter(newEffectiveBeginDate) && next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//Type 3
+			{
+				//Update type3 object
 				next.setPerspectiveDateEnd(newPersectiveBeginDate);
 			}
-			else if(next.getPerspectiveDateStart().isAfter(newPersectiveBeginDate) && (next.getPerspectiveDateEnd().isBefore(newPerspectiveEndDate)))//Type 2
+			else if(!next.getEffectiveDateStart().isAfter(newEffectiveEndDate) && !next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//Type 4 and Type 5
 			{
-				next.setIsDeleted(Boolean.TRUE);
-			}
-			else if(!next.getPerspectiveDateStart().isAfter(newPerspectiveEndDate) && (!next.getPerspectiveDateEnd().isBefore(newPerspectiveEndDate)))//Type 3
-			{
-				next.setPerspectiveDateStart(newPerspectiveEndDate);
-			}
+				//Update type4 object
+				next.setEffectiveDateEnd(newEffectiveEndDate);
+				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+				//Insert type5 object
+				E toInsertForType5;
+				Field declaredIdField;
+				try
+				{
+					toInsertForType5 = (E)next.clone();
+					declaredIdField= parentClazzType.getDeclaredField(Constants.ID_COLUMN_KEY);
+					declaredIdField.setAccessible(true);
+					declaredIdField.set(toInsertForType5, null);
+				} 
+				catch (CloneNotSupportedException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) 
+				{
+					throw new ApplicationException(ExceptionConstants.CLONING_ENTITY_EXCEPTION, e, parentClazzType.getSimpleName());					
+				}
+				toInsertForType5.setEffectiveDateStart(newEffectiveEndDate);
+				toInsertForType5.setPerspectiveDateEnd(END_OF_SOFTWARE);
+				if(toInsertForType5.getEffectiveDateStart().isBefore(toInsertForType5.getEffectiveDateEnd()))//Detect ederken buyuk esit ve kucuk esit almistim, yazmaya degecek bir araligi varsa kaydet.. 
+				{
+					entityManager.persist(toInsertForType5);
+				}
+			}			
 		}		
 	}
 
@@ -378,7 +521,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		}
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		
-		StringBuilder queryStr = new StringBuilder(SELECT_DISTINCT_E_FROM_PREFIX).append(beType.getSimpleName()).append("WHERE E.").append(pidDetail.getName())
+		StringBuilder queryStr = new StringBuilder(SELECT_DISTINCT_E_FROM_PREFIX).append(beType.getSimpleName()).append(" E WHERE E.").append(pidDetail.getName())
 		.append(" = :pid  AND :perspectiveDate >= E.perspectiveDateStart and :perspectiveDate < E.perspectiveDateEnd AND (") 
 		.append("(E.effectiveDateStart <= :effectiveStartDate AND E.effectiveDateEnd >= :effectiveStartDate) OR ")
 		.append("(E.effectiveDateStart > :effectiveStartDate AND E.effectiveDateEnd < :effectiveEndDate) OR ")
@@ -388,6 +531,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery(queryStr.toString());
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveStartDate", effectiveStartDate);
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveEndDate", effectiveEndDate);
+		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("perspectiveDate", LocalDateTime.now());
 		Object pidCasted = pidDetail.castGivenValueToPidType(beType, pid);		
 		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("pid", pidCasted);
 		try
@@ -400,7 +544,11 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			String errorMessage = "Can not retrieve all tuples of type " + classTypeStr +"  withing given effective date range with a begin date of: " + effectiveStartDate + " and an end date of: " + effectiveEndDate + ". Detail: " + ExceptionUtils.getStackTrace(e);
 			log.error(errorMessage);							 
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_GET_ALL_ENTITIES_THAT_INTERSECT_BEGIN_AND_END_DATE, e, classTypeStr, effectiveStartDate.toString(), effectiveEndDate.toString());	
-		}		
+		}
+		if(CollectionUtils.isEmpty(toReturnCollection))
+		{
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_UPDATE_PID_UTILITY_CAN_NOT_DETECT_ANY_PRIOR_TUPLES_TO_UPDATE, pidDetail.getName(), pid.toString(), beType.getSimpleName());
+		}
 		return toReturnCollection;
 	}
 	
@@ -676,4 +824,56 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 			throw new ApplicationException(ExceptionConstants.GET_RELEVANT_CONVERTER_EXCEPTION, e);
 		}		
 	}
+	
+//	private void updateOldTuplesWithNewDates(List<E> allEntitiesToUpdate, LocalDateTime newPersectiveBeginDate, LocalDateTime newPerspectiveEndDate, LocalDateTime newEffectiveBeginDate, LocalDateTime newEffectiveEndDate)
+//	{
+//		if(CollectionUtils.isEmpty(allEntitiesToUpdate))
+//		{
+//			return;
+//		}
+//		Comparator sortByEffectiveStartDateComparator = new SortBaseEntityByEffectiveStartDateComparator<>();
+//		Collections.sort((List<E>)allEntitiesToUpdate, sortByEffectiveStartDateComparator);		
+//		Iterator<E> iterator = allEntitiesToUpdate.iterator();
+//		while(iterator.hasNext())
+//		{
+//			E next = iterator.next();
+//			if(!next.getEffectiveDateStart().isAfter(newEffectiveBeginDate) && !next.getEffectiveDateEnd().isBefore(newEffectiveBeginDate))//Type 1 and Type 2
+//			{
+//				//Insert type1 object
+//				E toInsertForType1 = initializeObject();
+//				//Update type2 object
+//				next.setEffectiveDateStart(newEffectiveBeginDate);
+//				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+//			}
+//			else if(next.getEffectiveDateStart().isAfter(newEffectiveBeginDate) && next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//Type 3
+//			{
+//				//Update type3 object
+//				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+//			}
+//			else if(!next.getEffectiveDateStart().isAfter(newEffectiveEndDate) && !next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//Type 4 and Type 5
+//			{
+//				//Update type4 object
+//				next.setEffectiveDateEnd(newEffectiveEndDate);
+//				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+//				//Insert type5 object
+//				E toInsertForType5 = initializeObject();
+//			}			
+//			
+//			
+//			
+////			E next = iterator.next();
+////			if(!next.getPerspectiveDateStart().isAfter(newPersectiveBeginDate) && (!next.getPerspectiveDateEnd().isBefore(newPersectiveBeginDate)))//Type 1
+////			{
+////				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+////			}
+////			else if(next.getPerspectiveDateStart().isAfter(newPersectiveBeginDate) && (next.getPerspectiveDateEnd().isBefore(newPerspectiveEndDate)))//Type 2
+////			{
+////				next.setIsDeleted(Boolean.TRUE);
+////			}
+////			else if(!next.getPerspectiveDateStart().isAfter(newPerspectiveEndDate) && (!next.getPerspectiveDateEnd().isBefore(newPerspectiveEndDate)))//Type 3
+////			{
+////				next.setPerspectiveDateStart(newPerspectiveEndDate);
+////			}
+//		}		
+//	}
 }

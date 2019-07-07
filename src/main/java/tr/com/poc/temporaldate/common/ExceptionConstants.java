@@ -25,10 +25,11 @@ public class ExceptionConstants
 	public static final String DATE_UTILS_NOT_EXPECTING_NULL_OBJECT_COMPARISON_EXCEPTION = "10001";
 	
 	/* *************************************
-	 *     Converter Exception Constants
+	 *     Converter and Cloning Exception Constants
 	 **************************************/
 	public static final String INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION = "10200";
 	public static final String INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION = "10201";
+	public static final String CLONING_ENTITY_EXCEPTION = "10202";
 	
 	/* *************************************
 	 *     Server startup Exception Constants
@@ -70,6 +71,8 @@ public class ExceptionConstants
 	public static final String BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_CANNOT_BE_NULL = "11028";
 	public static final String BITEMPORAL_ENTITY_CLASS_CAN_NOT_BE_NULL = "11029";
 	public static final String BITEMPORAL_ENTITY_PID_UTILITY_CAN_NOT_BE_APPLIED_TO_NULL_VALUED_OBJECT = "11030";
+	public static final String BITEMPORAL_UPDATE_PID_UTILITY_CAN_NOT_DETECT_ANY_PRIOR_TUPLES_TO_UPDATE = "11031";
+	public static final String BITEMPORAL_PERSISTED_ENTITY_EFFECTIVE_END_BEFORE_END_OF_SOFTWARE = "11032";
 		
 	//CREATE Exception Constants
 	public static final String NULL_OBJECT_CAN_NOT_BE_SAVED_EXCEPTION = "11200";

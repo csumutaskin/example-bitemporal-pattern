@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -70,8 +69,11 @@ public class BaseBitemporalEntity implements BaseEntity
 	private LocalDateTime perspectiveDateStart;
 	
 	@Column(name = "PERSPECTIVE_DATE_END")
-	private LocalDateTime perspectiveDateEnd;
+	private LocalDateTime perspectiveDateEnd;		
 	
-	@Version
-	private int version;
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
 }
