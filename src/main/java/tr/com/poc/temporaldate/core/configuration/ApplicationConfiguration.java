@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import lombok.extern.log4j.Log4j2;
 
 import tr.com.poc.temporaldate.common.Constants;
+import tr.com.poc.temporaldate.core.aspect.AspectDebugLogger;
 import tr.com.poc.temporaldate.core.aspect.AspectValidator;
 
 /**
@@ -109,6 +110,8 @@ public class ApplicationConfiguration
         return new AspectValidator();
     }
 
+    @Bean
+    public AspectDebugLogger aspectDebugLogger() { return new AspectDebugLogger();}
 
 
     @PostConstruct
