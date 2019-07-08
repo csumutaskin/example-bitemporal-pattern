@@ -1,15 +1,11 @@
 package tr.com.poc.temporaldate.bitemporalexample.model;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.NaturalIdCache;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,21 +23,20 @@ import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 @NoArgsConstructor 
 @Getter 
 @Setter 
-@ToString 
 @Builder
-@NaturalIdCache
+@ToString(callSuper=true, includeFieldNames=true)
 public class BitemporalOrganization extends BaseBitemporalEntity
 {
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private BigDecimal id;
+	private Long id;
 	
 	@Column(name = "NAME")
 	private String name;
 	
 	@Column(name = "ORG_ID")
-	@Pid
+	@Pid(sequenceName="ORGANIZATION_PID_SEQUENCE")
 	private Long orgId;
 	
 	@Column(name = "FINE_AMOUNT")
@@ -49,4 +44,10 @@ public class BitemporalOrganization extends BaseBitemporalEntity
 	
 	@Column(name = "EARN_AMOUNT")
 	private double earnAmount;
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
 }

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import tr.com.poc.temporaldate.core.model.BaseEntity;
 
 /**
@@ -31,26 +31,28 @@ import tr.com.poc.temporaldate.core.model.BaseEntity;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@ToString(callSuper=true, includeFieldNames=true)
 public class BaseBitemporalEntity implements BaseEntity 
 {
 	@Column(name = "CREATE_USER")
 	@CreatedBy
 	private String createUser; 
 		
-	@Column(name = "IP")
+	@Column(name = "CLIENT_IP")
 	private String clientIp;
+	
+	@Column(name = "HOST")
+	private String host;
 
 	@Column(name = "MODIFY_USER")
 	@LastModifiedBy
 	private String modifyUser;
 		
 	@Column(name = "CREATE_DATE")
-	//@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate	
-	private LocalDateTime createDate;//this is the record date
+	private LocalDateTime createDate;
 		
 	@Column(name = "MODIFY_DATE")
-	//@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate	
 	private LocalDateTime modifyDate;
 	
@@ -58,21 +60,20 @@ public class BaseBitemporalEntity implements BaseEntity
 	private Boolean isDeleted;
 	
 	@Column(name = "EFFECTIVE_DATE_START")
-	//@Temporal(TemporalType.TIMESTAMP)	
 	private LocalDateTime effectiveDateStart;
 	
 	@Column(name = "EFFECTIVE_DATE_END")
-	//@Temporal(TemporalType.TIMESTAMP)	
 	private LocalDateTime effectiveDateEnd;
 	
 	@Column(name = "PERSPECTIVE_DATE_START")
-	//@Temporal(TemporalType.TIMESTAMP)	
 	private LocalDateTime perspectiveDateStart;
 	
 	@Column(name = "PERSPECTIVE_DATE_END")
-	//@Temporal(TemporalType.TIMESTAMP)	
-	private LocalDateTime perspectiveDateEnd;
+	private LocalDateTime perspectiveDateEnd;		
 	
-	@Version
-	private int version;
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
 }

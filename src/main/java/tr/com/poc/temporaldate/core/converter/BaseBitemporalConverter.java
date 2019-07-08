@@ -4,7 +4,6 @@ import java.lang.reflect.ParameterizedType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.CollectionUtils;
@@ -31,11 +30,12 @@ import tr.com.poc.temporaldate.core.util.Trim;
 public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D extends BaseBitemporalDTO> implements BaseConverter<E,D> 
 {
 	/**
-	 * While converting an entity to DTO, if no effective begin date is set manually by the developer, the following rules are applied to the conversion process:</br> 
-	 * <b>if true:</b> open period <i>-currently the beginning day of month-</i> is calculated, </br> <b>else:</b> now is used as effective start date in conversion process 
+	 * While converting an entity to DTO:
+	 * If set, trim type is used to round effective begin date of a tuple w.r.t current time,
+	 * if effective begin date is manually set by user on DTO, no trim rule is applied to now to find effective begin date.
 	 * @return boolean to calculate the effective begin date
 	 */
-	public abstract Trim overrideEffectiveStartToCurrentBeginPeriodAlways();	
+	public abstract Trim setEffectiveBeginDateTrimType();	
 	
 	/**
 	 * Converts DTO object to the related Entity object
@@ -59,7 +59,6 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	 * perspective begin: "now" 
 	 * perspective end: end of software 
 	 */	
-	//private E enrichEntityPerspectiveDates(E entityToEnrich, Date now)
 	private E enrichEntityPerspectiveDates(E entityToEnrich, LocalDateTime now)
 	{		
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);
@@ -85,7 +84,6 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	 * effective begin: "now" or end of period according to overridden getNowOrGivenOrOpenPeriodStartDate() method's return value
 	 * effective end: end of software 
 	 */	
-	//private E enrichEntityEffectiveDates(E entityToEnrich, Date now)
 	private E enrichEntityEffectiveDates(E entityToEnrich, LocalDateTime now)
 	{			
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);	
@@ -93,7 +91,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			if(now == null)
 			{
-				now = DateUtils.getNowOrGivenOrOpenPeriodStartDate(overrideEffectiveStartToCurrentBeginPeriodAlways());
+				now = DateUtils.getNowOrGivenOrOpenPeriodStartDate(setEffectiveBeginDateTrimType());
 			}
 			entityToEnrich.setEffectiveDateStart(now);
 		}
@@ -105,16 +103,14 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	}
 	
 	/**
-	 * Sets DTO's effective start and end, perspective start and end dates using the entities related date columns
+	 * Sets DTO's effective start and end dates using the entities related date columns
 	 * 
 	 * @param entityThatWillEnrich object used to enrich dto
 	 */
 	public void enrichDTODates(D dtoToEnrich, E entityThatWillEnrich)
 	{
 		dtoToEnrich.setEffectiveDateStart(entityThatWillEnrich.getEffectiveDateStart());
-		dtoToEnrich.setEffectiveDateEnd(entityThatWillEnrich.getEffectiveDateEnd());
-		dtoToEnrich.setPerspectiveDateStart(entityThatWillEnrich.getPerspectiveDateStart());
-		dtoToEnrich.setPerspectiveDateEnd(entityThatWillEnrich.getPerspectiveDateEnd());
+		dtoToEnrich.setEffectiveDateEnd(entityThatWillEnrich.getEffectiveDateEnd());		
 	}
 	
 	/**
@@ -128,9 +124,10 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 			return null;	
 		}
 		E toReturn = convertDTOToEntity(bd);
+		toReturn.setIsDeleted(Boolean.FALSE);
 		LocalDateTime currentNow = LocalDateTime.now();
 		LocalDateTime effectiveNow = currentNow;
-		Trim trimType = overrideEffectiveStartToCurrentBeginPeriodAlways();
+		Trim trimType = setEffectiveBeginDateTrimType();
 		if(trimType != null && trimType != Trim.NOW)//override now
 		{
 			effectiveNow = DateUtils.getNowOrGivenOrOpenPeriodStartDate(trimType);

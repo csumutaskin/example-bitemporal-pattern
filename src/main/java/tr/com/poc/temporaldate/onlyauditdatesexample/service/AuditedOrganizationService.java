@@ -57,6 +57,7 @@ public class AuditedOrganizationService  implements BaseService
 		//TODO: Application Exception controlleri
 		//thr new ApplicationException("10000")
 		new BusinessValidationException("10000").throwFinally();
+		new BusinessValidationException("10001").throwFinally();
 		return new ArrayList<>();
 		//ret versionedOrganizationDao.getDTOList (AuditedOrganizationDTOConverter.class)		
 	}

@@ -23,7 +23,6 @@ import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
 import tr.com.poc.temporaldate.core.util.logging.RestLoggable;
-import tr.com.poc.temporaldate.core.model.BooleanDTO;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
 /**
@@ -69,20 +68,21 @@ public class BitemporalOrganizationController
 	}
 		
 	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public ResponseEntity<RestResponse<BooleanDTO>> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSave)
-	{			
+	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSaveOrUpdate)
+	{		
+		BitemporalOrganizationDTO toReturn = null;
 		if(!id.isPresent() || "undefined".equalsIgnoreCase(id.get()))
 		{			
-			BigDecimal organizationId = bitemporalOrganizationService.saveOrMergeOrganization(null, toSave);
-			log.debug("Organization created with id: {}", organizationId);
+			toReturn = bitemporalOrganizationService.saveOrMergeOrganization(null, toSaveOrUpdate);
+			log.debug("Organization created with @pid: {}", toReturn.getOrgId());
 		}	
 		else
 		{
 			BigDecimal bd = new BigDecimal(id.get());
-			BigDecimal organizationId = bitemporalOrganizationService.saveOrMergeOrganization(bd, toSave);
-			log.debug("Organization created with id: {}", organizationId);
+			toReturn = bitemporalOrganizationService.saveOrMergeOrganization(bd, toSaveOrUpdate);
+			log.debug("Organization created with @pid: {}", toReturn.getOrgId());
 		}
-		RestResponse<BooleanDTO> response = new RestResponse.Builder<BooleanDTO>(HttpStatus.OK.toString()).withBody(new BooleanDTO(Boolean.TRUE)).build();
+		RestResponse<BitemporalOrganizationDTO> response = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBody(toReturn).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	

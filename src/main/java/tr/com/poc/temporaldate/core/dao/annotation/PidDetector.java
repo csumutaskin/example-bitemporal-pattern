@@ -28,7 +28,7 @@ import tr.com.poc.temporaldate.common.Constants;
 @Log4j2
 public class PidDetector 
 {
-	static Map<Class<?>, PidTypeAndName> pidTypesAndNamesMap;
+	static Map<Class<?>, PidDetail> pidTypesAndNamesMap;
 	
 	private PidDetector()
 	{}
@@ -38,7 +38,7 @@ public class PidDetector
 	 * 
 	 * @return {@link ConcurrentHashMap}
 	 */
-	public static Map<Class<?>, PidTypeAndName> getPidTypesAndNamesMap()
+	public static Map<Class<?>, PidDetail> getPidTypesAndNamesMap()
 	{
 		return pidTypesAndNamesMap;
 	}	
@@ -56,9 +56,9 @@ public class PidDetector
 		Set<Class<?>> notPidEntityClasses = Sets.difference(entityClasses, pidEntityClasses);
 		Map<Class<?>, Set<Class<?>>> pidEntityMap = getPidEntityMap(createEntityColumnMap(entityClasses),pidEntityClasses);
 		log.info("@Entity classes in projects: {}", entityClasses.toString());
-	    pidTypesAndNamesMap = detectPidColumnNameAndType(pidEntityClasses);
+	    pidTypesAndNamesMap = detectPidDetails(pidEntityClasses);
 		log.info("-----@Pid annotated classes among entity classes: {}", pidTypesAndNamesMap.keySet().stream().map(key -> key + "=" + pidTypesAndNamesMap.get(key)).collect(Collectors.joining(", ", "{", "}")));
-		log.info("@Pid types and names in @Entity classes: {}",detectPidColumnNameAndType(pidEntityClasses));
+		log.info("@Pid types and names in @Entity classes: {}",detectPidDetails(pidEntityClasses));
 		log.info("Not @Pid annotated classes among entity classes: {}", notPidEntityClasses.toString());		
 		log.info("In case of auto update with @pid entity, other entities that should also be updated as key value pair: {}",  pidEntityMap.keySet().stream().map(key -> key + "=" + pidEntityMap.get(key)).collect(Collectors.joining(", ", "{", "}")));
 	}
@@ -126,9 +126,9 @@ public class PidDetector
 	 *  Detects the name and the type of @Pid annotation for each entity in current entity set and stores it in a map 
 	 *  
 	 */
-	public static Map<Class<?>, PidTypeAndName> detectPidColumnNameAndType(Set<Class<?>> pidEntityClasses)
+	public static Map<Class<?>, PidDetail> detectPidDetails(Set<Class<?>> pidEntityClasses)
 	{
-		Map<Class<?>, PidTypeAndName> pidNamesAndTypes = new ConcurrentHashMap<>();
+		Map<Class<?>, PidDetail> pidNamesAndTypes = new ConcurrentHashMap<>();
 		for(Class<?> clazz : pidEntityClasses)			
 		{
 			Field[] fields = clazz.getDeclaredFields();
@@ -136,7 +136,7 @@ public class PidDetector
 			{
 				if(field.isAnnotationPresent(Pid.class) && field.isAnnotationPresent(Column.class))
 				{
-					PidTypeAndName toAdd = new PidTypeAndName(field.getType(), field.getName());
+					PidDetail toAdd = new PidDetail(field.getType(), field.getName(), field.getAnnotation(Pid.class).sequenceName(), field);
 					pidNamesAndTypes.put(clazz, toAdd);
 					break;
 				}

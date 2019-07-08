@@ -47,8 +47,8 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Log4j2
 //TODO: Inject locale from rest header/session/cookie
-@Order(10)
-public class RestExceptionHandler 
+//TODO: Ayrı jara a alındıgında da kullanıldığı projede message sourcelardan okusun...
+public class RestExceptionHandler
 {	
 	private enum ExceptionType { BUSINESS, APPLICATION, BUSINESS_VALIDATION, UNEXPECTED }
 		
@@ -126,9 +126,8 @@ public class RestExceptionHandler
 		}
 		
 		Locale locale = Locale.ENGLISH;//TODO: Parametric...
-		BaseException be = new BaseException(UNEXPECTED);
-		ExceptionLog errorMessageExplanations = getExceptionMessagesFromSource(locale, applicationExceptionMessageSource, be, ExceptionType.UNEXPECTED);
-		log.error("UNHANDLED EXCEPTION DETAIL IS: {}",ExceptionUtils.getStackTrace(exc));
+		ApplicationException ae = new ApplicationException(UNEXPECTED, exc);
+		ExceptionLog errorMessageExplanations = getExceptionMessagesFromSource(locale, applicationExceptionMessageSource, ae, ExceptionType.UNEXPECTED);
 		return prepareResponse(headers, HttpStatus.INTERNAL_SERVER_ERROR, APPLICATION_ERROR_PREFIX + UNEXPECTED, errorMessageExplanations.getGuiLog());		
 	}
 	
@@ -152,8 +151,13 @@ public class RestExceptionHandler
 		}			
 		boolean anyEnglishLocale = locale.getLanguage() != null && locale.getLanguage().startsWith("en");
 		String defaultMessage = anyEnglishLocale ? Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN: Constants.MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES;
-		ExceptionLog errorMessageExplanations = new ExceptionLog(source.getMessage(exc.getExceptionCode() + "|GUI", exc.getExceptionMessageParameters(), defaultMessage ,locale), businessExceptionMessageSource.getMessage(exc.getExceptionCode() + "|LOG", exc.getExceptionMessageParameters(), null ,locale));
-		log.error("user's {} call has an {} erronous response, you can enable debug mode for detailed logging. Exception detail is: {}", getThreadContextKey(MDC_URI), type.toString() ,"[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG" + errorMessageExplanations.getServerLog() + "]");
+		ExceptionLog errorMessageExplanations = new ExceptionLog(source.getMessage(exc.getExceptionCode() + "|GUI", exc.getExceptionMessageParameters(), defaultMessage ,locale), source.getMessage(exc.getExceptionCode() + "|LOG", exc.getExceptionMessageParameters(), null ,locale));
+		log.error("Rest Service with URL: {} , has an ({} ERROR) type response, you can enable debug mode for detailed logging. Exception detail is: {}", getThreadContextKey(MDC_URI), type.toString() ,"[GUI: " + errorMessageExplanations.getGuiLog() + ", LOG: " + errorMessageExplanations.getServerLog() + "]");
+		log.error("EXCEPTION STACK TRACE: {}", ExceptionUtils.getStackTrace(exc));
+		if(exc instanceof ApplicationException && ((ApplicationException)exc).getCauseException() != null)
+		{
+			log.error("APPLICATION EXCEPTION'S CAUSE DETAIL is: {}", ExceptionUtils.getStackTrace(((ApplicationException)exc).getCauseException()));
+		}
 		return errorMessageExplanations;
 	}
 	
