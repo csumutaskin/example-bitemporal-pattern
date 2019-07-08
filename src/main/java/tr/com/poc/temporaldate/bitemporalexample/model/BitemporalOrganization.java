@@ -16,6 +16,11 @@ import lombok.ToString;
 import tr.com.poc.temporaldate.core.dao.annotation.Pid;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 
+/**
+ * BitemporalOrganization Entity
+ * 
+ * @author umutaskin
+ */
 @SuppressWarnings("serial")
 @Table(name = "BT_ORGANIZATION")
 @Entity
@@ -44,10 +49,4 @@ public class BitemporalOrganization extends BaseBitemporalEntity
 	
 	@Column(name = "EARN_AMOUNT")
 	private double earnAmount;
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
 }

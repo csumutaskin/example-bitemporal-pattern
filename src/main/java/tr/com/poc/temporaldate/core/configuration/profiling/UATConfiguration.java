@@ -8,13 +8,18 @@ import org.springframework.context.annotation.PropertySource;
 
 import tr.com.poc.temporaldate.common.Constants;
 
+/**
+ * UAT specific bean for setting up server startup
+ * 
+ * @author umutaskin
+ */
 @Configuration
 @Profile(Constants.PROFILE_UAT)
 @PropertySource("classpath:uat/application-uat.properties")
 public class UATConfiguration 
 {
 	@PostConstruct
-	public void printInfo()
+	public void configureEnvironment()
 	{
 		//In case of UAT specific build is necessary for the project, this method can be used to differ environment specific logging
 	}

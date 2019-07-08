@@ -1,17 +1,18 @@
 package tr.com.poc.temporaldate.bitemporalexample.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import tr.com.poc.temporaldate.bitemporalexample.model.BitemporalOrganization;
-import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
+import tr.com.poc.temporaldate.core.model.BaseDTO;
 
 /**
- * A Sample DTO object for Rest Operations of {@link BitemporalOrganization}
+ * A Sample DTO object for Read All /getAll Operations of {@link BitemporalOrganization}
  * @author umutaskin
- *
  */
 @SuppressWarnings("serial")
 @AllArgsConstructor
@@ -19,10 +20,9 @@ import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
 @Getter 
 @Setter 
 @ToString
-public class BitemporalOrganizationDTO extends BaseBitemporalDTO
+public class BitemporalOrganizationReadRequestDTO implements BaseDTO
 {	
-	private String name;
 	private Long orgId;
-	private double fineAmount;
-	private double earnAmount;
+	private LocalDateTime atEffectiveTime;
+	private LocalDateTime atPerspectiveTime;
 }

@@ -10,13 +10,18 @@ import org.springframework.context.annotation.PropertySource;
 
 import tr.com.poc.temporaldate.common.Constants;
 
+/**
+ * Development specific bean for setting up server startup
+ * 
+ * @author umutaskin
+ */
 @Configuration
 @Profile(Constants.PROFILE_DEV)
 @PropertySource("classpath:dev/application-dev.properties")
 public class DevConfiguration 
 {
 	@PostConstruct
-	public void printInfo() throws IOException
+	public void configureEnvironment() throws IOException
 	{
 		//In case of dev specific build is necessary for the project, this method can be used to differ environment specific logging
 	}

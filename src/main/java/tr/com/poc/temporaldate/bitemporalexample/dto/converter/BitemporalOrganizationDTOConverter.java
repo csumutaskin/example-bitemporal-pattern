@@ -32,6 +32,9 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 		return toReturn;	
 	}
 
+	/**
+	 * Converts {@link BitemporalOrganization} entity to {@link BitemporalOrganizationDTO}
+	 */
 	@Override
 	public BitemporalOrganizationDTO convertEntityToDTO(BitemporalOrganization be) 
 	{
@@ -46,6 +49,9 @@ public class BitemporalOrganizationDTOConverter  extends BaseBitemporalConverter
 		return toReturn;
 	}
 
+	/**
+	 * Trims all Effective Begin Types assigned using this converter utility 
+	 */
 	@Override
 	public Trim setEffectiveBeginDateTrimType() 
 	{

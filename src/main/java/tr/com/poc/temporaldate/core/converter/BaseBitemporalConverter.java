@@ -51,57 +51,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	 * @return related {@link BaseBitemporalDTO} that is converted successfully
 	 */
 	public abstract D convertEntityToDTO(E be);
-	
-	/*
-	 * If perspective dates are still null on entity after convertDTOtoEntity method is called, 
-	 * this method fills as below
-	 * 
-	 * perspective begin: "now" 
-	 * perspective end: end of software 
-	 */	
-	private E enrichEntityPerspectiveDates(E entityToEnrich, LocalDateTime now)
-	{		
-		entityToEnrich = initializeObjectIfNull(entityToEnrich);
-		if(entityToEnrich.getPerspectiveDateStart() == null)
-		{
-			if(now == null)
-			{
-				now = LocalDateTime.now();
-			}
-			entityToEnrich.setPerspectiveDateStart(now);
-		}
-		if(entityToEnrich.getPerspectiveDateEnd() == null)
-		{
-			entityToEnrich.setPerspectiveDateEnd(DateUtils.END_OF_SOFTWARE);
-		}
-		return entityToEnrich;
-	}
-	
-	/*
-	 * If effective dates are still null on entity after convertDTOtoEntity method is called, 
-	 * this method fills as below
-	 * 
-	 * effective begin: "now" or end of period according to overridden getNowOrGivenOrOpenPeriodStartDate() method's return value
-	 * effective end: end of software 
-	 */	
-	private E enrichEntityEffectiveDates(E entityToEnrich, LocalDateTime now)
-	{			
-		entityToEnrich = initializeObjectIfNull(entityToEnrich);	
-		if(entityToEnrich.getEffectiveDateStart() == null)
-		{
-			if(now == null)
-			{
-				now = DateUtils.getNowOrGivenOrOpenPeriodStartDate(setEffectiveBeginDateTrimType());
-			}
-			entityToEnrich.setEffectiveDateStart(now);
-		}
-		if(entityToEnrich.getEffectiveDateEnd() == null)
-		{
-			entityToEnrich.setEffectiveDateEnd(DateUtils.END_OF_SOFTWARE);
-		}
-		return entityToEnrich;
-	}
-	
+			
 	/**
 	 * Sets DTO's effective start and end dates using the entities related date columns
 	 * 
@@ -132,7 +82,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			effectiveNow = DateUtils.getNowOrGivenOrOpenPeriodStartDate(trimType);
 		}
-		toReturn = enrichEntityPerspectiveDates(toReturn, currentNow);
+		enrichEntityPerspectiveDates(toReturn, currentNow);
 		return enrichEntityEffectiveDates(toReturn, effectiveNow);		
 	}
 	
@@ -161,6 +111,10 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		return toReturn;		
 	}
 	
+	/**
+	 * Converts given DTO collection to the related entity collection one by one
+	 * @param dtoList dtolist to be converted to
+	 */
 	public Collection<E> convertDTOCollectiontoEntityCollection(Collection<D> dtoList)
 	{
 		if(CollectionUtils.isEmpty(dtoList))
@@ -177,6 +131,9 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		return toReturn;		
 	}
 	
+	/*
+	 * Initializes a new object using reflection
+	 */
 	private E initializeObjectIfNull(E toInitialize)
 	{		
 		E toReturn = toInitialize;
@@ -198,5 +155,54 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 			throw new ApplicationException(ExceptionConstants.INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION, e);				
 		}
 		return toReturn;
+	}
+	
+	/*
+	 * If perspective dates are still null on entity after convertDTOtoEntity method is called, 
+	 * this method fills as below
+	 * 
+	 * perspective begin: "now" 
+	 * perspective end: end of software 
+	 */	
+	private void enrichEntityPerspectiveDates(E entityToEnrich, LocalDateTime now)
+	{		
+		entityToEnrich = initializeObjectIfNull(entityToEnrich);
+		if(entityToEnrich.getPerspectiveDateStart() == null)
+		{
+			if(now == null)
+			{
+				now = LocalDateTime.now();
+			}
+			entityToEnrich.setPerspectiveDateStart(now);
+		}
+		if(entityToEnrich.getPerspectiveDateEnd() == null)
+		{
+			entityToEnrich.setPerspectiveDateEnd(DateUtils.END_OF_SOFTWARE);
+		}
+	}
+	
+	/*
+	 * If effective dates are still null on entity after convertDTOtoEntity method is called, 
+	 * this method fills as below
+	 * 
+	 * effective begin: "now" or end of period according to overridden getNowOrGivenOrOpenPeriodStartDate() method's return value
+	 * effective end: end of software 
+	 */	
+	private E enrichEntityEffectiveDates(E entityToEnrich, LocalDateTime now)
+	{			
+		entityToEnrich = initializeObjectIfNull(entityToEnrich);	
+		if(entityToEnrich.getEffectiveDateStart() == null)
+		{
+			if(now == null)
+			{
+				now = DateUtils.getNowOrGivenOrOpenPeriodStartDate(setEffectiveBeginDateTrimType());
+			}
+			entityToEnrich.setEffectiveDateStart(now);
+		}
+		if(entityToEnrich.getEffectiveDateEnd() == null)
+		{
+			entityToEnrich.setEffectiveDateEnd(DateUtils.END_OF_SOFTWARE);
+		}
+		return entityToEnrich;
 	}
 }

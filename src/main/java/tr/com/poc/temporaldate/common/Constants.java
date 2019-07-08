@@ -14,6 +14,7 @@ public class Constants
 	{}
 	
 	public static final Locale LOCALE_TR = new Locale("tr-TR");
+	public static final String UNDEFINED_STR = "undefined";
 	
 	public static final String PROFILE_DEV = "dev";
 	public static final String PROFILE_QA = "qa";
