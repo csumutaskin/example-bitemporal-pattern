@@ -94,7 +94,7 @@ public class ApplicationConfiguration
     @PostConstruct
     public void promptSystemInfoLog() throws IOException
     {       	
-    	setMDCDefaults();
+    	setMDCDefaults();       	
     	
     	System.setProperty("common.log.pattern", commonLogPattern);
     	log.info("****************************************************************************************");

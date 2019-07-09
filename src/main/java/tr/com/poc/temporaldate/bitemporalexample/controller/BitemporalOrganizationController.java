@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationDTO;
 import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationReadRequestDTO;
 import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
 import tr.com.poc.temporaldate.common.Constants;
+import tr.com.poc.temporaldate.core.model.BooleanDTO;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
 /**
@@ -72,5 +74,19 @@ public class BitemporalOrganizationController
 		}
 		RestResponse<BitemporalOrganizationDTO> response = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBody(toReturn).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	/**
+	 * Retrieves all organization data with the given parameter set in {@link BitemporalOrganizationReadRequestDTO}
+	 * @param toRead input parameters for read criteria
+	 * @return List of {@link RestResponse of BitemporalOrganizationDTO}
+	 */
+	@DeleteMapping(value = "/deleteEntities" , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<RestResponse<BooleanDTO>> deleteOrganizations(@RequestBody BitemporalOrganizationReadRequestDTO toDelete)
+	{		
+		bitemporalOrganizationService.removeOrganizations(toDelete);
+		RestResponse<BooleanDTO> response = new RestResponse.Builder<BooleanDTO>(HttpStatus.OK.toString()).withBody(new BooleanDTO(Boolean.TRUE)).build();
+		log.debug("Organization entities deleted using /bitemporal-organization/deleteEntities rest");
+		return new ResponseEntity<>(response, HttpStatus.OK);		
 	}
 }

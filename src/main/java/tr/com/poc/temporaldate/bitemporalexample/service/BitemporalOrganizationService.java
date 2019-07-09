@@ -51,4 +51,18 @@ public class BitemporalOrganizationService  implements BaseService
 		BitemporalOrganization organizationSavedOrUpdated = bitemporalOrganizationDao.saveOrUpdateDTOWithNaturalId(id, toSaveOrUpdate, BitemporalOrganizationDTOConverter.class);
 		return converter.convertEntityToDTO(organizationSavedOrUpdated);				
 	}	
+	
+	/**
+	 * Removes all the tuples of {@link BitemporalOrganizationDTO} object, that match the given criteria
+	 * @param toRead if null, persist operation is done, if non-null update operation is done	 * 
+	 * @return {@link Boolean} true if removal is successful
+	 */
+	public void removeOrganizations(BitemporalOrganizationReadRequestDTO toRead)
+	{		
+		if(toRead == null)
+		{
+			return;
+		}
+		bitemporalOrganizationDao.removeEntities(toRead.getOrgId(), toRead.getAtPerspectiveTime(), toRead.getAtEffectiveTime());						
+	}	
 }

@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
@@ -81,6 +82,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	public List<E> getEntityWithNaturalIdAtGivenDates(final Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
 	{	
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		 
+//		Session hibernateSession = entityManager.unwrap(Session.class);
+//		Filter publishedAfterFilter = hibernateSession.enableFilter("notDeletedTuplesFilter");
+//		publishedAfterFilter.setParameter("isDeleted", Boolean.FALSE);
+//		publishedAfterFilter.validate();
+		
+		
 		return baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, null, perspectiveDate, effectiveDate);
 	}
 	
@@ -154,6 +162,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_ENTITY_PID_COLUMN_SHOULD_BE_NULL, beType.getSimpleName(), toSave.toString());		
 	}
 	
+	/**
+	 * Updates an entity within given Effective and Perspective Dates
+	 * @param beType type of object to be persisted
+	 * @param pid pid value of the object to be updated
+	 * @param toUpdate new parameters of the object that will be overridden to the table
+	 * @return {@link E extends BaseEntity}
+	 */
 	public  E updateEntityWithinEffectiveAndPerspectiveDates(Class<?> beType, Serializable pid, E toUpdate)
 	{			
 		baseHelper.validateDates(beType, toUpdate, OperationType.UPDATE);
@@ -165,4 +180,26 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	/*	baseHelper checkNoPerspectiveDateGapsAfterUpdate baseHelper checkNoEffectiveDateGapsAfterUpdate*/
 		return toUpdate;
 	}	
+	
+
+	/**
+	 * Removes all entities with the given criteria
+	 * @param beType type of the object to be persisted
+	 * @param pid pid value of the pid column of the entity - leave null to select all pid's
+	 * @param perspectiveDate perspective time - leave null to select all tuple modifications
+	 * @param effectiveDate - effective time - leave null to select all tuples at different effective times
+	 */
+	public void removeEntities(Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
+	{
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		List<E> entitiesRetrievedWithLock = baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, LockModeType.PESSIMISTIC_WRITE, perspectiveDate, effectiveDate);
+		if(CollectionUtils.isEmpty(entitiesRetrievedWithLock))
+		{
+			return;
+		}
+		for(E current: entitiesRetrievedWithLock)
+		{
+			entityManager.remove(current);
+		}
+	}
 }
