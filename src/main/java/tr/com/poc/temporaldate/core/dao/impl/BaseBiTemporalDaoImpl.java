@@ -2,6 +2,8 @@ package tr.com.poc.temporaldate.core.dao.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +42,14 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	
 	@Autowired
 	private BaseBiTemporalDaoHelperImpl<E> baseHelper;
+	
+	public Object getSequenceNextValueOfPidColumn()
+	{
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		PidDetail pidInfoOfCurrentEntity = baseHelper.getPidInfoOfCurrentEntity(beType, OperationType.UNDEFINED);
+		BigInteger sequenceNextValue = (BigInteger)baseHelper.getSequenceNextValue(entityManager, pidInfoOfCurrentEntity.getSequenceName());
+		return pidInfoOfCurrentEntity.castGivenValueToPidType(beType, sequenceNextValue);		
+	}
 	
 	/**
 	 * Returns the entity manager object that can be used directly in sub data access object classes
@@ -201,5 +211,12 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		{
 			entityManager.remove(current);
 		}
+	}
+	
+	//!!!!
+	public E saveEntityWithPrimaryId(E toSave)
+	{
+		entityManager.persist(toSave);
+		return toSave;
 	}
 }

@@ -78,7 +78,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 			return null;
 		}		
 		Query selectCurrentDataUsingEffectiveTimeParameter = null;
-		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery(SELECT_E_FROM_PREFIX + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= recordDateStart and sysdate < recordDateEnd and E.id = :id");
+		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery(SELECT_E_FROM_PREFIX + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= perspectiveDateStart and sysdate < perspectiveDateEnd and E.id = :id");
 		selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
 		if(lockModeType != null)
 		{
