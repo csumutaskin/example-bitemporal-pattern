@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.bitemporalexample.dto;
+package tr.com.poc.temporaldate.bitemporalexample.dto.bitemporaluser;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,16 +10,16 @@ import tr.com.poc.temporaldate.core.annotations.validation.NotNull;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalDTO;
 
 @SuppressWarnings("serial")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
-public class BitemporalOrganizationDTO extends BaseBitemporalDTO
+public class BitemporalUserWithOrganizationDTO extends BaseBitemporalDTO 
 {
-	@NotNull(exceptionCode = "10000")
+	private String userName;
 	private String name;
-	private Long orgId;
+	private String orgName;
 	private double fineAmount;
 	private double earnAmount;
 }

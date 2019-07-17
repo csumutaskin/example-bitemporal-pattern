@@ -14,7 +14,7 @@ import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 
 /**
- * A metadata holder for @Pid annotated fields in a class
+ * A metadata holder for &#64;Pid annotated fields in a class
  * 
  * @author umutaskin
  *

@@ -1,32 +1,33 @@
 package tr.com.poc.temporaldate.bitemporalexample.controller;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiParam;
 import lombok.extern.log4j.Log4j2;
-import tr.com.poc.temporaldate.bitemporalexample.dto.BitemporalOrganizationDTO;
+import tr.com.poc.temporaldate.bitemporalexample.dto.bitemporalorganization.BitemporalOrganizationSaveOrUpdateRequestDTO;
+import tr.com.poc.temporaldate.bitemporalexample.dto.bitemporalorganization.BitemporalOrganizationSaveOrUpdateResponseDTO;
+import tr.com.poc.temporaldate.bitemporalexample.dto.common.BitemporalReadRequestDTO;
 import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
 import tr.com.poc.temporaldate.core.util.logging.RestLoggable;
+import tr.com.poc.temporaldate.common.Constants;
+import tr.com.poc.temporaldate.core.model.BooleanDTO;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
 
 /**
- * Sample organization controller having bi-temporal data
+ * A Bitemporal Organization Rest Collection Example
  * 
  * @author umut
  */
@@ -34,61 +35,59 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
 @Log4j2
 @RequestMapping(value = "/bitemporal-organization")
 @RestLoggable
-public class BitemporalOrganizationController 
+@ResponseBody
+public class BitemporalOrganizationController
 {
 	@Autowired
 	private BitemporalOrganizationService bitemporalOrganizationService;
 	
-	@GetMapping(value = "/getAll" , produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> getOrganizationList()
-	{		
-		List<BitemporalOrganizationDTO> allOrganizations = bitemporalOrganizationService.getAllOrganizations(LocalDateTime.now(), null);
-		RestResponse<BitemporalOrganizationDTO> build = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBodyList(allOrganizations).build();
-		return new ResponseEntity<>(build, HttpStatus.OK);		
-	}
-	
-	//TODO: Gereksiz sil....
-	@GetMapping(value = "/getAll2" , produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> getOrganizationItem()
-	{		
-		BitemporalOrganizationDTO a = new BitemporalOrganizationDTO("aboooTek1", 15l, 3d, 5d);
-		RestResponse<BitemporalOrganizationDTO> build = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBody(a).build();
-		return new ResponseEntity<>(build, HttpStatus.OK);		
-	}
-	
-	/**	 
-	 * @param id
-	 * @param toUpdate
-	 * @return
+	/**
+	 * Retrieves all organization data with the given parameter set in {@link BitemporalReadRequestDTO}
+	 * @param toRead input parameters for read criteria
+	 * @return List of {@link RestResponse of BitemporalOrganizationDTO}
 	 */
-	@PutMapping(value = "/update/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public ResponseEntity<Boolean> updateOrganization(@PathVariable BigDecimal id, @RequestBody BitemporalOrganizationDTO toUpdate)
-	{
-		return new ResponseEntity<>(bitemporalOrganizationService.updateOrganization(id, toUpdate), HttpStatus.OK);
-	}
-		
-	@PostMapping(value = "/saveOrMerge/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public ResponseEntity<RestResponse<BitemporalOrganizationDTO>> saveOrMergeOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> id, @RequestBody BitemporalOrganizationDTO toSaveOrUpdate)
+	@PostMapping(value = "/getAll" , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public RestResponse<BitemporalOrganizationSaveOrUpdateResponseDTO> getOrganizationList(@RequestBody BitemporalReadRequestDTO toRead)
 	{		
-		BitemporalOrganizationDTO toReturn = null;
-		if(!id.isPresent() || "undefined".equalsIgnoreCase(id.get()))
-		{			
+		List<BitemporalOrganizationSaveOrUpdateResponseDTO> allOrganizations = bitemporalOrganizationService.getAllOrganizations(toRead);
+		log.debug("Organization list retrieved using /bitemporal-organization/getAll rest");
+		return new RestResponse.Builder<BitemporalOrganizationSaveOrUpdateResponseDTO>(HttpStatus.OK.toString()).withBodyList(allOrganizations).build();				
+	}
+	
+	/**
+	 * Saves or Updates the given {@link BitemporalOrganizationSaveOrUpdateResponseDTO} object
+	 * @param id if null, persist operation is done, if non-null update operation is done
+	 * @param toSaveOrUpdate object to be persisted or updated
+	 * @return {@link BitemporalOrganizationSaveOrUpdateResponseDTO} Saved or Updated object details
+	 */
+	@PostMapping(value = "/saveOrUpdate/{orgId}" , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	public RestResponse<BitemporalOrganizationSaveOrUpdateResponseDTO> saveOrUpdateOrganization(@ApiParam(required=false) @PathVariable(required=false) Optional<String> orgId, @RequestBody BitemporalOrganizationSaveOrUpdateRequestDTO toSaveOrUpdate)
+	{		
+		BitemporalOrganizationSaveOrUpdateResponseDTO toReturn = null;
+		if(!orgId.isPresent() || Constants.UNDEFINED_STR.equalsIgnoreCase(orgId.get()))
+		{
 			toReturn = bitemporalOrganizationService.saveOrMergeOrganization(null, toSaveOrUpdate);
 			log.debug("Organization created with @pid: {}", toReturn.getOrgId());
 		}	
 		else
 		{
-			BigDecimal bd = new BigDecimal(id.get());
+			BigDecimal bd = new BigDecimal(orgId.get());
 			toReturn = bitemporalOrganizationService.saveOrMergeOrganization(bd, toSaveOrUpdate);
 			log.debug("Organization created with @pid: {}", toReturn.getOrgId());
 		}
-		RestResponse<BitemporalOrganizationDTO> response = new RestResponse.Builder<BitemporalOrganizationDTO>(HttpStatus.OK.toString()).withBody(toReturn).build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new RestResponse.Builder<BitemporalOrganizationSaveOrUpdateResponseDTO>(HttpStatus.OK.toString()).withBody(toReturn).build();		
 	}
 	
-	@DeleteMapping(value = "/delete/{id}")
-	public ResponseEntity<Boolean> deleteOrganization(@PathVariable BigDecimal id)
+	/**
+	 * Retrieves all organization data with the given parameter set in {@link BitemporalReadRequestDTO}
+	 * @param toRead input parameters for read criteria
+	 * @return List of {@link RestResponse of BitemporalOrganizationDTO}
+	 */
+	@DeleteMapping(value = "/deleteEntities" , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public RestResponse<BooleanDTO> deleteOrganizations(@RequestBody BitemporalReadRequestDTO toDelete)
 	{		
-		return new ResponseEntity<>(bitemporalOrganizationService.deleteOrganization(id), HttpStatus.OK);
+		bitemporalOrganizationService.removeOrganizations(toDelete);
+		log.debug("Organization entities deleted using /bitemporal-organization/deleteEntities rest");
+		return new RestResponse.Builder<BooleanDTO>(HttpStatus.OK.toString()).withBody(new BooleanDTO(Boolean.TRUE)).build();				
 	}
 }

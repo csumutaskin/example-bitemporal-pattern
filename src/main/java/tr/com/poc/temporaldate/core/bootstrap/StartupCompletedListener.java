@@ -62,10 +62,9 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
         log.info("Spring Context is up and all beans are initialized now...");
         
         PidDetector.detectPidAnnotations();
-
         RestServerLogInit.init(contextPathUrl);
-        
-        
+//        EntityDetector.detectEntityAssociations();
+
         checkBusinessExceptionsI18NKeysAreSynchronizedOrNot();
         checkApplicationExceptionsI18NKeysAreSynchronizedOrNot();
         log.info("All startup checks are done, no important issue found to cancel build/startup process...");

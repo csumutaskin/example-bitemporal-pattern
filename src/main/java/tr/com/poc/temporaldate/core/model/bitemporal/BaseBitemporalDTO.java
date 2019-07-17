@@ -10,7 +10,7 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 
 /**
  * Base DTO for Bitemporal entities
- * "Record Dates" hold perspective time details whereas "effective Dates" mean in which interval those tuples are active.
+ * "Record Dates" hold observer time details whereas "effective Dates" mean in which interval those tuples are active.
  * 
  * @author umutaskin
  */

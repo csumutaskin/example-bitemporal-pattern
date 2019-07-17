@@ -32,6 +32,8 @@ import tr.com.poc.temporaldate.core.model.BaseEntity;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @ToString(callSuper=true, includeFieldNames=true)
+//@FilterDef (name = "notDeletedTuplesFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+//@Filter(name="notDeletedTuplesFilter", condition="IS_DELETED = :isDeleted")
 public class BaseBitemporalEntity implements BaseEntity 
 {
 	@Column(name = "CREATE_USER")
@@ -65,11 +67,11 @@ public class BaseBitemporalEntity implements BaseEntity
 	@Column(name = "EFFECTIVE_DATE_END")
 	private LocalDateTime effectiveDateEnd;
 	
-	@Column(name = "PERSPECTIVE_DATE_START")
-	private LocalDateTime perspectiveDateStart;
+	@Column(name = "OBSERVER_DATE_START")
+	private LocalDateTime observerDateStart;
 	
-	@Column(name = "PERSPECTIVE_DATE_END")
-	private LocalDateTime perspectiveDateEnd;		
+	@Column(name = "OBSERVER_DATE_END")
+	private LocalDateTime observerDateEnd;		
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException

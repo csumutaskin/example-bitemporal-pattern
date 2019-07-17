@@ -29,6 +29,7 @@ import tr.com.poc.temporaldate.common.Constants;
 public class PidDetector 
 {
 	static Map<Class<?>, PidDetail> pidTypesAndNamesMap;
+	static Map<Class<?>, Set<Class<?>>> pidEntityMap;
 	
 	private PidDetector()
 	{}
@@ -44,8 +45,18 @@ public class PidDetector
 	}	
 	
 	/**
+	 * Getter for Pid Entity Map that contains the association of parent and child which both have @pid column 
+	 * 
+	 * @return {@link ConcurrentHashMap}
+	 */
+	public static Map<Class<?>, Set<Class<?>>> getPidEntityMap()
+	{
+		return pidEntityMap;
+	}	
+	
+	/**
 	 * Creates a map where keys are entities with @pid usage, values are where these key entities are used as attributes.
-	 * This is necessary to auto update entities along with associations from perspective view.
+	 * This is necessary to auto update entities along with associations from observer view.
 	 */
 	public static void detectPidAnnotations()
 	{
@@ -54,7 +65,7 @@ public class PidDetector
 		Set<Class<?>> entityClasses = reflections.getTypesAnnotatedWith(Entity.class);
 		Set<Class<?>> pidEntityClasses = detectPidAnnotatedClassesAtColumnFields(entityClasses);
 		Set<Class<?>> notPidEntityClasses = Sets.difference(entityClasses, pidEntityClasses);
-		Map<Class<?>, Set<Class<?>>> pidEntityMap = getPidEntityMap(createEntityColumnMap(entityClasses),pidEntityClasses);
+		pidEntityMap = getPidEntityMap(createEntityColumnMap(entityClasses),pidEntityClasses);
 		log.info("@Entity classes in projects: {}", entityClasses.toString());
 	    pidTypesAndNamesMap = detectPidDetails(pidEntityClasses);
 		log.info("-----@Pid annotated classes among entity classes: {}", pidTypesAndNamesMap.keySet().stream().map(key -> key + "=" + pidTypesAndNamesMap.get(key)).collect(Collectors.joining(", ", "{", "}")));
@@ -111,6 +122,7 @@ public class PidDetector
 	 *       User -> {Organization, ....} and etc
 	 * 
 	 */
+	//TODO: Cyclic check
 	public static Map<Class<?>, Set<Class<?>>> getPidEntityMap(Map<Class<?>, Set<Class<?>>> entityColumnMap, Set<Class<?>> pidContainedEntitySet)
 	{
 		Map<Class<?>, Set<Class<?>>> pidMap = new ConcurrentHashMap<>();
