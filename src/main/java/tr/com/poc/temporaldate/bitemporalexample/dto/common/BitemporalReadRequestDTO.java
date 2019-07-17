@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.bitemporalexample.dto;
+package tr.com.poc.temporaldate.bitemporalexample.dto.common;
 
 import java.time.LocalDateTime;
 
@@ -20,9 +20,9 @@ import tr.com.poc.temporaldate.core.model.BaseDTO;
 @Getter 
 @Setter 
 @ToString
-public class BitemporalOrganizationReadRequestDTO implements BaseDTO
+public class BitemporalReadRequestDTO implements BaseDTO
 {	
-	private Long orgId;
+	private Long pid;
 	private LocalDateTime atEffectiveTime;
 	private LocalDateTime atPerspectiveTime;
 }

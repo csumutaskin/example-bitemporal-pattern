@@ -30,6 +30,7 @@ public class ExceptionConstants
 	public static final String INITIALIZING_NULL_ENTITY_USING_REFLECTION_EXCEPTION = "10200";
 	public static final String INITIALIZING_NULL_DTO_USING_REFLECTION_EXCEPTION = "10201";
 	public static final String CLONING_ENTITY_EXCEPTION = "10202";
+	public static final String NOT_CONVERTABLE_ENTITY_EXCEPTION = "10203";
 	
 	/* *************************************
 	 *     Server startup Exception Constants

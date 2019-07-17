@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.ResultCheckStyle;
@@ -21,50 +20,45 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import tr.com.poc.temporaldate.core.dao.annotation.Pid;
 import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 
+/**
+ * Bitemporal User Entity 
+ * 
+ * @author umutaskin
+ */
 @SuppressWarnings("serial")
 @Table(name = "USER")
 @Entity
-//@AllArgsConstructor 
 @NoArgsConstructor 
 @Getter 
 @Setter 
-//@Builder
 @ToString(callSuper=true, includeFieldNames=true)
 @Where(clause = "IS_DELETED = 'FALSE'" )
 @SQLDelete(sql = "UPDATE USER SET IS_DELETED = 'TRUE' WHERE id = ?", check = ResultCheckStyle.COUNT)
-public class User extends BaseBitemporalEntity
+public class BitemporalUser extends BaseBitemporalEntity
 {
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+
+	@Column(name = "USERNAME")
+	private String userName;
 	
 	@Column(name = "NAME")
 	private String name;
 	
+	@Column(name = "USER_ID")
+	@Pid(sequenceName="USER_PID_SEQUENCE")
+	private String userId;
+		
 	@Column(name = "ORG_ID")
 	private Long orgId;
 	
-//	@Basic(fetch = FetchType.LAZY)
-//	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional=false)
-//	@JoinFormula(
-//	value="(SELECT B.id FROM BT_ORGANIZATION B WHERE now() > B.PERSPECTIVE_DATE_START AND now() < B.PERSPECTIVE_DATE_END AND now() > B.EFFECTIVE_DATE_START AND now() < B.EFFECTIVE_DATE_END AND B.ORG_ID = ORG_ID)",
-//	referencedColumnName="id")	
-//	private BitemporalOrganization organization;	
-	
-	@Transient
-	private BitemporalOrganization organization;
-
-	public User(User user, BitemporalOrganization organization) {
-		super();
-		this.id = user.getId();
-		this.name = user.getName();
-		this.orgId = user.getOrgId();
-		this.organization = organization;
-	}
-	
-	
-	
+	@Basic(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, optional=false)
+	@JoinFormula(value="(SELECT B.id FROM BT_ORGANIZATION B WHERE now() > B.PERSPECTIVE_DATE_START AND now() < B.PERSPECTIVE_DATE_END AND now() > B.EFFECTIVE_DATE_START AND now() < B.EFFECTIVE_DATE_END AND B.ORG_ID = ORG_ID)", referencedColumnName="id")	
+	private BitemporalOrganization organization;	
 }

@@ -2,7 +2,6 @@ package tr.com.poc.temporaldate.core.dao.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -26,7 +25,7 @@ import tr.com.poc.temporaldate.core.model.bitemporal.BaseBitemporalEntity;
 import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 /**
- * Base CRUD operations on a Bitemporal entity
+ * Base CRUD operations on any Bitemporal Entity
  * @author umutaskin
  *
  * @param <E> any entity that extends {@link BaseBitemporalEntity}
@@ -34,7 +33,7 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 @Component
 @SuppressWarnings(value = { "rawtypes", "unchecked"})
 @Log4j2
-//TODO: Append isDeleted = 0 condition to all queries, saveOrUpdateBulk()
+//TODO: Add Oracle 12c identity support.. 
 public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 {
 	@PersistenceContext
@@ -43,6 +42,10 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	@Autowired
 	private BaseBiTemporalDaoHelperImpl<E> baseHelper;
 	
+	/**
+	 * Returns next sequence value on a well known pid sequence column of an entity  
+	 * @return next value of the sequence, casted to the related pid type of that entity
+	 */
 	public Object getSequenceNextValueOfPidColumn()
 	{
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
@@ -70,11 +73,21 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/**
+	 * Returns the pid details of an entity if exists
+	 * @param type current database operation waiting to be completed
+	 * @return {@link PidDetail}
+	 */
+	public PidDetail getPidInfoOfCurrentEntity(OperationType type)
+	{
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		return baseHelper.getPidInfoOfCurrentEntity(beType, type);
+	}
+	
+	/**
 	 * Retrieves currently effective entity, from current perspective using primary key id
 	 * @param pk primary key to be searched (not the @Pid)
 	 * @return {@link BaseTemporalEntity} 
 	 */
-	//TODO: Refactor
 	public E getEntityWithPrimaryId(final Serializable pk)
 	{		
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
@@ -92,13 +105,6 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	public List<E> getEntityWithNaturalIdAtGivenDates(final Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
 	{	
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
-		 
-//		Session hibernateSession = entityManager.unwrap(Session.class);
-//		Filter publishedAfterFilter = hibernateSession.enableFilter("notDeletedTuplesFilter");
-//		publishedAfterFilter.setParameter("isDeleted", Boolean.FALSE);
-//		publishedAfterFilter.validate();
-		
-		
 		return baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, null, perspectiveDate, effectiveDate);
 	}
 	
@@ -130,12 +136,12 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		if(pid == null)//persist
 		{
 			log.info("Saving entity:{}, with pid: {}", beType.getSimpleName(), pid);
-			toReturn = saveEntityWithinEffectiveAndPerspectiveDates(beType, baseBiTemporalEntity);
+			toReturn = saveEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(beType, baseBiTemporalEntity);
 		}
 		else//update
 		{	
 			log.info("Updating entity:{}, with pid: {}", beType.getSimpleName(), pid);
-			toReturn = updateEntityWithinEffectiveAndPerspectiveDates(beType, pid, baseBiTemporalEntity);
+			toReturn = updateEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(beType, pid, baseBiTemporalEntity);
 		}
 		return toReturn;
 	}	
@@ -159,10 +165,11 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param toSave object that is to be persisted
 	 * @return {@link E extends BaseEntity}
 	 */
-	public E saveEntityWithinEffectiveAndPerspectiveDates(Class<?> beType, E toSave)
+	public E saveEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(Class<?> beType, E toSave)
 	{
 		baseHelper.validateDates(beType, toSave, OperationType.SAVE);
 		PidDetail pidDetail = baseHelper.getPidInfoOfCurrentEntity(beType, OperationType.SAVE);
+		toSave.setIsDeleted(Boolean.FALSE);
 		if(pidDetail.readPidColumnValue(beType, toSave) == null)//For a persist operation @Pid value should be null and read from its own sequence
 		{	
 			pidDetail.setPidColumnValue(beType, toSave, baseHelper.getSequenceNextValue(entityManager, pidDetail.getSequenceName()));
@@ -179,10 +186,11 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param toUpdate new parameters of the object that will be overridden to the table
 	 * @return {@link E extends BaseEntity}
 	 */
-	public  E updateEntityWithinEffectiveAndPerspectiveDates(Class<?> beType, Serializable pid, E toUpdate)
+	public  E updateEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(Class<?> beType, Serializable pid, E toUpdate)
 	{			
 		baseHelper.validateDates(beType, toUpdate, OperationType.UPDATE);
 		PidDetail pidDetail = baseHelper.getPidInfoOfCurrentEntity(beType, OperationType.UPDATE);
+		toUpdate.setIsDeleted(Boolean.FALSE);
 		pidDetail.setPidColumnValue(beType, toUpdate, pid);
 		Collection<E> allEntitiesWithinDates = baseHelper.getAllEntitiesWithinDates(beType, entityManager, pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd(), pidDetail);
 		baseHelper.updateOldTuplesWithNewDates(entityManager, beType, (List<E>)allEntitiesWithinDates, toUpdate.getPerspectiveDateStart(), toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd());
@@ -193,13 +201,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	
 
 	/**
-	 * Removes all entities with the given criteria
+	 * Removes - Soft Deletes - all entities with the given criteria
 	 * @param beType type of the object to be persisted
 	 * @param pid pid value of the pid column of the entity - leave null to select all pid's
 	 * @param perspectiveDate perspective time - leave null to select all tuple modifications
 	 * @param effectiveDate - effective time - leave null to select all tuples at different effective times
 	 */
-	public void removeEntities(Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
+	public void removeEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
 	{
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
 		List<E> entitiesRetrievedWithLock = baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, LockModeType.PESSIMISTIC_WRITE, perspectiveDate, effectiveDate);
@@ -213,9 +221,19 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		}
 	}
 	
-	//!!!!
+	/**
+	 * Persists entity *DOES NOT USE pid utility
+	 * @param toSave object to be persisted
+	 * @return {@link BaseBitemporalEntity} object that is persisted
+	 */
 	public E saveEntityWithPrimaryId(E toSave)
 	{
+		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
+		if(toSave == null)
+		{
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_CANNOT_BE_NULL, OperationType.SAVE.toString(), beType.getSimpleName());
+		}
+		toSave.setIsDeleted(Boolean.FALSE);
 		entityManager.persist(toSave);
 		return toSave;
 	}

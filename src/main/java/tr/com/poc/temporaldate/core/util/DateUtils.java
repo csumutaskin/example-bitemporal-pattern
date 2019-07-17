@@ -16,7 +16,7 @@ public final class DateUtils
 {
 	private DateUtils() {}
 	
-	public static final LocalDateTime END_OF_SOFTWARE  = LocalDateTime.of(2100, 12, 31, 23, 59, 59);
+	public static final LocalDateTime END_OF_SOFTWARE  = LocalDateTime.of(9999, 12, 31, 23, 59, 59);
 
 	/**
 	 * Checks whether toCompare date is between beginDate and endDate
