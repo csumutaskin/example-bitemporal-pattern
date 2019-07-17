@@ -67,11 +67,11 @@ public class BaseBitemporalEntity implements BaseEntity
 	@Column(name = "EFFECTIVE_DATE_END")
 	private LocalDateTime effectiveDateEnd;
 	
-	@Column(name = "PERSPECTIVE_DATE_START")
-	private LocalDateTime perspectiveDateStart;
+	@Column(name = "OBSERVER_DATE_START")
+	private LocalDateTime observerDateStart;
 	
-	@Column(name = "PERSPECTIVE_DATE_END")
-	private LocalDateTime perspectiveDateEnd;		
+	@Column(name = "OBSERVER_DATE_END")
+	private LocalDateTime observerDateEnd;		
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException

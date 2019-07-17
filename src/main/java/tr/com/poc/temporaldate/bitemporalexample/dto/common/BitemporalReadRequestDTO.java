@@ -24,5 +24,5 @@ public class BitemporalReadRequestDTO implements BaseDTO
 {	
 	private Long pid;
 	private LocalDateTime atEffectiveTime;
-	private LocalDateTime atPerspectiveTime;
+	private LocalDateTime atObserverTime;
 }

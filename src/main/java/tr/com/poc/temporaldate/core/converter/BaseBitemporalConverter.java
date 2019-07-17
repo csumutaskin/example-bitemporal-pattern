@@ -82,7 +82,7 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 		{
 			effectiveNow = DateUtils.getNowOrGivenOrOpenPeriodStartDate(trimType);
 		}
-		enrichEntityPerspectiveDates(toReturn, currentNow);
+		enrichEntityObserverDates(toReturn, currentNow);
 		return enrichEntityEffectiveDates(toReturn, effectiveNow);		
 	}
 	
@@ -158,26 +158,26 @@ public abstract class BaseBitemporalConverter<E extends BaseBitemporalEntity, D 
 	}
 	
 	/*
-	 * If perspective dates are still null on entity after convertDTOtoEntity method is called, 
+	 * If observer dates are still null on entity after convertDTOtoEntity method is called, 
 	 * this method fills as below
 	 * 
-	 * perspective begin: "now" 
-	 * perspective end: end of software 
+	 * observer begin: "now" 
+	 * observer end: end of software 
 	 */	
-	private void enrichEntityPerspectiveDates(E entityToEnrich, LocalDateTime now)
+	private void enrichEntityObserverDates(E entityToEnrich, LocalDateTime now)
 	{		
 		entityToEnrich = initializeObjectIfNull(entityToEnrich);
-		if(entityToEnrich.getPerspectiveDateStart() == null)
+		if(entityToEnrich.getObserverDateStart() == null)
 		{
 			if(now == null)
 			{
 				now = LocalDateTime.now();
 			}
-			entityToEnrich.setPerspectiveDateStart(now);
+			entityToEnrich.setObserverDateStart(now);
 		}
-		if(entityToEnrich.getPerspectiveDateEnd() == null)
+		if(entityToEnrich.getObserverDateEnd() == null)
 		{
-			entityToEnrich.setPerspectiveDateEnd(DateUtils.END_OF_SOFTWARE);
+			entityToEnrich.setObserverDateEnd(DateUtils.END_OF_SOFTWARE);
 		}
 	}
 	

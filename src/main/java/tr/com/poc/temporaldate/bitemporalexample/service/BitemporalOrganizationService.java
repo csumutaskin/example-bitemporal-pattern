@@ -38,7 +38,7 @@ public class BitemporalOrganizationService  implements BaseService
 	 */
 	public List<BitemporalOrganizationSaveOrUpdateResponseDTO> getAllOrganizations(BitemporalReadRequestDTO toRead)
 	{
-		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalIdAtGivenDates(toRead.getPid(), toRead.getAtPerspectiveTime(), toRead.getAtEffectiveTime());		
+		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalIdAtGivenDates(toRead.getPid(), toRead.getAtObserverTime(), toRead.getAtEffectiveTime());		
 		return (List<BitemporalOrganizationSaveOrUpdateResponseDTO>)converter.convertEntityCollectionToDTOCollection(entityWithNaturalId);
 	}
 	
@@ -65,6 +65,6 @@ public class BitemporalOrganizationService  implements BaseService
 		{
 			return;
 		}
-		bitemporalOrganizationDao.removeEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(toRead.getPid(), toRead.getAtPerspectiveTime(), toRead.getAtEffectiveTime());						
+		bitemporalOrganizationDao.removeEntityWithNaturalIdWithinEffectiveAndObserverDates(toRead.getPid(), toRead.getAtObserverTime(), toRead.getAtEffectiveTime());						
 	}	
 }

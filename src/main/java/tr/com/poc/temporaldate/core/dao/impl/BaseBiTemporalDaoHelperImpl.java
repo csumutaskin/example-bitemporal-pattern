@@ -46,7 +46,7 @@ import tr.com.poc.temporaldate.core.util.comparator.SortBaseEntityByEffectiveSta
 public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 {
 	private static final String EFFECTIVE_DATE_STR = "effectiveDate";
-	private static final String PERSPECTIVE_DATE_STR = "perspectiveDate";
+	private static final String OBSERVER_DATE_STR = "observerDate";
 	private static final String SELECT_E_FROM_PREFIX = "SELECT E FROM ";
 	private static final String SELECT_DISTINCT_E_FROM_PREFIX = "SELECT DISTINCT E FROM ";
 	
@@ -79,7 +79,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 			return null;
 		}		
 		Query selectCurrentDataUsingEffectiveTimeParameter = null;
-		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery(SELECT_E_FROM_PREFIX + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= perspectiveDateStart and sysdate < perspectiveDateEnd and E.id = :id");
+		selectCurrentDataUsingEffectiveTimeParameter = entityManager.createQuery(SELECT_E_FROM_PREFIX + beType.getSimpleName() + " E WHERE E.effectiveDateStart <= sysdate and E.effectiveDateEnd > sysdate and sysdate >= observerDateStart and sysdate < observerDateEnd and E.id = :id");
 		selectCurrentDataUsingEffectiveTimeParameter.setParameter(Constants.ID_COLUMN_KEY, pk);
 		if(lockModeType != null)
 		{
@@ -94,23 +94,23 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 	 * @param entityManager manager for database operations
 	 * @param pid pid value
 	 * @param lockModeType for database tuple locking
-	 * @param perspectiveDate perspective date of querying
+	 * @param observerDate Observer date of querying
 	 * @param effectiveDate effective date to select tuples
 	 * @return list of BaseEntities that match the criteria
 	 */
-	public List<E> getEntityWithNaturalIdForUpdateWithLockMode(Class<?> beType, EntityManager entityManager, final Serializable pid, LockModeType lockModeType, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
+	public List<E> getEntityWithNaturalIdForUpdateWithLockMode(Class<?> beType, EntityManager entityManager, final Serializable pid, LockModeType lockModeType, LocalDateTime observerDate, LocalDateTime effectiveDate)
 	{
 		 PidDetail pidTypeAndName = PidDetector.getPidTypesAndNamesMap().get(beType);
-		 Query query = queryGeneratorWithPidAndDates(entityManager, beType, lockModeType, pidTypeAndName, perspectiveDate, effectiveDate, pid);
+		 Query query = queryGeneratorWithPidAndDates(entityManager, beType, lockModeType, pidTypeAndName, observerDate, effectiveDate, pid);
 		 return (List<E>) query.getResultList();		 
 	}
 	
 	/**
-	 * Validates Perspective Dates and Effective Dates of an entity to be persisted or to be updated
-	 * All Dates Should be filled (non null) Effective Begin Date, Effective End Date, Perspective Begin Date, Perspective End Date
-	 * Perspective Begin Date <= Perspective End Date
+	 * Validates Observer Dates and Effective Dates of an entity to be persisted or to be updated
+	 * All Dates Should be filled (non null) Effective Begin Date, Effective End Date, Observer Begin Date, Observer End Date
+	 * Observer Begin Date <= Observer End Date
 	 * Effective Begin Date <= Effective End Date
-	 * For Only Save Operations: Perspective End Date = Infinity (End of Software: Year ~2100)
+	 * For Only Save Operations: Observer End Date = Infinity (End of Software: Year ~9999)
 	 * @param beType class type of BaseEntity
 	 * @param entityToBeChecked entity to be checked for its date operations
 	 * @param type current database operation type {@link OperationType}
@@ -123,22 +123,22 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_CANNOT_BE_NULL, type.toString(), objectType);
 		}
 		String objectToString = entityToBeChecked.toString();
-		if(entityToBeChecked.getEffectiveDateStart() == null || entityToBeChecked.getEffectiveDateEnd() == null || entityToBeChecked.getPerspectiveDateStart() == null || entityToBeChecked.getPerspectiveDateEnd() == null)
+		if(entityToBeChecked.getEffectiveDateStart() == null || entityToBeChecked.getEffectiveDateEnd() == null || entityToBeChecked.getObserverDateStart() == null || entityToBeChecked.getObserverDateEnd() == null)
 		{
-			log.error("At least one of the existing begin, existing end, perspective begin, perspective end dates in a {} operation for object of type: {} is absend. Object toString() is: {}", type, objectType, objectToString);
+			log.error("At least one of the existing begin, existing end, observer begin, observer end dates in a {} operation for object of type: {} is absend. Object toString() is: {}", type, objectType, objectToString);
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITIES_ALL_4_DATES_NOT_EXIST, type.toString(), objectType, objectToString);
 		}
-		if(entityToBeChecked.getPerspectiveDateEnd().isBefore(entityToBeChecked.getPerspectiveDateStart()))
+		if(entityToBeChecked.getObserverDateEnd().isBefore(entityToBeChecked.getObserverDateStart()))
 		{
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_PERSPECTIVE_END_BEFORE_PERSPECTIVE_BEGIN, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_OBSERVER_END_BEFORE_OBSERVER_BEGIN, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
 		}
 		if(entityToBeChecked.getEffectiveDateEnd().isBefore(entityToBeChecked.getEffectiveDateStart()))
 		{
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_EFFECTIVE_END_BEFORE_EFFECTIVE_BEGIN, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
 		}	
-		if(type == OperationType.SAVE && entityToBeChecked.getPerspectiveDateEnd().isBefore(END_OF_SOFTWARE))//Save operation before a perspective end date of end of software
+		if(type == OperationType.SAVE && entityToBeChecked.getObserverDateEnd().isBefore(END_OF_SOFTWARE))//Save operation before a observer end date of end of software
 		{
-			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_PERSPECTIVE_END_BEFORE_END_OF_SOFTWARE, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
+			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTED_OR_UPDATED_ENTITY_OBSERVER_END_BEFORE_END_OF_SOFTWARE, type.toString(), beType.getSimpleName(), entityToBeChecked.toString());
 		}
 		if(type == OperationType.SAVE && entityToBeChecked.getEffectiveDateEnd().isBefore(END_OF_SOFTWARE))//Save operation before an effective end date of end of software
 		{
@@ -152,19 +152,19 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 	 * @param entityClazz class type of the entity
 	 * @param lockModeType lock type of database querying (optimistic lock, no lock, pessimistic lock)
 	 * @param pidDetail detail of the pid column in current entity
-	 * @param perspectiveDate perspective date of querying
+	 * @param observerDate Observer date of querying
 	 * @param effectiveDate effective date of the tuples being queried
 	 * @param pid pid value of the &#64;pid column
 	 * @return {@link Query} prepared
 	 */
-	public Query queryGeneratorWithPidAndDates(EntityManager entityManager, Class<?> entityClazz, LockModeType lockModeType, PidDetail pidDetail, LocalDateTime perspectiveDate, LocalDateTime effectiveDate, Serializable pid)
+	public Query queryGeneratorWithPidAndDates(EntityManager entityManager, Class<?> entityClazz, LockModeType lockModeType, PidDetail pidDetail, LocalDateTime observerDate, LocalDateTime effectiveDate, Serializable pid)
 	{
 		String entityClassName = entityClazz.getSimpleName();
 		if(pidDetail == null || pidDetail.getType() == null)
 		{
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_ENTITY_SELECTION_WITH_NO_PID_OR_NO_PID_TYPE, entityClassName); 
 		}
-		boolean perspectiveDatePresent =  perspectiveDate != null;
+		boolean observerDatePresent =  observerDate != null;
 		boolean effectiveDatePresent = effectiveDate != null;
 		boolean pidPresent =  pid != null;
 		
@@ -173,11 +173,11 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 		{
 			queryStr.append(" AND E."+ pidDetail.getName() +" = :pid");			
 		}
-		if(perspectiveDatePresent)
+		if(observerDatePresent)
 		{
-			queryStr.append(" AND :perspectiveDate >= perspectiveDateStart and :perspectiveDate < perspectiveDateEnd");			
+			queryStr.append(" AND :observerDate >= observerDateStart and :observerDate < observerDateEnd");			
 		}
-		//or  query string  append and now gte perspective date start and now lt perspective date end 
+		//or  query string  append and now gte Observer date start and now lt Observer date end 
 		if(effectiveDatePresent)
 		{
 			queryStr.append(" AND E.effectiveDateStart <= :effectiveDate and E.effectiveDateEnd > :effectiveDate");
@@ -188,9 +188,9 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 		{			
 			query.setParameter("pid", pidDetail.castGivenValueToPidType(entityClazz, pid));
 		}
-		if(perspectiveDatePresent)
+		if(observerDatePresent)
 		{
-			query.setParameter(PERSPECTIVE_DATE_STR, perspectiveDate);
+			query.setParameter(OBSERVER_DATE_STR, observerDate);
 		}
 		if(effectiveDatePresent)
 		{
@@ -261,7 +261,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/**
-	 * Retrieves all entities that is active between the given effective start and end dates, at now perspective time
+	 * Retrieves all entities that is active between the given effective start and end dates, at now Observer time
 	 * @param beType class type of the BaseEntity
 	 * @param entityManager entityManager for database operations
 	 * @param pid pid value to be queried
@@ -279,21 +279,21 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 		}	
 		
 		StringBuilder queryStr = new StringBuilder(SELECT_DISTINCT_E_FROM_PREFIX).append(beType.getSimpleName()).append(" E WHERE E.").append(pidDetail.getName())
-		.append(" = :pid  AND :perspectiveDate >= E.perspectiveDateStart and :perspectiveDate < E.perspectiveDateEnd AND (") 
+		.append(" = :pid  AND :observerDate >= E.observerDateStart and :observerDate < E.observerDateEnd AND (") 
 		.append("(E.effectiveDateStart <= :effectiveStartDate AND E.effectiveDateEnd >= :effectiveStartDate) OR ")
 		.append("(E.effectiveDateStart > :effectiveStartDate AND E.effectiveDateEnd < :effectiveEndDate) OR ")
 		.append("(E.effectiveDateStart <= :effectiveEndDate AND E.effectiveDateEnd >= :effectiveEndDate)").append(")");
 		log.info("Query Created: {}", queryStr);
 
-		Query selectWithinEffectiveTimeFromPerspectiveDate = entityManager.createQuery(queryStr.toString());
-		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveStartDate", effectiveStartDate);
-		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("effectiveEndDate", effectiveEndDate);
-		selectWithinEffectiveTimeFromPerspectiveDate.setParameter(PERSPECTIVE_DATE_STR, LocalDateTime.now());
+		Query selectWithinEffectiveTimeFromObserverDate = entityManager.createQuery(queryStr.toString());
+		selectWithinEffectiveTimeFromObserverDate.setParameter("effectiveStartDate", effectiveStartDate);
+		selectWithinEffectiveTimeFromObserverDate.setParameter("effectiveEndDate", effectiveEndDate);
+		selectWithinEffectiveTimeFromObserverDate.setParameter(OBSERVER_DATE_STR, LocalDateTime.now());
 		Object pidCasted = pidDetail.castGivenValueToPidType(beType, pid);		
-		selectWithinEffectiveTimeFromPerspectiveDate.setParameter("pid", pidCasted);
+		selectWithinEffectiveTimeFromObserverDate.setParameter("pid", pidCasted);
 		try
 		{
-			toReturnCollection = (List<E>) selectWithinEffectiveTimeFromPerspectiveDate.getResultList();		
+			toReturnCollection = (List<E>) selectWithinEffectiveTimeFromObserverDate.getResultList();		
 		}
 		catch(Exception e)
 		{
@@ -326,7 +326,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 	}
 	
     /**
-     * Checks if any gaps exist WRT perspective dates
+     * Checks if any gaps exist WRT observer dates
      * @param entityManager entity manager to be queried
      * @param beType class type of the base entity
      * @param pidDetail pid column of the current base entity
@@ -336,14 +336,14 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
      * @return true if no gap exists, false if gap exists
      */
 	//TODO: check...
-	public boolean checkNoPerspectiveDateGapsAfterUpdate(EntityManager entityManager, Class<?> beType, PidDetail pidDetail, Serializable pid, LocalDateTime gapPossibleStartDate, LocalDateTime gapPossibleEndDate)//TODO: Get rid of all extra queries
+	public boolean checkNoObserverDateGapsAfterUpdate(EntityManager entityManager, Class<?> beType, PidDetail pidDetail, Serializable pid, LocalDateTime gapPossibleStartDate, LocalDateTime gapPossibleEndDate)//TODO: Get rid of all extra queries
 	{
 		if(pid == null)
 		{
 			throw new ApplicationException(ExceptionConstants.BITEMPORAL_PERSISTE_OR_UPDATE_GAP_CONTROL_PID_CAN_NOT_BE_NULL, beType.getSimpleName());
 		}
 		//select max effective end date which is closest to the newly inserted tuple's effective begin date, to check if there is a gap before the effective begin date of the new updated tuple
-		String queryToCheckBeginDate = "Select max(E.perspectiveDateEnd) from "+ beType.getSimpleName() +" E where E."+ pidDetail.getName() +" = :pid and E.perspectiveDateEnd <= :gapPossibleStartDate";
+		String queryToCheckBeginDate = "Select max(E.observerDateEnd) from "+ beType.getSimpleName() +" E where E."+ pidDetail.getName() +" = :pid and E.observerDateEnd <= :gapPossibleStartDate";
 		Query checkBeginQuery = entityManager.createQuery(queryToCheckBeginDate);
 		checkBeginQuery.setParameter("pid", pidDetail.castGivenValueToPidType(beType, pid));
 		checkBeginQuery.setParameter("gapPossibleStartDate", gapPossibleStartDate);
@@ -360,7 +360,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 		// if new end date is end of software no need to make any checks
 		if(gapPossibleEndDate.isBefore(END_OF_SOFTWARE))
 		{
-			String queryToSelectEndDate = "Select min(E.perspectiveDateStart) from "+ beType.getSimpleName() +" E, where E."+ pidDetail.getName() +" = :pid and E.perspectiveDateBegin >= :gapPossibleEndDate";
+			String queryToSelectEndDate = "Select min(E.observerDateStart) from "+ beType.getSimpleName() +" E, where E."+ pidDetail.getName() +" = :pid and E.observerDateBegin >= :gapPossibleEndDate";
 			Query checkEndQuery = entityManager.createQuery(queryToSelectEndDate);
 			checkEndQuery.setParameter("pid", pidDetail.castGivenValueToPidType(beType, pid));
 			checkEndQuery.setParameter("gapPossibleEndDate", gapPossibleEndDate);
@@ -380,14 +380,14 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 	/**
 	 * Persists a new tuple that is cloned from the oldTupleToBeOverridden with dates overridden to cloned data 
 	 * @param entityManager entity manager for database operations
-	 * @param parentClazzType clazz type of the BaseEntity in operations
+	 * @param parentClazzType class type of the BaseEntity in operations
 	 * @param oldTupleToBeOverridden original data to be cloned and persisted (after date values are overridden to old date values)
 	 * @param newEffectiveBeginDate new effective begin date to be applied to the cloned data before persisted (if null, old value from the clone will be persisted with the new entity)
 	 * @param newEffectiveEndDate new effective end date to be applied to the cloned data before persisted (if null, old value from the clone will be persisted with the new entity)
-	 * @param newPerspectiveBeginDate new perspective begin date to be applied to the cloned data before persisted (if null, old value from the clone will be persisted with the new entity)
-	 * @param newPerspectiveEndDate new perspective begin date to be applied to the cloned data before persisted (if null, old value from the clone will be persisted with the new entity)
+	 * @param newObserverBeginDate new observer begin date to be applied to the cloned data before persisted (if null, old value from the clone will be persisted with the new entity)
+	 * @param newObserverEndDate new observer begin date to be applied to the cloned data before persisted (if null, old value from the clone will be persisted with the new entity)
 	 */
-	public void persistData(EntityManager entityManager, Class<?> parentClazzType, E oldTupleToBeOverridden, LocalDateTime newEffectiveBeginDate, LocalDateTime newEffectiveEndDate, LocalDateTime newPerspectiveBeginDate, LocalDateTime newPerspectiveEndDate)
+	public void persistData(EntityManager entityManager, Class<?> parentClazzType, E oldTupleToBeOverridden, LocalDateTime newEffectiveBeginDate, LocalDateTime newEffectiveEndDate, LocalDateTime newObserverBeginDate, LocalDateTime newObserverEndDate)
 	{		
 		E toInsert;
 		Field declaredIdField;
@@ -410,13 +410,13 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 		{
 			toInsert.setEffectiveDateEnd(newEffectiveEndDate);
 		}
-		if(newPerspectiveBeginDate != null)
+		if(newObserverBeginDate != null)
 		{
-			toInsert.setPerspectiveDateStart(newPerspectiveBeginDate);
+			toInsert.setObserverDateStart(newObserverBeginDate);
 		}
-		if(newPerspectiveEndDate != null)
+		if(newObserverEndDate != null)
 		{
-			toInsert.setPerspectiveDateEnd(newPerspectiveEndDate);
+			toInsert.setObserverDateEnd(newObserverEndDate);
 		}
 		if(toInsert.getEffectiveDateStart().isBefore(toInsert.getEffectiveDateEnd()))//Detect ederken buyuk esit ve kucuk esit almistim, yazmaya degecek bir araligi varsa kaydet.. 
 		{
@@ -429,11 +429,11 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 	 * @param entityManager entity manager for database operations
 	 * @param parentClazzType class type of the BaseEntity in operations
 	 * @param allEntitiesToUpdate all entities that overlaps the new updated data on effective time line
-	 * @param newPersectiveBeginDate new perspective begin date, that is to be used, where necessary
+	 * @param newObserverBeginDate new observer begin date, that is to be used, where necessary
 	 * @param newEffectiveBeginDate new effective begin date, that is to be used, where necessary
 	 * @param newEffectiveEndDate new effective end date, that is to be used, where necessary
 	 */
-	public void updateOldTuplesWithNewDates(EntityManager entityManager, Class<?> parentClazzType, List<E> allEntitiesToUpdate, LocalDateTime newPersectiveBeginDate, LocalDateTime newEffectiveBeginDate, LocalDateTime newEffectiveEndDate)
+	public void updateOldTuplesWithNewDates(EntityManager entityManager, Class<?> parentClazzType, List<E> allEntitiesToUpdate, LocalDateTime newObserverBeginDate, LocalDateTime newEffectiveBeginDate, LocalDateTime newEffectiveEndDate)
 	{
 		if(CollectionUtils.isEmpty(allEntitiesToUpdate))
 		{
@@ -455,19 +455,19 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 					//update type 6
 //					next.setEffectiveDateStart(newEffectiveBeginDate);
 //					next.setEffectiveDateEnd(newEffectiveEndDate);
-					next.setPerspectiveDateEnd(newPersectiveBeginDate);					
+					next.setObserverDateEnd(newObserverBeginDate);					
 				}
 				else
 				{
 					//Update type2 object
 //					next.setEffectiveDateStart(newEffectiveBeginDate);
-					next.setPerspectiveDateEnd(newPersectiveBeginDate);
+					next.setObserverDateEnd(newObserverBeginDate);
 				}
 			}
 			else if(next.getEffectiveDateStart().isAfter(newEffectiveBeginDate) && next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//Type 3
 			{
 				//Update type3 object
-				next.setPerspectiveDateEnd(newPersectiveBeginDate);
+				next.setObserverDateEnd(newObserverBeginDate);
 			}
 			else if(!next.getEffectiveDateStart().isAfter(newEffectiveEndDate) && !next.getEffectiveDateEnd().isBefore(newEffectiveEndDate))//Type 4 and Type 5
 			{	
@@ -475,7 +475,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 				persistData(entityManager, parentClazzType, next, newEffectiveEndDate, null, null, END_OF_SOFTWARE);//insert type 5
 				//Update type4 object
 //				next.setEffectiveDateEnd(newEffectiveEndDate);
-				next.setPerspectiveDateEnd(newPersectiveBeginDate);				
+				next.setObserverDateEnd(newObserverBeginDate);				
 			}			
 		}		
 	}

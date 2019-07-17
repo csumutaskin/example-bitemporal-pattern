@@ -34,7 +34,7 @@ public class BitemporalUserDao extends BaseBiTemporalDaoImpl<BitemporalUser>
 		PidDetail pidOfUserEntity =  getPidInfoOfCurrentEntity(OperationType.READ);
 		
 		boolean effectiveDateExists = (toRead !=null) && (toRead.getAtEffectiveTime() != null);
-		boolean perspectiveDateExists = (toRead !=null) && (toRead.getAtPerspectiveTime() != null);
+		boolean observerDateExists = (toRead !=null) && (toRead.getAtObserverTime() != null);
 		boolean pidExists = (toRead !=null) && (toRead.getPid() != null);
 				
 		StringBuilder sql = new StringBuilder("Select U.userName, U.name from BitemporalUser U where 1=1 ");
@@ -42,9 +42,9 @@ public class BitemporalUserDao extends BaseBiTemporalDaoImpl<BitemporalUser>
 		{
 			sql.append("and U.effectiveDateStart <= :effectiveDate and U.effectiveDateEnd > :effectiveDate");
 		}
-		if(perspectiveDateExists)
+		if(observerDateExists)
 		{
-			sql.append(" and U.perspectiveDateStart <= :perspectiveDate and U.perspectiveDateEnd > :perspectiveDate");
+			sql.append(" and U.observerDateStart <= :observerDate and U.observerDateEnd > :observerDate");
 		}
 		if(pidExists)
 		{
@@ -55,9 +55,9 @@ public class BitemporalUserDao extends BaseBiTemporalDaoImpl<BitemporalUser>
 		{
 			createQuery.setParameter("effectiveDate", toRead.getAtEffectiveTime());
 		}
-		if(perspectiveDateExists)
+		if(observerDateExists)
 		{
-			createQuery.setParameter("perspectiveDate", toRead.getAtPerspectiveTime());
+			createQuery.setParameter("observerDate", toRead.getAtObserverTime());
 		}
 		if(pidExists)
 		{
@@ -81,7 +81,7 @@ public class BitemporalUserDao extends BaseBiTemporalDaoImpl<BitemporalUser>
 		PidDetail pidOfUserEntity =  getPidInfoOfCurrentEntity(OperationType.READ);
 		
 		boolean effectiveDateExists = (toRead !=null) && (toRead.getAtEffectiveTime() != null);
-		boolean perspectiveDateExists = (toRead !=null) && (toRead.getAtPerspectiveTime() != null);
+		boolean observerDateExists = (toRead !=null) && (toRead.getAtObserverTime() != null);
 		boolean pidExists = (toRead !=null) && (toRead.getPid() != null);
 				
 		StringBuilder sql = new StringBuilder("Select U.userName, U.name, U.organization.name, U.organization.fineAmount, U.organization.earnAmount from BitemporalUser U where 1=1 ");
@@ -89,9 +89,9 @@ public class BitemporalUserDao extends BaseBiTemporalDaoImpl<BitemporalUser>
 		{
 			sql.append("and U.effectiveDateStart <= :effectiveDate and U.effectiveDateEnd > :effectiveDate");
 		}
-		if(perspectiveDateExists)
+		if(observerDateExists)
 		{
-			sql.append(" and U.perspectiveDateStart <= :perspectiveDate and U.perspectiveDateEnd > :perspectiveDate");
+			sql.append(" and U.observerDateStart <= :observerDate and U.observerDateEnd > :observerDate");
 		}
 		if(pidExists)
 		{
@@ -102,9 +102,9 @@ public class BitemporalUserDao extends BaseBiTemporalDaoImpl<BitemporalUser>
 		{
 			createQuery.setParameter("effectiveDate", toRead.getAtEffectiveTime());
 		}
-		if(perspectiveDateExists)
+		if(observerDateExists)
 		{
-			createQuery.setParameter("perspectiveDate", toRead.getAtPerspectiveTime());
+			createQuery.setParameter("observerDate", toRead.getAtObserverTime());
 		}
 		if(pidExists)
 		{

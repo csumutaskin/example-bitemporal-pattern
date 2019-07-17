@@ -84,7 +84,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/**
-	 * Retrieves currently effective entity, from current perspective using primary key id
+	 * Retrieves currently effective entity, from current observer time using primary key id
 	 * @param pk primary key to be searched (not the @Pid)
 	 * @return {@link BaseTemporalEntity} 
 	 */
@@ -98,29 +98,29 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * Retrieves an entity list (or a single entity but in an ArrayList Collection) that match the given date criteria
 	 * @param pid natural key -which is marked with @Pid annotation- to be searched among the given entity. 
 	 * </br>Natural key is normally the id of the entity, but this time it can be a repeatable item in a database table
-	 * @param perspectiveDate if null get all entities that fit the given effectiveDate with given natural id, if a valid date given, returns the tuples that are valid at that perspective date  
-	 * @param effectiveDate if null get all entities that fit the given perspective Date with given natural id, if a valid date given, returns the tuples that are valid at that effective date 
+	 * @param observerDate if null get all entities that fit the given effectiveDate with given natural id, if a valid date given, returns the tuples that are valid at that observer date  
+	 * @param effectiveDate if null get all entities that fit the given observer Date with given natural id, if a valid date given, returns the tuples that are valid at that effective date 
 	 * @return {@link List of BaseTemporalEntity} object collection that match the given criteria
 	 */
-	public List<E> getEntityWithNaturalIdAtGivenDates(final Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
+	public List<E> getEntityWithNaturalIdAtGivenDates(final Serializable pid, LocalDateTime observerDate, LocalDateTime effectiveDate)
 	{	
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
-		return baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, null, perspectiveDate, effectiveDate);
+		return baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, null, observerDate, effectiveDate);
 	}
 	
 	/**
 	 * Retrieves an entity list (or a single entity but in an ArrayList Collection) that match the given date criteria with pessimistic lock, for update operations
 	 * @param pid natural key -which is marked with @Pid annotation- to be searched among the given entity. 
 	 * Natural key is normally the id of the entity, but this time it can be a repeatable tuple in a database table
-	 * @param perspectiveDate, if null get all entities that fit the given effectiveDate with given natural id, if a valid date given, returns the tuples that are valid at that perspective date  
-	 * @param effectiveDate, if null get all entities that fit the given perspective Date with given natural id, if a valid date given, returns the tuples that are valid at that effective date 
+	 * @param observerDate, if null get all entities that fit the given effectiveDate with given natural id, if a valid date given, returns the tuples that are valid at that observer date  
+	 * @param effectiveDate, if null get all entities that fit the given observer Date with given natural id, if a valid date given, returns the tuples that are valid at that effective date 
 	 * @return {@link List of BaseTemporalEntity} object
 	 * 
 	 */
-	public List<E> getEntityForUpdateWithNaturalIdAtGivenDates(final Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
+	public List<E> getEntityForUpdateWithNaturalIdAtGivenDates(final Serializable pid, LocalDateTime observerDate, LocalDateTime effectiveDate)
 	{	
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
-		return baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, LockModeType.PESSIMISTIC_WRITE, perspectiveDate, effectiveDate);
+		return baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, LockModeType.PESSIMISTIC_WRITE, observerDate, effectiveDate);
 	}
 		
 	/**
@@ -136,12 +136,12 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 		if(pid == null)//persist
 		{
 			log.info("Saving entity:{}, with pid: {}", beType.getSimpleName(), pid);
-			toReturn = saveEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(beType, baseBiTemporalEntity);
+			toReturn = saveEntityWithNaturalIdWithinEffectiveAndObserverDates(beType, baseBiTemporalEntity);
 		}
 		else//update
 		{	
 			log.info("Updating entity:{}, with pid: {}", beType.getSimpleName(), pid);
-			toReturn = updateEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(beType, pid, baseBiTemporalEntity);
+			toReturn = updateEntityWithNaturalIdWithinEffectiveAndObserverDates(beType, pid, baseBiTemporalEntity);
 		}
 		return toReturn;
 	}	
@@ -165,7 +165,7 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * @param toSave object that is to be persisted
 	 * @return {@link E extends BaseEntity}
 	 */
-	public E saveEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(Class<?> beType, E toSave)
+	public E saveEntityWithNaturalIdWithinEffectiveAndObserverDates(Class<?> beType, E toSave)
 	{
 		baseHelper.validateDates(beType, toSave, OperationType.SAVE);
 		PidDetail pidDetail = baseHelper.getPidInfoOfCurrentEntity(beType, OperationType.SAVE);
@@ -180,22 +180,22 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	}
 	
 	/**
-	 * Updates an entity within given Effective and Perspective Dates
+	 * Updates an entity within given Effective and Observer Dates
 	 * @param beType type of object to be persisted
 	 * @param pid pid value of the object to be updated
 	 * @param toUpdate new parameters of the object that will be overridden to the table
 	 * @return {@link E extends BaseEntity}
 	 */
-	public  E updateEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(Class<?> beType, Serializable pid, E toUpdate)
+	public  E updateEntityWithNaturalIdWithinEffectiveAndObserverDates(Class<?> beType, Serializable pid, E toUpdate)
 	{			
 		baseHelper.validateDates(beType, toUpdate, OperationType.UPDATE);
 		PidDetail pidDetail = baseHelper.getPidInfoOfCurrentEntity(beType, OperationType.UPDATE);
 		toUpdate.setIsDeleted(Boolean.FALSE);
 		pidDetail.setPidColumnValue(beType, toUpdate, pid);
 		Collection<E> allEntitiesWithinDates = baseHelper.getAllEntitiesWithinDates(beType, entityManager, pid, toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd(), pidDetail);
-		baseHelper.updateOldTuplesWithNewDates(entityManager, beType, (List<E>)allEntitiesWithinDates, toUpdate.getPerspectiveDateStart(), toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd());
+		baseHelper.updateOldTuplesWithNewDates(entityManager, beType, (List<E>)allEntitiesWithinDates, toUpdate.getObserverDateStart(), toUpdate.getEffectiveDateStart(), toUpdate.getEffectiveDateEnd());
 		entityManager.persist(toUpdate);
-	/*	baseHelper checkNoPerspectiveDateGapsAfterUpdate baseHelper checkNoEffectiveDateGapsAfterUpdate*/
+	/*	baseHelper checkNoObserverDateGapsAfterUpdate baseHelper checkNoEffectiveDateGapsAfterUpdate*/
 		return toUpdate;
 	}	
 	
@@ -204,13 +204,13 @@ public class BaseBiTemporalDaoImpl<E extends BaseBitemporalEntity>
 	 * Removes - Soft Deletes - all entities with the given criteria
 	 * @param beType type of the object to be persisted
 	 * @param pid pid value of the pid column of the entity - leave null to select all pid's
-	 * @param perspectiveDate perspective time - leave null to select all tuple modifications
+	 * @param observerDate observer time - leave null to select all tuple modifications
 	 * @param effectiveDate - effective time - leave null to select all tuples at different effective times
 	 */
-	public void removeEntityWithNaturalIdWithinEffectiveAndPerspectiveDates(Serializable pid, LocalDateTime perspectiveDate, LocalDateTime effectiveDate)
+	public void removeEntityWithNaturalIdWithinEffectiveAndObserverDates(Serializable pid, LocalDateTime observerDate, LocalDateTime effectiveDate)
 	{
 		Class beType = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];	
-		List<E> entitiesRetrievedWithLock = baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, LockModeType.PESSIMISTIC_WRITE, perspectiveDate, effectiveDate);
+		List<E> entitiesRetrievedWithLock = baseHelper.getEntityWithNaturalIdForUpdateWithLockMode(beType, entityManager, pid, LockModeType.PESSIMISTIC_WRITE, observerDate, effectiveDate);
 		if(CollectionUtils.isEmpty(entitiesRetrievedWithLock))
 		{
 			return;

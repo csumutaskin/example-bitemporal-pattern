@@ -56,7 +56,7 @@ public class PidDetector
 	
 	/**
 	 * Creates a map where keys are entities with @pid usage, values are where these key entities are used as attributes.
-	 * This is necessary to auto update entities along with associations from perspective view.
+	 * This is necessary to auto update entities along with associations from observer view.
 	 */
 	public static void detectPidAnnotations()
 	{

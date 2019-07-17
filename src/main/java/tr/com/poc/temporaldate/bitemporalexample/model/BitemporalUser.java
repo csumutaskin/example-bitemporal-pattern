@@ -59,6 +59,6 @@ public class BitemporalUser extends BaseBitemporalEntity
 	
 	@Basic(fetch = FetchType.LAZY)
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, optional=false)
-	@JoinFormula(value="(SELECT B.id FROM BT_ORGANIZATION B WHERE now() > B.PERSPECTIVE_DATE_START AND now() < B.PERSPECTIVE_DATE_END AND now() > B.EFFECTIVE_DATE_START AND now() < B.EFFECTIVE_DATE_END AND B.ORG_ID = ORG_ID)", referencedColumnName="id")	
+	@JoinFormula(value="(SELECT B.id FROM BT_ORGANIZATION B WHERE now() > B.OBSERVER_DATE_START AND now() < B.OBSERVER_DATE_END AND now() > B.EFFECTIVE_DATE_START AND now() < B.EFFECTIVE_DATE_END AND B.ORG_ID = ORG_ID)", referencedColumnName="id")	
 	private BitemporalOrganization organization;	
 }
