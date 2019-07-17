@@ -2,16 +2,10 @@ package tr.com.poc.temporaldate.common.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -48,7 +42,7 @@ public class FileDatabaseUtility
 
 	public static byte[] createZipAndByteFile(String url, FileType type, String content)
 	{
-		String fileName = createFileNameOfEpiasServiceCalls(url, type);
+		String fileName = createFileNameOfServerSideServiceCalls(url, type);
 		return createAndZipFileInMemory(fileName, content).toByteArray();
 	}
 
@@ -88,7 +82,7 @@ public class FileDatabaseUtility
 	}
 
 	/**
-	 * Request URL den mantikli bir dosyalama adi yapar. "Request.v1.organization.save" ya da "Response.v1.organization.save" seklinde, Servis sahibi EPİAŞ olan servislerle kullanılmalıdır.
+	 * Request URL den mantikli bir dosyalama adi yapar. "Request.v1.organization.save" ya da "Response.v1.organization.save" seklinde, Servis sahibi biz olan servislerle kullanılmalıdır.
 	 * 
 	 * @param url
 	 *            mevcut dosya ismine donusturulecek olan url
@@ -96,7 +90,7 @@ public class FileDatabaseUtility
 	 *            mevcut loglanacak dosya tipi, request log mu, response log mu
 	 * @return {@link String} olusan dosya adi
 	 */
-	private static String createFileNameOfEpiasServiceCalls(String url, FileType type)
+	private static String createFileNameOfServerSideServiceCalls(String url, FileType type)
 	{
 		StringBuilder toReturn = new StringBuilder(type.getType());
 		if (StringUtils.isNotBlank(url))
