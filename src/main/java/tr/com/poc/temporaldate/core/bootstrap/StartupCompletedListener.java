@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
@@ -22,6 +23,7 @@ import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.dao.annotation.PidDetector;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
+import tr.com.poc.temporaldate.core.util.logging.RestServerLogInit;
 
 /**
  * After all spring beans are initialized onApplicationEvent run once,
@@ -43,6 +45,9 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
 	private static final String INTER_LOG_MESSAGE_2 = " that the other does not contain";
 	private static final String INTER_LOG_MESSAGE_3 = ", and ";
 	private static final String INTER_LOG_MESSAGE_4 = " vice versa.";
+
+    @Value("#{servletContext.contextPath}")
+    public String contextPathUrl;
 	
 	@Autowired
 	private ResourceLoader rl;
@@ -57,8 +62,9 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
         log.info("Spring Context is up and all beans are initialized now...");
         
         PidDetector.detectPidAnnotations();
+        RestServerLogInit.init(contextPathUrl);
 //        EntityDetector.detectEntityAssociations();
-        
+
         checkBusinessExceptionsI18NKeysAreSynchronizedOrNot();
         checkApplicationExceptionsI18NKeysAreSynchronizedOrNot();
         log.info("All startup checks are done, no important issue found to cancel build/startup process...");
@@ -154,4 +160,5 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
     		log.warn(message.toString());
     	}
     }
+
 }

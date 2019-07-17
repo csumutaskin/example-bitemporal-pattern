@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.log4j.Log4j2;
+
 import tr.com.poc.temporaldate.bitemporalexample.dao.BitemporalOrganizationDao;
 import tr.com.poc.temporaldate.bitemporalexample.dto.bitemporalorganization.BitemporalOrganizationSaveOrUpdateRequestDTO;
 import tr.com.poc.temporaldate.bitemporalexample.dto.bitemporalorganization.BitemporalOrganizationSaveOrUpdateResponseDTO;
@@ -23,11 +25,12 @@ import tr.com.poc.temporaldate.core.service.BaseService;
  */
 @Service
 @Transactional
-public class BitemporalOrganizationService  implements BaseService
+@Log4j2
+public class BitemporalOrganizationService implements BaseService
 {
 	@Autowired
 	private BitemporalOrganizationDao bitemporalOrganizationDao;
-	
+
 	@Autowired
 	private BitemporalOrganizationSaveOrUpdateResponseDTOConverter converter;
 	
@@ -41,7 +44,7 @@ public class BitemporalOrganizationService  implements BaseService
 		List<BitemporalOrganization> entityWithNaturalId = bitemporalOrganizationDao.getEntityWithNaturalIdAtGivenDates(toRead.getPid(), toRead.getAtObserverTime(), toRead.getAtEffectiveTime());		
 		return (List<BitemporalOrganizationSaveOrUpdateResponseDTO>)converter.convertEntityCollectionToDTOCollection(entityWithNaturalId);
 	}
-	
+
 	/**
 	 * Saves or Updates the given {@link BitemporalOrganizationSaveOrUpdateResponseDTO} object
 	 * @param id if null, persist operation is done, if non-null update operation is done

@@ -10,7 +10,8 @@ import java.util.Locale;
  */
 public class Constants 
 {
-	private Constants()
+
+    private Constants()
 	{}
 	
 	public static final Locale LOCALE_TR = new Locale("tr-TR");
@@ -29,6 +30,7 @@ public class Constants
 	public static final String SCAN_PATH_JPA_ENTITIES = "tr.com";//Root path to scan entities
 	public static final String SCAN_PATH_SPRING_COMPONENTS = "tr.com";//Root path to scan spring beans
 	public static final String CLASSPATH_FOR_EXCEPTION_PROPERTIES = "classpath:" + "/exception/";//classpath where application and business exception properties reside
+    public static final String SCAN_PATH_REST_CONTROLLER = "tr.com";//Rest controller path
 	
 	public static final int    REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH = 100;
 	public static final String ID_COLUMN_KEY = "id";
@@ -58,6 +60,7 @@ public class Constants
 	/* Message Bundle File Parameters */
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS = "application-exception"; //application-exception_LOCALE.properties
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS = "business-exception"; //business-exception_LOCALE.properties
+    public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_VALIDATION_EXCEPTIONS = "validation-exception"; //validation-exception_LOCALE.properties
 	public static final String MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES = "Sistemde ilgili hatanın açıklaması yer almamaktadır. Lütfen hata kodunuzu ve işlem numaranızı kullanarak sistem yöneticilerine başvurunuz."; //business-exception_LOCALE.properties
 	public static final String MESSAGE_DEAFULT_FOR_BUSINESS_EXCEPTIONS_FOR_NOT_FOUND_ERROR_CODES_EN = "There is no error explanation present in the system for the exception you recieved, please contact system administrators with your transaction number and exception code";
 	public static final String BUSINESS_VALIDATION_EXCEPTION_PREFIX = " (!) BUSINESS VALIDATION EXCEPTION (!) : ";
@@ -68,4 +71,5 @@ public class Constants
 	
 	/* Aspect Parameters */
 	public static final String EXECUTION_OF_CONTROLLER_METHODS = "execution(public * tr.com.poc.temporaldate.*.controller.*.*(..))";
+    public static final String EXECUTION_OF_VALID_ANNOTATION = "execution(* *(@tr.com.poc.temporaldate.core.annotations.validation.Valid (*)))";// Valid annotation path
 }

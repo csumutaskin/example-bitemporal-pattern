@@ -21,6 +21,7 @@ import tr.com.poc.temporaldate.bitemporalexample.dto.bitemporalorganization.Bite
 import tr.com.poc.temporaldate.bitemporalexample.dto.bitemporalorganization.BitemporalOrganizationSaveOrUpdateResponseDTO;
 import tr.com.poc.temporaldate.bitemporalexample.dto.common.BitemporalReadRequestDTO;
 import tr.com.poc.temporaldate.bitemporalexample.service.BitemporalOrganizationService;
+import tr.com.poc.temporaldate.core.util.logging.RestLoggable;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.core.model.BooleanDTO;
 import tr.com.poc.temporaldate.core.util.response.RestResponse;
@@ -33,8 +34,9 @@ import tr.com.poc.temporaldate.core.util.response.RestResponse;
 @RestController
 @Log4j2
 @RequestMapping(value = "/bitemporal-organization")
+@RestLoggable
 @ResponseBody
-public class BitemporalOrganizationController 
+public class BitemporalOrganizationController
 {
 	@Autowired
 	private BitemporalOrganizationService bitemporalOrganizationService;
@@ -63,7 +65,7 @@ public class BitemporalOrganizationController
 	{		
 		BitemporalOrganizationSaveOrUpdateResponseDTO toReturn = null;
 		if(!orgId.isPresent() || Constants.UNDEFINED_STR.equalsIgnoreCase(orgId.get()))
-		{			
+		{
 			toReturn = bitemporalOrganizationService.saveOrMergeOrganization(null, toSaveOrUpdate);
 			log.debug("Organization created with @pid: {}", toReturn.getOrgId());
 		}	
