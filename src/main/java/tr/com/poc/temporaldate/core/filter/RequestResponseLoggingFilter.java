@@ -8,17 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-
 import tr.com.poc.temporaldate.bitemporalexample.service.RestLogService;
 import tr.com.poc.temporaldate.core.configuration.ApplicationContextProvider;
-import tr.com.poc.temporaldate.core.util.logging.RestServerLogInit;
 import tr.com.poc.temporaldate.core.util.logging.RestRequestWrapper;
 import tr.com.poc.temporaldate.core.util.logging.RestResponseWrapper;
+import tr.com.poc.temporaldate.core.util.logging.RestServerLogInit;
 
 /**
  * For database and text logging of requests and responses if necessary
@@ -71,10 +69,9 @@ public class RequestResponseLoggingFilter implements Filter
 				wrappedResponse = new RestResponseWrapper((HttpServletResponse) response);
 				shouldWrapResponse = true;
 			}
-			/**
+			/*
 			 * TODO:Json olarak gelen request bilgisi sıkıştırılmamış olduğundan dolayı loga yazıdırılırken birden
-			 * 
-			 * TODO:fazla satıra yazabilmektedir.Bu da graylog gibi log toplayan sistemler için yanlış olabilmektedir.
+			 *      fazla satıra yazabilmektedir.Bu da graylog gibi log toplayan sistemler için yanlış olabilmektedir.
 			 */
 			if (requestTxtLoggable)
 			{

@@ -453,14 +453,14 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 					persistData(entityManager, parentClazzType, next, newEffectiveEndDate, null, null, END_OF_SOFTWARE);//insert type 5				
 															
 					//update type 6
-//					next.setEffectiveDateStart(newEffectiveBeginDate);
-//					next.setEffectiveDateEnd(newEffectiveEndDate);
+//					next setEffectiveDateStart ( newEffectiveBeginDate )
+//					next setEffectiveDateEnd ( newEffectiveEndDate ) 
 					next.setObserverDateEnd(newObserverBeginDate);					
 				}
 				else
 				{
 					//Update type2 object
-//					next.setEffectiveDateStart(newEffectiveBeginDate);
+//					next setEffectiveDateStart ( newEffectiveBeginDate )
 					next.setObserverDateEnd(newObserverBeginDate);
 				}
 			}
@@ -474,7 +474,7 @@ public class BaseBiTemporalDaoHelperImpl<E extends BaseBitemporalEntity>
 				//Insert type5 object
 				persistData(entityManager, parentClazzType, next, newEffectiveEndDate, null, null, END_OF_SOFTWARE);//insert type 5
 				//Update type4 object
-//				next.setEffectiveDateEnd(newEffectiveEndDate);
+//				next setEffectiveDateEnd ( newEffectiveEndDate )
 				next.setObserverDateEnd(newObserverBeginDate);				
 			}			
 		}		

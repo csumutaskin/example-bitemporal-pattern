@@ -33,7 +33,6 @@ public class LocaleValidator extends ExistValidator implements ConstraintValidat
 			{
 				try
 				{
-					//LocaleUtils.toLocale(value);
 					return true;
 				}
 				catch (Exception e)

@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.log4j.Log4j2;
-
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.common.ExceptionConstants;
 import tr.com.poc.temporaldate.core.converter.BaseConverter;
@@ -38,7 +37,6 @@ import tr.com.poc.temporaldate.core.dao.BaseDao;
 import tr.com.poc.temporaldate.core.exception.ApplicationException;
 import tr.com.poc.temporaldate.core.model.BaseDTO;
 import tr.com.poc.temporaldate.core.model.audited.BaseAuditedEntity;
-import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
 
 /**
  * Base Data Access Operations. Includes generic operations for saving, updating, deleting and retrieving tuples according to different criteria. Do not use/inject this component directly to the service layer. 

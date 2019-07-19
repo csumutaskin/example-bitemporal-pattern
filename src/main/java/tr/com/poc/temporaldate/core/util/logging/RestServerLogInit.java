@@ -28,6 +28,7 @@ import tr.com.poc.temporaldate.common.Constants;
 @Log4j2
 public class RestServerLogInit
 {
+	private RestServerLogInit() {}
 
 	private static HashMap<String, Boolean> textLoggableMethodRequest = new HashMap<>();
 
@@ -43,6 +44,7 @@ public class RestServerLogInit
 
 	public static void init(String contextPathUrl)
 	{
+		log.debug("Initializing rest server logging utility");
 		contextPath = contextPathUrl;
 		Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(Constants.SCAN_PATH_REST_CONTROLLER)).setScanners(new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner()));
 		findLoggableFromClassAnnotation(reflections);

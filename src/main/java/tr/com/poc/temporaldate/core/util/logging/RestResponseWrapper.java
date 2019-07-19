@@ -35,7 +35,7 @@ public class RestResponseWrapper extends HttpServletResponseWrapper
 		super(response);
 	}
 
-	public String getContent() throws IOException
+	public String getContent()
 	{
 		return bos.toString();
 	}
@@ -83,6 +83,7 @@ public class RestResponseWrapper extends HttpServletResponseWrapper
 
 		public TeeServletOutputStream(OutputStream one, OutputStream two)
 		{
+			log.debug("Initializing data input output stream replicator...");
 			targetStream = new TeeOutputStream(one, two);
 		}
 

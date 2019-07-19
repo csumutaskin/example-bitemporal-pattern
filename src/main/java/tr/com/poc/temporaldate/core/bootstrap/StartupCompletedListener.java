@@ -63,7 +63,7 @@ public class StartupCompletedListener implements ApplicationListener<ContextRefr
         
         PidDetector.detectPidAnnotations();
         RestServerLogInit.init(contextPathUrl);
-//        EntityDetector.detectEntityAssociations();
+//      TODO:  EntityDetector detectEntityAssociations()
 
         checkBusinessExceptionsI18NKeysAreSynchronizedOrNot();
         checkApplicationExceptionsI18NKeysAreSynchronizedOrNot();

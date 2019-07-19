@@ -1,7 +1,5 @@
 package tr.com.poc.temporaldate.bitemporalexample.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import tr.com.poc.temporaldate.core.model.audited.BaseAuditedEntity;
 
 @SuppressWarnings("serial")
