@@ -1,5 +1,7 @@
 package tr.com.poc.temporaldate.core.util.logging;
 
+import static tr.com.poc.temporaldate.common.CommonConstants.SCAN_PATH_REST_CONTROLLER;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.log4j.Log4j2;
 
-import tr.com.poc.temporaldate.common.Constants;
-
 @Log4j2
 public class RestServerLogInit
 {
@@ -46,7 +46,7 @@ public class RestServerLogInit
 	{
 		log.debug("Initializing rest server logging utility");
 		contextPath = contextPathUrl;
-		Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(Constants.SCAN_PATH_REST_CONTROLLER)).setScanners(new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner()));
+		Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(SCAN_PATH_REST_CONTROLLER)).setScanners(new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner()));
 		findLoggableFromClassAnnotation(reflections);
 		findLoggableFromMethodAnnotation(reflections);
 

@@ -1,5 +1,7 @@
 package tr.com.poc.temporaldate.core.dao.annotation;
 
+import static tr.com.poc.temporaldate.common.CommonConstants.SCAN_PATH_JPA_ENTITIES;
+
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class PidDetector
 	public static void detectPidAnnotations()
 	{
 		log.info("Scanning @Pid annotation in all Entities");
-		Reflections reflections = new Reflections(Constants.SCAN_PATH_JPA_ENTITIES);
+		Reflections reflections = new Reflections(SCAN_PATH_JPA_ENTITIES);
 		Set<Class<?>> entityClasses = reflections.getTypesAnnotatedWith(Entity.class);
 		Set<Class<?>> pidEntityClasses = detectPidAnnotatedClassesAtColumnFields(entityClasses);
 		Set<Class<?>> notPidEntityClasses = Sets.difference(entityClasses, pidEntityClasses);

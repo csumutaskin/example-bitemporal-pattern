@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.bitemporalexample.service;
+package tr.com.poc.temporaldate.core.service;
 
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,12 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import tr.com.poc.temporaldate.bitemporalexample.dao.RestLogDao;
-import tr.com.poc.temporaldate.bitemporalexample.model.RestServerLog;
 import tr.com.poc.temporaldate.common.Constants;
 import tr.com.poc.temporaldate.common.util.FileDatabaseUtility;
+import tr.com.poc.temporaldate.core.dao.RestLogDao;
 import tr.com.poc.temporaldate.core.filter.RequestResponseLoggingFilter;
-
+import tr.com.poc.temporaldate.core.model.RestServerLog;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

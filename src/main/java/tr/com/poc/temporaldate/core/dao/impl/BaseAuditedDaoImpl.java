@@ -1,5 +1,7 @@
 package tr.com.poc.temporaldate.core.dao.impl;
 
+import static tr.com.poc.temporaldate.common.CommonConstants.REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -511,7 +513,7 @@ public abstract class BaseAuditedDaoImpl<E extends BaseAuditedEntity> implements
 		{
 			E next = iterator.next();			
 			entityManager.persist(next);
-			if (count == Constants.REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
+			if (count == REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
 			{
 				entityManager.flush();
 				count = 0;
@@ -530,7 +532,7 @@ public abstract class BaseAuditedDaoImpl<E extends BaseAuditedEntity> implements
 		{
 			E next = iterator.next();			
 			entityManager.merge(next);
-			if (count == Constants.REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
+			if (count == REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
 			{
 				entityManager.flush();
 				count = 0;

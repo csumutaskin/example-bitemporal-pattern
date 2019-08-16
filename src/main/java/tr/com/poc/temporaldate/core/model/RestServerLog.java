@@ -1,4 +1,4 @@
-package tr.com.poc.temporaldate.bitemporalexample.model;
+package tr.com.poc.temporaldate.core.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

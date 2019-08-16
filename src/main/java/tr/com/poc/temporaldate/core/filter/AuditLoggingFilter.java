@@ -5,7 +5,7 @@ import static tr.com.poc.temporaldate.common.Constants.MDC_HOST_ADDRESS;
 import static tr.com.poc.temporaldate.common.Constants.MDC_TRANSACTION_NO;
 import static tr.com.poc.temporaldate.common.Constants.MDC_URI;
 import static tr.com.poc.temporaldate.common.Constants.MDC_USERNAME;
-import static tr.com.poc.temporaldate.common.Constants.REQUEST_HEADER_USERNAME;
+import static tr.com.poc.temporaldate.common.CommonConstants.REQUEST_HEADER_USERNAME;
 
 import java.io.IOException;
 import java.net.InetAddress;

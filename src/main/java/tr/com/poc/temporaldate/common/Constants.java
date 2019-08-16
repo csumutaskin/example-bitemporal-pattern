@@ -27,18 +27,11 @@ public class Constants
 	public static final String UTF8 = "UTF-8";
 	public static final String STARTUP = "STARTUP";
 	
-	public static final String SCAN_PATH_JPA_ENTITIES = "tr.com";//Root path to scan entities
-	public static final String SCAN_PATH_SPRING_COMPONENTS = "tr.com";//Root path to scan spring beans
 	public static final String CLASSPATH_FOR_EXCEPTION_PROPERTIES = "classpath:" + "/exception/";//classpath where application and business exception properties reside
-    public static final String SCAN_PATH_REST_CONTROLLER = "tr.com";//Rest controller path
 	
-	public static final int    REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH = 100;
 	public static final String ID_COLUMN_KEY = "id";
 	public static final String ID_GETTER_KEY = "getId";
 	public static final String ID_SETTER_KEY = "setId";
-	
-	/* Request and Request Header Parameters */
-	public static final String REQUEST_HEADER_USERNAME = "username";
 	
 	/* MDC Parameters */
 	public static final String MDC_CLIENT_IP = "ClientIP";
@@ -55,7 +48,8 @@ public class Constants
 	public static final String IGNORE_SECURITY_AT_RESOURCES_URL = "/resources/**";
 	public static final String IGNORE_SECURITY_AT_H2_URL = "/h2-console/**";
 	
-	
+	/* Scan Path for only core API entities (for common entities like RestServerLog...) */
+	public static final String SCAN_PATH_CORE_JPA_ENTITIES = "tr.com";//Root path to scan core package entities
 	
 	/* Message Bundle File Parameters */
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_APPLICATION_EXCEPTIONS = "application-exception"; //application-exception_LOCALE.properties
@@ -69,7 +63,4 @@ public class Constants
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS_DEFAULT_PATH = "exception/business-exception.properties";
 	public static final String MESSAGE_BUNDLE_FILE_NAME_FOR_BUSINESS_EXCEPTIONS_EN_PATH = "exception/business-exception_en.properties";
 	
-	/* Aspect Parameters */
-	public static final String EXECUTION_OF_CONTROLLER_METHODS = "execution(public * tr.com.poc.temporaldate.*.controller.*.*(..))";
-    public static final String EXECUTION_OF_VALID_ANNOTATION = "execution(* *(@tr.com.poc.temporaldate.core.annotations.validation.Valid (*)))";// Valid annotation path
 }

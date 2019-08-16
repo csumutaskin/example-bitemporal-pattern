@@ -1,5 +1,7 @@
 package tr.com.poc.temporaldate.core.dao.impl;
 
+import static tr.com.poc.temporaldate.common.CommonConstants.REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -42,12 +44,10 @@ import tr.com.poc.temporaldate.core.model.temporal.BaseTemporalEntity;
  * Base Data Access Operations. Includes generic operations for saving, updating, deleting and retrieving tuples according to different criteria. Do not use/inject this component directly to the service layer. 
  * Instead, use this utility as a super class to each entity's data access operation classes.
  * 
- * E.g public class MyDao extends BaseEntity<MyObject> {} And inject MyDao to MyService class and so on...
+ * E.g public class MyDao extends BaseEntity {} And inject MyDao to MyService class and so on...
  * 
  * @author umutaskin
  * 
- * @param <baseEntity
- *            extends BaseEntity> Needs a generic type of any BaseEntity extending object to auto detect the database table/entity mapping
  */
 
 @Component
@@ -511,7 +511,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		{
 			E next = iterator.next();			
 			entityManager.persist(next);
-			if (count == Constants.REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
+			if (count == REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
 			{
 				entityManager.flush();
 				count = 0;
@@ -530,7 +530,7 @@ public abstract class BaseDaoImpl<E extends BaseTemporalEntity> implements BaseD
 		{
 			E next = iterator.next();			
 			entityManager.merge(next);
-			if (count == Constants.REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
+			if (count == REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH)
 			{
 				entityManager.flush();
 				count = 0;
