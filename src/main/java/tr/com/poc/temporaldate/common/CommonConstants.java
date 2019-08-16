@@ -15,9 +15,5 @@ public class CommonConstants
 	public static final int    REPOSITORY_BULK_TUPLE_SIZE_BEFORE_FLUSH = 100;
 	
 	/* Request and Request Header Parameters */
-	public static final String REQUEST_HEADER_USERNAME = "username";
-	
-	/* Aspect Parameters */
-	public static final String EXECUTION_OF_CONTROLLER_METHODS = "execution(public * tr.com.poc.temporaldate.*.controller.*.*(..))";
-    public static final String EXECUTION_OF_VALID_ANNOTATION = "execution(* *(@tr.com.poc.temporaldate.core.annotations.validation.Valid (*)))";// Valid annotation path
+	public static final String REQUEST_HEADER_USERNAME = "username";	
 }
